@@ -1,13 +1,22 @@
 <template>
   <div>
+    <div class="project-name">File Organiser</div>
     <div class="header">
-      <Dropdown
-        v-for="listItem in list"
-        :key="listItem.id"
-        :items="listItem.items"
-        :title="listItem.label"
-        :icon="listItem.icon"
-      />
+      <div class="menu-container">
+        <Dropdown
+          v-for="listItem in list"
+          :key="listItem.id"
+          :items="listItem.items"
+          :title="listItem.label"
+          :icon="listItem.icon"
+        />
+      </div>
+      <div class="menu-container">
+        <v-icon class="icon" icon="mdi-delete-outline"></v-icon>
+        <v-icon class="icon" icon="mdi-rename-box"></v-icon>
+        <v-icon class="icon" icon="mdi-content-cut"></v-icon>
+        <v-icon class="icon" icon="mdi-content-paste"></v-icon>
+      </div>
     </div>
   </div>
 </template>

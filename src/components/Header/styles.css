@@ -1,9 +1,21 @@
+.project-name{
+    border-bottom: 1px solid rgb(51, 46, 46);
+    background-color: #E0E0E0;
+    padding-left: 10px;
+}
+
 .header {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     width: 100%;
     padding: 10px;
     background-color: #E0E0E0;
-    margin: 0;
+    padding-top:0px ;
+    
+}
+.header > .menu-container{
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
