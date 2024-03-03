@@ -1,0 +1,10 @@
+.folder{
+    display: grid;
+    width: fit-content;
+    width: 105px;
+}
+
+.input{
+    width: 100%;
+    text-align: center;
+}

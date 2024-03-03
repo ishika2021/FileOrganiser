@@ -1,0 +1,8 @@
+.board{
+    background-color: beige;
+    width: 100%;
+    height: calc(100% - 82px);
+    display: flex;
+    gap: 10px;
+    
+}

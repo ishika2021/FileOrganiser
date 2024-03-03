@@ -12,10 +12,10 @@
         />
       </div>
       <div class="menu-container">
-        <v-icon class="icon" icon="mdi-delete-outline"></v-icon>
-        <v-icon class="icon" icon="mdi-rename-box"></v-icon>
-        <v-icon class="icon" icon="mdi-content-cut"></v-icon>
-        <v-icon class="icon" icon="mdi-content-paste"></v-icon>
+        <v-icon class="cursor-pointer" icon="mdi-delete-outline"></v-icon>
+        <v-icon class="cursor-pointer" icon="mdi-rename-box"></v-icon>
+        <v-icon class="cursor-pointer" icon="mdi-content-cut"></v-icon>
+        <v-icon class="cursor-pointer" icon="mdi-content-paste"></v-icon>
       </div>
     </div>
   </div>
@@ -28,40 +28,49 @@ export default {
   components: {
     Dropdown,
   },
-  data: () => ({
-    list: [
-      {
-        title: "Add Menu",
-        label: "New",
-        icon: "mdi-plus-circle",
-        items: [
-          {
-            title: "New Folder",
-            icon: "",
-          },
-          {
-            title: "New File",
-            icon: "",
-          },
-        ],
-      },
-      {
-        title: "View Menu",
-        label: "View",
-        icon: "mdi-view-headline",
-        items: [
-          {
-            title: "List",
-            icon: "",
-          },
-          {
-            title: "Grid",
-            icon: "",
-          },
-        ],
-      },
-    ],
-  }),
+  data() {
+    return {
+      list: [
+        {
+          title: "Add Menu",
+          label: "New",
+          icon: "mdi-plus-circle",
+          items: [
+            {
+              title: "New Folder",
+              icon: "",
+              action: this.addFolder,
+            },
+            {
+              title: "New File",
+              icon: "",
+              action: () => {},
+            },
+          ],
+        },
+        {
+          title: "View Menu",
+          label: "View",
+          icon: "mdi-view-headline",
+          items: [
+            {
+              title: "List",
+              icon: "",
+            },
+            {
+              title: "Grid",
+              icon: "",
+            },
+          ],
+        },
+      ],
+    };
+  },
+  methods: {
+    addFolder() {
+      this.$store.dispatch("folder/addNewFolder", true);
+    },
+  },
 };
 </script>
 
