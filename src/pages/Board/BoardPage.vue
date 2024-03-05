@@ -17,6 +17,7 @@
 
 <script>
 import Folder from "../../components/Folder/Folder.vue";
+import { transformDuplicateFolderName } from "../../utils/functionUtils/folderHelpers.js";
 import { mapGetters } from "vuex";
 export default {
   name: "BoardPage",
@@ -30,9 +31,11 @@ export default {
     }),
   },
   methods: {
-    saveFolder($data) {
+    saveFolder($name) {
+      const name = $name.length > 0 ? $name : "New Folder";
+      const folderName = transformDuplicateFolderName(name, this.folders);
       const obj = {
-        name: $data,
+        name: folderName,
         files: [],
       };
       this.$store.dispatch("folder/addFolder", obj);
