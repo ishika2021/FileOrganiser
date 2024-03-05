@@ -1,9 +1,11 @@
 <template>
-  <Dashboard />
+  <div class="app">
+    <Dashboard />
+  </div>
 </template>
 
 <script>
-import Dashboard from "./pages/Dashboard.vue";
+import Dashboard from "./pages/Dashboard/DashboardPage.vue";
 export default {
   name: "App",
   components: {

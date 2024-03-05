@@ -8,7 +8,7 @@
       </template>
       <v-list>
         <v-list-item v-for="(item, index) in items" :key="index">
-          <v-list-item-title>
+          <v-list-item-title class="cursor-pointer" @click="item.action">
             {{ item.title }}
           </v-list-item-title>
         </v-list-item>
