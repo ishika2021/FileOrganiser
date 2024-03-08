@@ -10,11 +10,16 @@ export default {
     UPDATE_BREADCRUMBS(state, payload) {
       state.breadcrumbs = payload;
     },
+    ADD_BREADCRUMB(state, payload) {
+      state.breadcrumbs.push(payload);
+    },
   },
   actions: {
-    updateBreadcrumbs({ commit }, breadcrumb) {
-      console.log("b=", breadcrumb);
-      commit("UPDATE_BREADCRUMBS", breadcrumb);
+    updateBreadcrumbs({ commit }, allBreadcrumbs) {
+      commit("UPDATE_BREADCRUMBS", allBreadcrumbs);
+    },
+    addBreadcrumb({ commit }, item) {
+      commit("ADD_BREADCRUMB", item);
     },
   },
 };

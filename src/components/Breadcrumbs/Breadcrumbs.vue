@@ -1,12 +1,11 @@
 <template>
-  <ul class="breadcrumb">
-    <li>
-      <span>
-        <v-icon :icon="icon"></v-icon>
-        <span>{{ title }}</span>
-      </span>
-    </li>
-  </ul>
+  <span v-if="title !== 'Home'"> > </span>
+  <li>
+    <span>
+      <v-icon :icon="icon"></v-icon>
+      <span>{{ title }}</span>
+    </span>
+  </li>
 </template>
 
 <script>

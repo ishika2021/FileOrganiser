@@ -1,9 +1,11 @@
 <template>
-  <Breadcrumbs
-    v-for="(item, index) in breadcrumbs"
-    :key="index"
-    :title="item.title"
-  />
+  <ul class="breadcrumb">
+    <Breadcrumbs
+      v-for="(item, index) in breadcrumbs"
+      :key="index"
+      :title="item.title"
+    />
+  </ul>
 </template>
 
 <script>
@@ -21,3 +23,6 @@ export default {
   },
 };
 </script>
+<style>
+@import "./styles.css";
+</style>

@@ -15,14 +15,19 @@
 export default {
   name: "Folder",
   props: {
-    name: {
-      type: String,
+    folderDetails: {
+      type: Object,
       required: true,
-      default: "",
+      default: () => {},
     },
     isEdit: {
       type: Boolean,
       default: true,
+    },
+    action: {
+      type: Function,
+      default: () => {},
+      required: true,
     },
   },
   data() {
@@ -32,7 +37,7 @@ export default {
   },
   mounted() {
     this.$refs.focusInput.focus();
-    this.modelValue = this.name;
+    this.modelValue = this.folderDetails.name;
   },
 };
 </script>

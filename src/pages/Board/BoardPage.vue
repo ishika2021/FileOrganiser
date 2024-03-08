@@ -1,7 +1,7 @@
 <template>
   <div class="board">
     <div v-for="(folder, index) in folders" :key="index">
-      <Folder :name="folder.name" />
+      <Folder :folderDetails="folder" :action="handleFolderClick" />
     </div>
     <div>
       <Folder
@@ -19,6 +19,8 @@
 import Folder from "../../components/Folder/Folder.vue";
 import { transformDuplicateFolderName } from "../../utils/functionUtils/folderHelpers.js";
 import { mapGetters } from "vuex";
+import { v4 as uuidv4 } from "uuid";
+
 export default {
   name: "BoardPage",
   components: {
@@ -28,6 +30,7 @@ export default {
     ...mapGetters({
       folders: "folder/folders",
       newFolder: "folder/isNewFolder",
+      breadcrumbs: "breadcrumbs/breadcrumbs",
     }),
   },
   methods: {
@@ -35,10 +38,23 @@ export default {
       const name = $name.length > 0 ? $name : "New Folder";
       const folderName = transformDuplicateFolderName(name, this.folders);
       const obj = {
+        id: uuidv4(),
         name: folderName,
         files: [],
       };
       this.$store.dispatch("folder/addFolder", obj);
+    },
+    handleFolderClick(folder) {
+      const lastTitlePath = this.breadcrumbs[this.breadcrumbs.length - 1].path;
+      const path =
+        lastTitlePath === "/"
+          ? "/" + folder.name
+          : lastTitlePath + "/" + folder.name;
+      const obj = {
+        title: folder.name,
+        path: path,
+      };
+      this.$store.dispatch("breadcrumbs/addBreadcrumb", obj);
     },
   },
 };

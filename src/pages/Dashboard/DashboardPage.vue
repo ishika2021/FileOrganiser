@@ -41,6 +41,7 @@ export default {
   computed: {
     ...mapGetters({
       folders: "folder/folders",
+      breadcrumbs: "breadcrumbs/breadcrumbs",
     }),
   },
   watch: {
@@ -50,6 +51,12 @@ export default {
           localStorage.setItem("folders", JSON.stringify(curr));
           this.$store.dispatch("folder/addNewFolder", false);
         }
+      },
+      deep: true,
+    },
+    breadcrumbs: {
+      handler: function (curr) {
+        localStorage.setItem("breadcrumbs", JSON.stringify(curr));
       },
       deep: true,
     },
