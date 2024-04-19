@@ -23,6 +23,7 @@ export default {
     const breadcrumbList = JSON.parse(localStorage.getItem("breadcrumbs"));
     if (folderList) {
       this.$store.dispatch("folder/updateFolders", folderList);
+      this.$store.dispatch("folder/updateSelectedFolder", "Home");
     }
 
     if (breadcrumbList) {

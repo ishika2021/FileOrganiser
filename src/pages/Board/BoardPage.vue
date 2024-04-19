@@ -1,6 +1,6 @@
 <template>
   <div class="board">
-    <div v-for="(folder, index) in folders" :key="index">
+    <div v-for="(folder, index) in currentFolder" :key="index">
       <Folder :folderDetails="folder" :action="handleFolderClick" />
     </div>
     <div>
@@ -9,6 +9,7 @@
         :isEdit="false"
         :autoFocus="true"
         name="New Folder"
+        :isCreated="true"
         @save-folder="saveFolder"
       />
     </div>
@@ -31,7 +32,11 @@ export default {
       folders: "folder/folders",
       newFolder: "folder/isNewFolder",
       breadcrumbs: "breadcrumbs/breadcrumbs",
+      selectedFolder: "folder/selectedFolder",
     }),
+    currentFolder() {
+      return this.selectedFolder;
+    },
   },
   methods: {
     saveFolder($name) {
@@ -40,10 +45,27 @@ export default {
       const obj = {
         id: uuidv4(),
         name: folderName,
-        files: [],
+        children: [],
       };
-      this.$store.dispatch("folder/addFolder", obj);
+
+      if (this.breadcrumbs.length <= 1) {
+        const payload = {
+          folder: obj,
+          parent: "Home",
+        };
+        this.$store.dispatch("folder/addFolder", payload);
+        this.$store.dispatch("folder/updateSelectedFolder", "Home");
+      } else {
+        const title = this.breadcrumbs[this.breadcrumbs.length - 1].title;
+        const payload = {
+          folder: obj,
+          parent: title,
+        };
+        this.$store.dispatch("folder/addFolder", payload);
+        this.$store.dispatch("folder/updateSelectedFolder", title);
+      }
     },
+
     handleFolderClick(folder) {
       const lastTitlePath = this.breadcrumbs[this.breadcrumbs.length - 1].path;
       const path =
@@ -55,6 +77,8 @@ export default {
         path: path,
       };
       this.$store.dispatch("breadcrumbs/addBreadcrumb", obj);
+      this.$store.dispatch("folder/updateSelectedFolder", folder.name);
+      localStorage.setItem("selectedFolder", JSON.stringify(folder.children));
     },
   },
 };

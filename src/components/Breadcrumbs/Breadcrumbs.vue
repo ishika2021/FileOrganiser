@@ -1,7 +1,7 @@
 <template>
   <span v-if="title !== 'Home'"> > </span>
   <li>
-    <span>
+    <span @click="action(title)">
       <v-icon :icon="icon"></v-icon>
       <span>{{ title }}</span>
     </span>
@@ -16,6 +16,11 @@ export default {
       type: String,
       required: true,
       default: "",
+    },
+    action: {
+      type: Function,
+      required: true,
+      default: () => {},
     },
   },
   computed: {
