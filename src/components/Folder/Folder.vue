@@ -1,12 +1,21 @@
 <template>
   <div class="folder">
-    <v-icon icon="mdi-folder" size="100" />
+    <v-icon icon="mdi-folder" size="100" @click="action(folderDetails)" />
     <input
+      v-if="isCreated"
       class="input"
       v-model="modelValue"
       :disabled="isEdit"
       ref="focusInput"
       @keyup.enter="this.$emit('save-folder', modelValue)"
+    />
+    <input
+      v-else
+      class="input"
+      :value="name"
+      :disabled="isEdit"
+      ref="focusInput"
+      @keyup.enter="this.$emit('save-folder', name)"
     />
   </div>
 </template>
@@ -15,14 +24,24 @@
 export default {
   name: "Folder",
   props: {
-    name: {
-      type: String,
+    folderDetails: {
+      type: Object,
       required: true,
-      default: "",
+      default: () => {},
     },
     isEdit: {
       type: Boolean,
       default: true,
+    },
+    action: {
+      type: Function,
+      default: () => {},
+      required: true,
+    },
+    isCreated: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
   },
   data() {
@@ -32,7 +51,14 @@ export default {
   },
   mounted() {
     this.$refs.focusInput.focus();
-    this.modelValue = this.name;
+    if (this.folderDetails) {
+      this.modelValue = this.folderDetails.name;
+    }
+  },
+  computed: {
+    name() {
+      return this.folderDetails?.name;
+    },
   },
 };
 </script>
