@@ -4,6 +4,7 @@
       v-for="(item, index) in breadcrumbs"
       :key="index"
       :title="item.title"
+      :action="handleBreadcrumbClick"
     />
   </ul>
 </template>
@@ -19,7 +20,24 @@ export default {
   computed: {
     ...mapGetters({
       breadcrumbs: "breadcrumbs/breadcrumbs",
+      folders: "folder/folders",
     }),
+  },
+  methods: {
+    handleBreadcrumbClick(breadcrumb) {
+      const currentBreadcrumbs = this.breadcrumbs;
+      let titleIndex = 0;
+      currentBreadcrumbs.map((item, index) => {
+        if (item.title === breadcrumb) {
+          titleIndex = index;
+        }
+      });
+
+      currentBreadcrumbs.splice(titleIndex + 1);
+      const id = currentBreadcrumbs[currentBreadcrumbs.length - 1].id;
+      localStorage.setItem("selectedFolder", id);
+      this.$store.dispatch("folder/updateSelectedFolder", id);
+    },
   },
 };
 </script>

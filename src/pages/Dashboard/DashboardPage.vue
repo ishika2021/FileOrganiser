@@ -21,8 +21,10 @@ export default {
   created() {
     const folderList = JSON.parse(localStorage.getItem("folders"));
     const breadcrumbList = JSON.parse(localStorage.getItem("breadcrumbs"));
+    const selectedFolderID = localStorage.getItem("selectedFolder");
     if (folderList) {
       this.$store.dispatch("folder/updateFolders", folderList);
+      this.$store.dispatch("folder/updateSelectedFolder", "00");
     }
 
     if (breadcrumbList) {
@@ -32,16 +34,22 @@ export default {
         {
           title: "Home",
           path: "/",
+          id: "00",
         },
       ];
       localStorage.setItem("breadcrumbs", JSON.stringify(defaultBreadcrumb));
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", defaultBreadcrumb);
+    }
+
+    if (selectedFolderID) {
+      this.$store.dispatch("folder/updateSelectedFolder", selectedFolderID);
     }
   },
   computed: {
     ...mapGetters({
       folders: "folder/folders",
       breadcrumbs: "breadcrumbs/breadcrumbs",
+      selectedFolder: "folder/selectedFolder",
     }),
   },
   watch: {
