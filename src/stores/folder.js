@@ -2,26 +2,27 @@ import { getCurrentFolder } from "../utils/functionUtils/folderHelpers";
 export default {
   namespaced: true,
   state: {
-    folders: [],
+    folders: {
+      id: "00",
+      name: "Home",
+      children: [],
+    },
     newFolder: false,
     selectedFolder: [],
   },
   getters: {
-    folders: (state) => state.folders,
+    folders: (state) => state.folders.children,
     isNewFolder: (state) => state.newFolder,
     selectedFolder: (state) => state.selectedFolder,
   },
   mutations: {
     UPDATE_FOLDERS(state, payload) {
-      state.folders = payload;
+      state.folders.children = payload;
     },
     ADD_FOLDER(state, payload) {
       const { folder, parent } = payload;
-      if (parent === "Home") {
-        state.folders.push(folder);
-      } else {
-        // call a fn that will return the parent's object then add folder to its children
-        const res = getCurrentFolder(parent, state.folders);
+      const res = getCurrentFolder(parent, state.folders);
+      if (res) {
         res.children.push(folder);
       }
     },
@@ -29,10 +30,8 @@ export default {
       state.newFolder = payload;
     },
     UPDATE_SELECTED_FOLDER(state, title) {
-      if (title === "Home") {
-        state.selectedFolder = state.folders;
-      } else {
-        const selectedFolder = getCurrentFolder(title, state.folders);
+      const selectedFolder = getCurrentFolder(title, state.folders);
+      if (selectedFolder) {
         state.selectedFolder = selectedFolder.children;
       }
     },

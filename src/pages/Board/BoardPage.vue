@@ -41,7 +41,10 @@ export default {
   methods: {
     saveFolder($name) {
       const name = $name.length > 0 ? $name : "New Folder";
-      const folderName = transformDuplicateFolderName(name, this.folders);
+      const folderName = transformDuplicateFolderName(
+        name,
+        this.selectedFolder
+      );
       const obj = {
         id: uuidv4(),
         name: folderName,
@@ -51,18 +54,18 @@ export default {
       if (this.breadcrumbs.length <= 1) {
         const payload = {
           folder: obj,
-          parent: "Home",
+          parent: "00",
         };
         this.$store.dispatch("folder/addFolder", payload);
-        this.$store.dispatch("folder/updateSelectedFolder", "Home");
+        this.$store.dispatch("folder/updateSelectedFolder", "00");
       } else {
-        const title = this.breadcrumbs[this.breadcrumbs.length - 1].title;
+        const id = this.breadcrumbs[this.breadcrumbs.length - 1].id;
         const payload = {
           folder: obj,
-          parent: title,
+          parent: id,
         };
         this.$store.dispatch("folder/addFolder", payload);
-        this.$store.dispatch("folder/updateSelectedFolder", title);
+        this.$store.dispatch("folder/updateSelectedFolder", id);
       }
     },
 
@@ -75,10 +78,11 @@ export default {
       const obj = {
         title: folder.name,
         path: path,
+        id: folder.id,
       };
       this.$store.dispatch("breadcrumbs/addBreadcrumb", obj);
-      this.$store.dispatch("folder/updateSelectedFolder", folder.name);
-      localStorage.setItem("selectedFolder", JSON.stringify(folder.children));
+      this.$store.dispatch("folder/updateSelectedFolder", folder.id);
+      localStorage.setItem("selectedFolder", folder.id);
     },
   },
 };

@@ -34,9 +34,9 @@ export default {
       });
 
       currentBreadcrumbs.splice(titleIndex + 1);
-      const title = currentBreadcrumbs[currentBreadcrumbs.length - 1].title;
-      // const currentFolder = getCurrentFolder(currentBreadcrumbs[currentBreadcrumbs.length-1].title,this.folders)
-      this.$store.dispatch("folder/updateSelectedFolder", title);
+      const id = currentBreadcrumbs[currentBreadcrumbs.length - 1].id;
+      localStorage.setItem("selectedFolder", id);
+      this.$store.dispatch("folder/updateSelectedFolder", id);
     },
   },
 };
