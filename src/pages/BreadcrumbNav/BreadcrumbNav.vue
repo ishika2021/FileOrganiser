@@ -3,7 +3,7 @@
     <Breadcrumbs
       v-for="(item, index) in breadcrumbs"
       :key="index"
-      :title="item.title"
+      :breadcrumb="item"
       :action="handleBreadcrumbClick"
     />
   </ul>
@@ -20,7 +20,6 @@ export default {
   computed: {
     ...mapGetters({
       breadcrumbs: "breadcrumbs/breadcrumbs",
-      folders: "folder/folders",
     }),
   },
   methods: {
@@ -28,7 +27,7 @@ export default {
       const currentBreadcrumbs = this.breadcrumbs;
       let titleIndex = 0;
       currentBreadcrumbs.map((item, index) => {
-        if (item.title === breadcrumb) {
+        if (item.id === breadcrumb.id) {
           titleIndex = index;
         }
       });

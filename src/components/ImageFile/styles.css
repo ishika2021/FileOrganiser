@@ -1,0 +1,12 @@
+.image-icon-wrapper {
+    padding-top: 20px;
+
+}
+
+.image-icon {
+    display: grid;
+    width: 118px;
+    align-items: center;
+    gap: 10px;
+
+}

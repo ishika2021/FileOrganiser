@@ -40,11 +40,13 @@ export default {
               title: "New Folder",
               icon: "",
               action: this.addFolder,
+              isUpload: false,
             },
             {
               title: "New File",
               icon: "",
               action: () => {},
+              isUpload: true,
             },
           ],
         },

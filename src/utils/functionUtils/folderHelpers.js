@@ -1,5 +1,8 @@
-export const transformDuplicateFolderName = (name, folders) => {
-  const allFolderNames = folders.map((folder) => folder.name);
+export const transformDuplicateFolderName = (name, selectedFolder) => {
+  if (!Object.keys(selectedFolder).length) {
+    return name;
+  }
+  const allFolderNames = selectedFolder.children.map((folder) => folder.name);
   const result = checkEquality(name, allFolderNames);
   return result;
 };
@@ -20,16 +23,18 @@ const checkEquality = (target, currentNames) => {
   return checkEquality(target, currentNames);
 };
 
-export const getCurrentFolder = (folderID, folders) => {
+export const getCurrentFolder = (folderID, rootDirectory) => {
   if (folderID === "00") {
-    return folders;
+    return rootDirectory;
   }
   //  check if the folder exists in the home directory, if yes directly return its children
-  const result = folders.children.filter((folder) => folder.id === folderID);
+  const result = rootDirectory.children.filter(
+    (folder) => folder.id === folderID
+  );
   if (result.length > 0) {
     return result[0];
   } else {
-    const res = findFolder(folderID, folders.children);
+    const res = findFolder(folderID, rootDirectory.children);
     return res;
   }
 };

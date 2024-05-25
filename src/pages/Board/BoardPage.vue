@@ -1,6 +1,6 @@
 <template>
   <div class="board">
-    <div v-for="(folder, index) in currentFolder" :key="index">
+    <div v-for="(folder, index) in currentSubFolders" :key="index">
       <Folder :folderDetails="folder" :action="handleFolderClick" />
     </div>
     <div>
@@ -13,11 +13,15 @@
         @save-folder="saveFolder"
       />
     </div>
+    <div v-for="(file, index) in selectedFiles" :key="index">
+      <ImageFile :file="file" />
+    </div>
   </div>
 </template>
 
 <script>
 import Folder from "../../components/Folder/Folder.vue";
+import ImageFile from "../../components/ImageFile/ImageFile.vue";
 import { transformDuplicateFolderName } from "../../utils/functionUtils/folderHelpers.js";
 import { mapGetters } from "vuex";
 import { v4 as uuidv4 } from "uuid";
@@ -26,29 +30,30 @@ export default {
   name: "BoardPage",
   components: {
     Folder,
+    ImageFile,
   },
   computed: {
     ...mapGetters({
-      folders: "folder/folders",
       newFolder: "folder/isNewFolder",
       breadcrumbs: "breadcrumbs/breadcrumbs",
       selectedFolder: "folder/selectedFolder",
+      selectedFiles: "folder/selectedFiles",
     }),
-    currentFolder() {
-      return this.selectedFolder;
+    currentSubFolders() {
+      return this.selectedFolder.children;
     },
   },
   methods: {
     saveFolder($name) {
       const name = $name.length > 0 ? $name : "New Folder";
-      const folderName = transformDuplicateFolderName(
-        name,
-        this.selectedFolder
-      );
+      const selectedFolder = this.selectedFolder || {};
+
+      const folderName = transformDuplicateFolderName(name, selectedFolder);
       const obj = {
         id: uuidv4(),
         name: folderName,
         children: [],
+        files: [],
       };
 
       if (this.breadcrumbs.length <= 1) {
