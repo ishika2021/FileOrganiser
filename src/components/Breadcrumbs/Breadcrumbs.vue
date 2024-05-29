@@ -1,9 +1,9 @@
 <template>
-  <span v-if="title !== 'Home'"> > </span>
+  <span v-if="breadcrumb.title !== 'Home'"> > </span>
   <li>
-    <span @click="action(title)">
+    <span @click="action(breadcrumb)">
       <v-icon :icon="icon"></v-icon>
-      <span>{{ title }}</span>
+      <span>{{ breadcrumb.title }}</span>
     </span>
   </li>
 </template>
@@ -12,10 +12,10 @@
 export default {
   name: "Breadcrumb",
   props: {
-    title: {
-      type: String,
+    breadcrumb: {
+      type: Object,
       required: true,
-      default: "",
+      default: () => {},
     },
     action: {
       type: Function,

@@ -19,12 +19,15 @@ export default {
   },
 
   created() {
-    const folderList = JSON.parse(localStorage.getItem("folders"));
+    const rootDirectory = JSON.parse(localStorage.getItem("rootDirectory"));
     const breadcrumbList = JSON.parse(localStorage.getItem("breadcrumbs"));
     const selectedFolderID = localStorage.getItem("selectedFolder");
-    if (folderList) {
-      this.$store.dispatch("folder/updateFolders", folderList);
-      this.$store.dispatch("folder/updateSelectedFolder", "00");
+    if (rootDirectory) {
+      const obj = {
+        folders: rootDirectory.children,
+        files: rootDirectory.files,
+      };
+      this.$store.dispatch("folder/updateFolders", obj);
     }
 
     if (breadcrumbList) {
@@ -43,20 +46,23 @@ export default {
 
     if (selectedFolderID) {
       this.$store.dispatch("folder/updateSelectedFolder", selectedFolderID);
+    } else {
+      this.$store.dispatch("folder/updateSelectedFolder", "00");
+      localStorage.setItem("selectedFolder", "00");
     }
   },
   computed: {
     ...mapGetters({
-      folders: "folder/folders",
+      rootDirectory: "folder/rootDirectory",
       breadcrumbs: "breadcrumbs/breadcrumbs",
       selectedFolder: "folder/selectedFolder",
     }),
   },
   watch: {
-    folders: {
+    rootDirectory: {
       handler: function (prev, curr) {
         if (curr >= prev) {
-          localStorage.setItem("folders", JSON.stringify(curr));
+          localStorage.setItem("rootDirectory", JSON.stringify(curr));
           this.$store.dispatch("folder/addNewFolder", false);
         }
       },
