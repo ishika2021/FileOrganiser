@@ -6,6 +6,9 @@
 </template>
 
 <script>
+import { fileConverter } from "../../utils/functionUtils/fileHelpers.js";
+import { mapGetters } from "vuex";
+
 export default {
   name: "FileUpload",
   props: {
@@ -15,35 +18,16 @@ export default {
       required: true,
     },
   },
+  computed: {
+    ...mapGetters({
+      selectedFiles: "folder/selectedFiles",
+    }),
+  },
   methods: {
     async handleChange(e) {
       const files = e.target.files;
-      const fileUploadPromises = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        fileUploadPromises.push(this.toBase64(file));
-      }
-      const filePaths = await Promise.all(fileUploadPromises);
-      this.$store.dispatch("folder/addNewFiles", filePaths);
-    },
-    toBase64(file) {
-      const obj = {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        lastModified: file.lastModifiedDate,
-      };
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-          obj["base64"] = reader.result;
-          resolve(obj);
-        };
-        reader.onerror = (error) => {
-          reject(error);
-        };
-      });
+      const convertedFiles = await fileConverter(files, this.selectedFiles);
+      this.$store.dispatch("folder/addNewFiles", convertedFiles);
     },
   },
 };
