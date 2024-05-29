@@ -1,7 +1,4 @@
 export const transformDuplicateFolderName = (name, selectedFolder) => {
-  if (!Object.keys(selectedFolder).length) {
-    return name;
-  }
   const allFolderNames = selectedFolder.children.map((folder) => folder.name);
   const result = checkEquality(name, allFolderNames);
   return result;

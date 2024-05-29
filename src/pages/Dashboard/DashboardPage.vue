@@ -28,7 +28,6 @@ export default {
         files: rootDirectory.files,
       };
       this.$store.dispatch("folder/updateFolders", obj);
-      this.$store.dispatch("folder/updateSelectedFolder", "00");
     }
 
     if (breadcrumbList) {
@@ -47,6 +46,9 @@ export default {
 
     if (selectedFolderID) {
       this.$store.dispatch("folder/updateSelectedFolder", selectedFolderID);
+    } else {
+      this.$store.dispatch("folder/updateSelectedFolder", "00");
+      localStorage.setItem("selectedFolder", "00");
     }
   },
   computed: {
