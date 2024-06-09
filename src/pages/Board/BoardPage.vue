@@ -1,7 +1,23 @@
 <template>
-  <div class="board">
+  <div
+    class="board"
+    v-selectable="{ onSelectedChange: handleSelectedFolders }"
+    @click="handleBoardClick"
+    ref="scrollContainer"
+  >
     <div v-for="(folder, index) in currentSubFolders" :key="index">
-      <Folder :folderDetails="folder" :action="handleFolderClick" />
+      <div
+        :class="lastActiveFolder === folder.id ? 'last-folder-selected' : ''"
+        :key="folder.id"
+      >
+        <Folder
+          :folderDetails="folder"
+          :singleClickAction="handleItemSelected"
+          :doubleClickAction="handleFolderDoubleClick"
+          class="selectable"
+          :data-id="folder.id"
+        />
+      </div>
     </div>
     <div>
       <Folder
@@ -14,7 +30,14 @@
       />
     </div>
     <div v-for="(file, index) in selectedFiles" :key="index">
-      <ImageFile :file="file" />
+      <div :class="selected === file.id ? 'folder-selected' : ''">
+        <ImageFile
+          :file="file"
+          :action="handleItemSelected"
+          class="selectable"
+          :data-id="file.id"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -32,12 +55,19 @@ export default {
     Folder,
     ImageFile,
   },
+  data() {
+    return {
+      selected: null,
+      currentFolderList: [],
+    };
+  },
   computed: {
     ...mapGetters({
       newFolder: "folder/isNewFolder",
       breadcrumbs: "breadcrumbs/breadcrumbs",
       selectedFolder: "folder/selectedFolder",
       selectedFiles: "folder/selectedFiles",
+      lastActiveFolder: "header/lastActiveFolder",
     }),
     currentSubFolders() {
       return this.selectedFolder.children;
@@ -73,8 +103,14 @@ export default {
         this.$store.dispatch("folder/updateSelectedFolder", id);
       }
     },
+    handleItemSelected($event) {
+      $event.stopPropagation();
+      this.$store.dispatch("header/updateMenuVisibility", true);
+    },
 
-    handleFolderClick(folder) {
+    handleFolderDoubleClick($event, folder) {
+      $event.stopPropagation();
+      this.$store.dispatch("header/updateMenuVisibility", false);
       const lastTitlePath = this.breadcrumbs[this.breadcrumbs.length - 1].path;
       const path =
         lastTitlePath === "/"
@@ -88,6 +124,22 @@ export default {
       this.$store.dispatch("breadcrumbs/addBreadcrumb", obj);
       this.$store.dispatch("folder/updateSelectedFolder", folder.id);
       localStorage.setItem("selectedFolder", folder.id);
+    },
+    handleBoardClick(e) {
+      e.stopPropagation();
+      this.$store.dispatch("header/updateLastActiveFolder", null);
+      this.$store.dispatch("header/updateMenuVisibility", false);
+    },
+    handleSelectedFolders(selectedFolderIds) {
+      console.log("Selected folder IDs:", selectedFolderIds);
+    },
+  },
+  watch: {
+    selectedFolder: {
+      handler(val) {
+        this.currentFolderList = [...val.children];
+      },
+      deep: true,
     },
   },
 };

@@ -1,6 +1,6 @@
 <template>
-  <div class="image-icon-wrapper">
-    <div class="image-icon">
+  <div class="image-icon-wrapper" v-bind="$attrs">
+    <div class="image-icon" @click="action($event, file.id)">
       <img :src="imageSource" alt="file" height="100%" width="100%" />
       <input class="input" :value="title" :disabled="isEdit" ref="focusInput" />
     </div>
@@ -13,6 +13,11 @@ export default {
   props: {
     file: {
       type: Object,
+      default: () => {},
+      required: true,
+    },
+    action: {
+      type: Function,
       default: () => {},
       required: true,
     },

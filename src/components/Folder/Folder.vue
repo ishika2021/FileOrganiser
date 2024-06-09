@@ -1,6 +1,11 @@
 <template>
-  <div class="folder">
-    <v-icon icon="mdi-folder" size="100" @click="action(folderDetails)" />
+  <div class="folder" v-bind="$attrs">
+    <v-icon
+      icon="mdi-folder"
+      size="100"
+      @click="singleClickAction($event, folderDetails.id)"
+      @dblclick="doubleClickAction($event, folderDetails)"
+    />
     <input
       v-if="isCreated"
       class="input"
@@ -33,7 +38,12 @@ export default {
       type: Boolean,
       default: true,
     },
-    action: {
+    singleClickAction: {
+      type: Function,
+      default: () => {},
+      required: true,
+    },
+    doubleClickAction: {
       type: Function,
       default: () => {},
       required: true,
