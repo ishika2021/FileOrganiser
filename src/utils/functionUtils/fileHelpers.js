@@ -22,7 +22,7 @@ const fileOperations = (allFileNames) => {
     updatedAllFileName.push(name); //added for the case: when two similar name files are being uploaded
 
     const convertedObj = {
-      id: uuidv4(),
+      id: "F-" + uuidv4(),
       name: name,
       size: size,
       type: type,

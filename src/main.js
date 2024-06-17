@@ -18,7 +18,7 @@ const app = createApp({
   extends: App,
 });
 
-app.directive("selectable", selectable);
+app.directive("drag-select", selectable);
 
 app.use(vuetify);
 app.use(store);

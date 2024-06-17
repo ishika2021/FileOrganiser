@@ -14,25 +14,12 @@
       <div class="menu-container">
         <v-icon
           class="cursor-pointer"
-          :class="!isMenuVisible ? 'blur' : ''"
           icon="mdi-delete-outline"
           @click="handleDelete"
         ></v-icon>
-        <v-icon
-          class="cursor-pointer"
-          :class="!isMenuVisible ? 'blur' : ''"
-          icon="mdi-rename-box"
-        ></v-icon>
-        <v-icon
-          class="cursor-pointer"
-          :class="!isMenuVisible ? 'blur' : ''"
-          icon="mdi-content-cut"
-        ></v-icon>
-        <v-icon
-          class="cursor-pointer"
-          :class="!isMenuVisible ? 'blur' : ''"
-          icon="mdi-content-paste"
-        ></v-icon>
+        <v-icon class="cursor-pointer" icon="mdi-rename-box"></v-icon>
+        <v-icon class="cursor-pointer" icon="mdi-content-cut"></v-icon>
+        <v-icon class="cursor-pointer" icon="mdi-content-paste"></v-icon>
       </div>
     </div>
   </div>
@@ -88,15 +75,20 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isMenuVisible: "header/isMenuVisible",
+      selectedItems: "header/selectedItems",
+      selectedFolder: "folder/selectedFolder",
     }),
   },
   methods: {
     addFolder() {
       this.$store.dispatch("folder/addNewFolder", true);
     },
-    handleDelete(id) {
-      console.log("Delete item=", id);
+    handleDelete() {
+      const payload = {
+        parent: this.selectedFolder,
+        toBeDeleted: this.selectedItems,
+      };
+      this.$store.dispatch("folder/delete", payload);
     },
   },
 };

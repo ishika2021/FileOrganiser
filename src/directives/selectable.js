@@ -2,25 +2,25 @@ import { nextTick } from "vue";
 export default {
   mounted(el, binding) {
     let isSelecting = false;
-    let selectionArea = null;
-    let startX = null;
-    let startY = null;
-    let selectables = [];
+    let selectionSquare = null;
+    let initialClickX = null;
+    let initialClickY = null;
+    let selectableElements = [];
 
-    const updateSelectables = () => {
+    const updateSelectableElements = () => {
       nextTick(() => {
-        selectables = el.querySelectorAll(".selectable");
+        selectableElements = el.querySelectorAll(".selectable");
       });
     };
 
-    updateSelectables();
+    updateSelectableElements();
 
-    const onSelectedChange = binding.value.onSelectedChange;
+    const getSelectedItems = binding.value.getSelectedItems;
 
-    const checkSelected = (selectedArea) => {
+    const checkSelectedArea = (selectedArea) => {
       const { left, top, right, bottom } = selectedArea.getBoundingClientRect();
-      const selectedFolderIds = [];
-      selectables.forEach((selectable) => {
+      const selectedItemID = [];
+      selectableElements.forEach((selectable) => {
         const {
           left: elLeft,
           top: elTop,
@@ -33,19 +33,19 @@ export default {
           elLeft < right &&
           elTop < bottom
         ) {
-          const folderId = selectable.dataset.id;
+          const itemID = selectable.dataset.id;
           selectable.classList.add("selected");
-          if (folderId) {
-            selectedFolderIds.push(folderId);
+          if (itemID) {
+            selectedItemID.push(itemID);
           }
         } else {
           selectable.classList.remove("selected");
         }
       });
-      onSelectedChange(selectedFolderIds);
+      getSelectedItems(selectedItemID);
     };
 
-    const createSelectionArea = (x, y) => {
+    const createSelectionSquare = (x, y) => {
       const div = document.createElement("div");
       div.classList.add("drag-select");
       div.style.left = x + "px";
@@ -58,47 +58,49 @@ export default {
 
     const handleMouseDown = (event) => {
       isSelecting = true;
-      startX = event.pageX;
-      startY = event.pageY;
-      selectionArea = createSelectionArea(startX, startY);
-      selectables.forEach((item) => item.classList.remove("selected"));
+      initialClickX = event.pageX;
+      initialClickY = event.pageY;
+      selectionSquare = createSelectionSquare(initialClickX, initialClickY);
+      selectableElements.forEach((item) => item.classList.remove("selected"));
     };
 
     const handleMouseMove = (event) => {
       if (!isSelecting) return;
       const currentX = event.pageX;
       const currentY = event.pageY;
-      const diffX = currentX - startX;
-      const diffY = currentY - startY;
-      selectionArea.style.left = diffX < 0 ? currentX + "px" : startX + "px";
-      selectionArea.style.top = diffY < 0 ? currentY + "px" : startY + "px";
-      selectionArea.style.width = Math.abs(diffX) + "px";
-      selectionArea.style.height = Math.abs(diffY) + "px";
-      checkSelected(selectionArea);
+      const diffX = currentX - initialClickX;
+      const diffY = currentY - initialClickY;
+      selectionSquare.style.left =
+        diffX < 0 ? currentX + "px" : initialClickX + "px";
+      selectionSquare.style.top =
+        diffY < 0 ? currentY + "px" : initialClickY + "px";
+      selectionSquare.style.width = Math.abs(diffX) + "px";
+      selectionSquare.style.height = Math.abs(diffY) + "px";
+      checkSelectedArea(selectionSquare);
     };
 
     const handleMouseUp = () => {
       if (isSelecting) {
         isSelecting = false;
-        selectionArea.remove();
+        selectionSquare.remove();
       }
     };
 
     binding.instance.$watch("currentFolderList", () => {
-      updateSelectables();
+      updateSelectableElements();
     });
 
     el.addEventListener("mousedown", handleMouseDown);
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
 
-    el._cleanup = () => {
+    el.cleanup = () => {
       el.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
   },
   unmounted(el) {
-    el._cleanup();
+    el.cleanup();
   },
 };

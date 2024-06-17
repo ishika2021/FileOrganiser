@@ -1,7 +1,7 @@
 <template>
   <div
     class="board"
-    v-selectable="{ onSelectedChange: handleSelectedFolders }"
+    v-drag-select="{ getSelectedItems: handleSelectedFolders }"
     @click="handleBoardClick"
     ref="scrollContainer"
   >
@@ -80,7 +80,7 @@ export default {
 
       const folderName = transformDuplicateFolderName(name, selectedFolder);
       const obj = {
-        id: uuidv4(),
+        id: "D-" + uuidv4(),
         name: folderName,
         children: [],
         files: [],
@@ -105,12 +105,10 @@ export default {
     },
     handleItemSelected($event) {
       $event.stopPropagation();
-      this.$store.dispatch("header/updateMenuVisibility", true);
     },
 
     handleFolderDoubleClick($event, folder) {
       $event.stopPropagation();
-      this.$store.dispatch("header/updateMenuVisibility", false);
       const lastTitlePath = this.breadcrumbs[this.breadcrumbs.length - 1].path;
       const path =
         lastTitlePath === "/"
@@ -128,10 +126,9 @@ export default {
     handleBoardClick(e) {
       e.stopPropagation();
       this.$store.dispatch("header/updateLastActiveFolder", null);
-      this.$store.dispatch("header/updateMenuVisibility", false);
     },
     handleSelectedFolders(selectedFolderIds) {
-      console.log("Selected folder IDs:", selectedFolderIds);
+      this.$store.dispatch("header/updateSelectedItem", selectedFolderIds);
     },
   },
   watch: {
