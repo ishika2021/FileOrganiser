@@ -53,3 +53,15 @@ const findFolder = (target, folders) => {
   // if target not found in folders
   return null;
 };
+
+export const deleteFromParent = (parent, items) => {
+  items.forEach((item) => {
+    const type = item.charAt(0);
+    if (type === "F") {
+      parent.files = parent.files.filter((file) => file.id !== item);
+    } else if (type === "D") {
+      parent.children = parent.children.filter((folder) => folder.id !== item);
+    }
+  });
+  return parent;
+};

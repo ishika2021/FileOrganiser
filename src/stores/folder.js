@@ -1,4 +1,7 @@
-import { getCurrentFolder } from "../utils/functionUtils/folderHelpers";
+import {
+  getCurrentFolder,
+  deleteFromParent,
+} from "../utils/functionUtils/folderHelpers";
 export default {
   namespaced: true,
   state: {
@@ -48,6 +51,11 @@ export default {
       state.selectedFolder.files = [...state.selectedFolder.files, ...payload];
       state.selectedFiles = state.selectedFolder.files;
     },
+    DELETE(state, payload) {
+      const { parent, toBeDeleted } = payload;
+      const updatedParent = deleteFromParent(parent, toBeDeleted);
+      state.selectedFiles = updatedParent.files;
+    },
   },
   actions: {
     updateFolders({ commit }, folders) {
@@ -67,6 +75,9 @@ export default {
     },
     addNewFiles({ commit }, files) {
       commit("ADD_NEW_FILES", files);
+    },
+    delete({ commit }, obj) {
+      commit("DELETE", obj);
     },
   },
 };

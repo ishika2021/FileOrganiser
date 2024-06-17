@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 export const fileConverter = async (newFiles, allFiles) => {
   const allFileNames = allFiles.map((file) => file.name);
   newFiles = Array.from(newFiles);
@@ -20,6 +22,7 @@ const fileOperations = (allFileNames) => {
     updatedAllFileName.push(name); //added for the case: when two similar name files are being uploaded
 
     const convertedObj = {
+      id: "F-" + uuidv4(),
       name: name,
       size: size,
       type: type,

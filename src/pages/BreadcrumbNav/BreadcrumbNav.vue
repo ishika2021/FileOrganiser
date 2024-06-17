@@ -32,10 +32,18 @@ export default {
         }
       });
 
-      currentBreadcrumbs.splice(titleIndex + 1);
-      const id = currentBreadcrumbs[currentBreadcrumbs.length - 1].id;
+      const updatedBreadcrumbs = [...currentBreadcrumbs];
+      updatedBreadcrumbs.splice(titleIndex + 1);
+      const id = updatedBreadcrumbs[updatedBreadcrumbs.length - 1].id;
+      const lastActiveFolder = currentBreadcrumbs[++titleIndex];
+
       localStorage.setItem("selectedFolder", id);
       this.$store.dispatch("folder/updateSelectedFolder", id);
+      this.$store.dispatch("breadcrumbs/updateBreadcrumbs", updatedBreadcrumbs);
+      this.$store.dispatch(
+        "header/updateLastActiveFolder",
+        lastActiveFolder.id
+      );
     },
   },
 };

@@ -19,3 +19,7 @@
     gap: 10px;
     margin-top: 10px;
 }
+
+.header > .menu-container > .blur{
+    opacity: 0.2;
+}

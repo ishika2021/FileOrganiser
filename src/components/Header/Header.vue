@@ -12,7 +12,11 @@
         />
       </div>
       <div class="menu-container">
-        <v-icon class="cursor-pointer" icon="mdi-delete-outline"></v-icon>
+        <v-icon
+          class="cursor-pointer"
+          icon="mdi-delete-outline"
+          @click="handleDelete"
+        ></v-icon>
         <v-icon class="cursor-pointer" icon="mdi-rename-box"></v-icon>
         <v-icon class="cursor-pointer" icon="mdi-content-cut"></v-icon>
         <v-icon class="cursor-pointer" icon="mdi-content-paste"></v-icon>
@@ -23,6 +27,7 @@
 
 <script>
 import Dropdown from "../Dropdown/Dropdown.vue";
+import { mapGetters } from "vuex";
 export default {
   name: "Header",
   components: {
@@ -68,9 +73,22 @@ export default {
       ],
     };
   },
+  computed: {
+    ...mapGetters({
+      selectedItems: "header/selectedItems",
+      selectedFolder: "folder/selectedFolder",
+    }),
+  },
   methods: {
     addFolder() {
       this.$store.dispatch("folder/addNewFolder", true);
+    },
+    handleDelete() {
+      const payload = {
+        parent: this.selectedFolder,
+        toBeDeleted: this.selectedItems,
+      };
+      this.$store.dispatch("folder/delete", payload);
     },
   },
 };
