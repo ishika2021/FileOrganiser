@@ -1,18 +1,21 @@
 <template>
   <div class="app">
-    <Dashboard />
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Dashboard from "./pages/Dashboard/DashboardPage.vue";
 export default {
   name: "App",
-  components: {
-    Dashboard,
+  components: {},
+  methods: {
+    changeTheme(newTheme) {
+      document.documentElement.setAttribute("data-theme", newTheme);
+    },
   },
 };
 </script>
-<style>
-@import "./App.css";
+
+<style lang="scss">
+@import "./styles/config.scss";
 </style>
