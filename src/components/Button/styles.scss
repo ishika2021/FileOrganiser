@@ -1,0 +1,54 @@
+.button {
+  display: flex;
+  border-radius: 6px;
+  padding: 1px 10px 1px 10px;
+  align-items: center;
+  justify-content: space-between;
+  height: 37px;
+  cursor: pointer;
+  
+  .icon {
+    height: 20px;
+    width: 20px;
+  }
+
+  .btn-label {
+    display: flex;
+    align-items: center;
+    span {
+      font-size: 13px;
+      font-weight: 700;
+    }
+  }
+}
+
+.button-medium {
+  width: 90px;
+  gap: 5px;
+}
+
+.button-full {
+  width: 140px;
+}
+
+.button-small {
+  width: 35px;
+  display: flex;
+  justify-content: center;
+
+  .btn-label {
+    display: none;
+  }
+}
+
+.button-primary {
+  border: 1px solid $color-green;
+  background: transparent;
+  color: $color-green;
+}
+
+.button-secondary {
+  background-color: $color-green;
+  color: $background-primary;
+  box-shadow: 0px 2px 14px 0px $shadow-green;
+}

@@ -1,0 +1,18 @@
+.breadcrumb-item{
+    display: flex;
+    cursor: pointer;
+    span{
+        font-size: 12px;
+        font-weight: 400;
+        color:$font-color-light;
+        display: flex;
+    }
+    .bold{
+        color:$heading-color;
+    }
+    .icon{
+        height: 15px;
+        width: 15px;
+    }
+}
+

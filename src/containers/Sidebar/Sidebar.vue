@@ -19,7 +19,7 @@
         :label="item.title"
         :isActive="activeMenuTitle === item.title ? true : false"
         @click="handleMenuItem(item)"
-      />p
+      />
     </section>
   </main>
 </template>
