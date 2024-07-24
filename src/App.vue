@@ -8,10 +8,12 @@
 import { mapGetters } from "vuex";
 export default {
   name: "App",
-  components: {},
   computed: {
     ...mapGetters({
       screenSize: "display/screenSize",
+      rootDirectory: "data/rootDirectory",
+      breadcrumbs: "breadcrumbs/breadcrumbs",
+      selectedFolder: "data/selectedFolder",
     }),
   },
   methods: {
@@ -37,6 +39,56 @@ export default {
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.handleScreenWidthChange);
+  },
+  created() {
+    const rootDirectory = JSON.parse(localStorage.getItem("rootDirectory"));
+    const breadcrumbList = JSON.parse(localStorage.getItem("breadcrumbs"));
+    const selectedFolderID = localStorage.getItem("selectedFolder");
+    if (rootDirectory) {
+      const obj = {
+        folders: rootDirectory.children,
+        files: rootDirectory.files,
+      };
+      this.$store.dispatch("data/updateFolders", obj);
+    }
+
+    if (breadcrumbList) {
+      this.$store.dispatch("breadcrumbs/updateBreadcrumbs", breadcrumbList);
+    } else {
+      const defaultBreadcrumb = [
+        {
+          title: "Home",
+          path: "/",
+          id: "root",
+        },
+      ];
+      localStorage.setItem("breadcrumbs", JSON.stringify(defaultBreadcrumb));
+      this.$store.dispatch("breadcrumbs/updateBreadcrumbs", defaultBreadcrumb);
+    }
+
+    if (selectedFolderID) {
+      this.$store.dispatch("data/updateSelectedFolder", selectedFolderID);
+    } else {
+      this.$store.dispatch("data/updateSelectedFolder", "root");
+      localStorage.setItem("selectedFolder", "root");
+    }
+  },
+  watch: {
+    rootDirectory: {
+      handler: function (prev, curr) {
+        if (curr >= prev) {
+          localStorage.setItem("rootDirectory", JSON.stringify(curr));
+          this.$store.dispatch("data/addNewFolder", false);
+        }
+      },
+      deep: true,
+    },
+    breadcrumbs: {
+      handler: function (curr) {
+        localStorage.setItem("breadcrumbs", JSON.stringify(curr));
+      },
+      deep: true,
+    },
   },
 };
 </script>

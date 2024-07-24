@@ -1,20 +1,55 @@
-.menu-item{
-    padding: 8px;
-    display: flex;
-    gap: 26px;
-    font-size: 13px;
-    font-weight: 600;
-    color: $font-color-dark;
-    cursor: pointer;
-    .icon{
-        height: 20px;
-        width: 20px;
-    }
+.menu-item {
+  padding: 8px;
+  display: flex;
+  gap: 26px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $font-color-dark;
+  cursor: pointer;
+  .icon {
+    height: 20px;
+    width: 20px;
+  }
 
-    @media screen and (max-width: 480px) {
-        justify-content:center ;
-        span{
-            display: none;
-        }
+  @media screen and (max-width: 480px) {
+    justify-content: center;
+    span {
+      display: none;
     }
+  }
+}
+
+.dropdown-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 15px 5px 15px;
+  gap: 18px;
+  cursor: pointer;
+
+  &:hover {
+    background: #bff8e84a;
+    path {
+      fill: $color-green;
+    }
+    span {
+      color: $color-green;
+    }
+  }
+
+  .icon {
+    height: 20px;
+    width: 20px;
+  }
+  span {
+    font-size: 13px;
+    font-weight: 500;
+    color: $font-color-dark;
+  }
+  @media screen and (max-width: 768px) {
+    justify-content: center;
+    padding: 5px;
+    span {
+      display: none;
+    }
+  }
 }

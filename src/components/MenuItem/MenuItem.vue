@@ -1,9 +1,21 @@
 <template>
-  <div class="menu-item">
-    <div class="icon">
-      <Icon :name="icon" :color="isActive ? '#11A37B' : ''" />
-    </div>
-    <span :style="isActive ? 'color:#11A37B' : ''">{{ label }}</span>
+  <div 
+    :class="isDropdown ? 'dropdown-menu-item' : 'menu-item'" 
+    @click="action()"
+  >
+    <Icon 
+      :name="icon" 
+      :color="!isDropdown && isActive ? '#11A37B' : ''" 
+      class="icon" 
+    />
+    <slot name="label" />
+    <span
+      v-if="!this.$slots.label"
+      :style="!isDropdown && isActive ? 'color:#11A37B' : ''"
+      class="text"
+    >
+      {{ label }}
+    </span>
   </div>
 </template>
 
@@ -22,12 +34,21 @@ export default {
     },
     label: {
       type: String,
-      required: true,
+      required: false,
       default: "",
     },
     isActive: {
       type: Boolean,
       default: true,
+    },
+    isDropdown: {
+      type: Boolean,
+      default: false,
+    },
+    action: {
+      type: Function,
+      required: false,
+      default: () => {},
     },
   },
 };

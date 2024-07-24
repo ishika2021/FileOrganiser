@@ -6,11 +6,11 @@
       class="icon"
       color="#A6A8A8"
     />
-    <span @click="action(item)" :class="item.title === 'Home' ? 'bold' : ''">{{
-      item.title
-    }}</span>
-    <span v-if="item.title === 'Home'">
-      <Icon name="right-arrow" class="icon" color="#595C5B" /> {{ currentPage }}
+    <span 
+      @click="action(item)" 
+      :class="item.title === 'Home' ? 'bold' : ''"
+    >
+      {{ item.title }}
     </span>
   </li>
 </template>

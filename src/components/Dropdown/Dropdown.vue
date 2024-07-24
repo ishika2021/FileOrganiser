@@ -2,17 +2,22 @@
   <div>
     <v-menu location="bottom">
       <template v-slot:activator="{ props }">
-        <v-btn color="purple-lighten-5" :prepend-icon="icon" v-bind="props">
-          {{ title }}
-        </v-btn>
+        <Button
+          v-if="visible"
+          :icon="button.icon"
+          :label="button.label"
+          :hasList="button.hasList"
+          :buttonStyle="button.buttonStyle"
+          :size="iconSize || button.size"
+          v-bind="props"
+        />
       </template>
-      <v-list>
-        <v-list-item v-for="(item, index) in items" :key="index">
-          <v-list-item-title v-if="item.isUpload" class="cursor-pointer">
-            <FileUpload :title="item.title" />
-          </v-list-item-title>
-          <v-list-item-title v-else class="cursor-pointer" @click="item.action">
-            {{ item.title }}
+      <v-list v-if="menu.length">
+        <v-list-item v-for="menuItem in menu">
+          <v-list-item-title>
+            <component :is="menuItem.component" v-bind="menuItem.props">
+              {{ menuItem.text }}
+            </component>
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -21,37 +26,40 @@
 </template>
 
 <script>
-import FileUpload from "../FileUpload/FileUpload.vue";
+import Button from "../Button";
+import { mapGetters } from "vuex";
 export default {
   name: "Dropdown",
+  components: {
+    Button,
+  },
   props: {
-    items: {
-      type: Array,
-      default: () => [],
+    button: {
+      type: Object,
       required: true,
+      default: () => {},
     },
-    title: {
-      type: String,
-      default: "",
+    menu: {
+      type: Object,
       required: true,
+      default: () => {},
     },
-    icon: {
-      type: String,
-      default: "",
-      required: true,
-    },
-    isUpload: {
+    visible: {
       type: Boolean,
-      default: false,
       required: false,
+      default: true,
     },
   },
-  components: {
-    FileUpload,
+  computed: {
+    ...mapGetters({
+      screenSize: "display/screenSize",
+    }),
+    iconSize() {
+      if (this.screenSize === "medium" || this.screenSize === "small") {
+        return "small";
+      }
+      return "";
+    },
   },
 };
 </script>
-
-<style>
-@import "./styles.css";
-</style>

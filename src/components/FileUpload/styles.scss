@@ -1,0 +1,22 @@
+input[type="file"] {
+  display: none;
+}
+
+.file-upload {
+  cursor: pointer;
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: $font-color-dark;
+  }
+  &:hover {
+    label {
+      color: $color-green;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    label {
+      display: none;
+    }
+  }
+}

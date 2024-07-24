@@ -21,7 +21,7 @@ const checkEquality = (target, currentNames) => {
 };
 
 export const getCurrentFolder = (folderID, rootDirectory) => {
-  if (folderID === "00") {
+  if (folderID === "root") {
     return rootDirectory;
   }
   //  check if the folder exists in the home directory, if yes directly return its children

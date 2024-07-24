@@ -5,6 +5,7 @@ $color-red: #F7685B;
 $color-green: #2DBD96;
 $color-purple: #8260D8;
 $shadow-green: rgba(8, 149, 111, 0.28);
+
 // category-colors
 $background-primary: var(--bg-color-primary);
 $background-secondary: var(--bg-color-secondary);
@@ -12,4 +13,8 @@ $font-color-light: var(--text-color-light);
 $font-color-dark: var(--text-color-dark);
 $heading-color: var(--header-color);
 $border-color: var(--border-color);
+
+// width
+$width-screen-md: 768px;
+$width-screen-sm: 480px;
 

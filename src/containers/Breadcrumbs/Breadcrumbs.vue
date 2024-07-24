@@ -11,27 +11,16 @@
 
 <script>
 import BreadcrumbItem from "../../components/BreadcrumbItem";
-// import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   name: "Breadcrumbs",
   components: {
     BreadcrumbItem,
   },
-  // computed: {
-  //   ...mapGetters({
-  //     breadcrumbs: "breadcrumbs/breadcrumbs",
-  //   }),
-  // },
-  data() {
-    return {
-      breadcrumbs: [
-        {
-          title: "Home",
-          path: "/",
-          id: "00",
-        },
-      ],
-    };
+  computed: {
+    ...mapGetters({
+      breadcrumbs: "breadcrumbs/breadcrumbs",
+    }),
   },
   methods: {
     handleBreadcrumbClick(breadcrumb) {
@@ -46,15 +35,12 @@ export default {
       const updatedBreadcrumbs = [...currentBreadcrumbs];
       updatedBreadcrumbs.splice(titleIndex + 1);
       const id = updatedBreadcrumbs[updatedBreadcrumbs.length - 1].id;
-      const lastActiveFolder = currentBreadcrumbs[++titleIndex];
+      // const lastActiveFolder = currentBreadcrumbs[++titleIndex];
 
       localStorage.setItem("selectedFolder", id);
-      this.$store.dispatch("folder/updateSelectedFolder", id);
+      this.$store.dispatch("data/updateSelectedFolder", id);
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", updatedBreadcrumbs);
-      this.$store.dispatch(
-        "header/updateLastActiveFolder",
-        lastActiveFolder.id
-      );
+      // this.$store.dispatch("header/updateLastActiveFolder", lastActiveFolder.id);
     },
   },
 };

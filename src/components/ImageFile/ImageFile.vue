@@ -1,7 +1,7 @@
 <template>
   <div class="image-icon-wrapper" v-bind="$attrs">
     <div class="image-icon" @click="action($event, file.id)">
-      <img :src="imageSource" alt="file" height="100%" width="100%" />
+      <img :src="imageSource" alt="file" />
       <input class="input" :value="title" :disabled="isEdit" ref="focusInput" />
     </div>
   </div>

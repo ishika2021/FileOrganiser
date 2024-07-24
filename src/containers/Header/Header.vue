@@ -12,24 +12,12 @@
       </div>
 
       <div class="action-buttons">
-        <Button
-          icon="sort"
-          label="Sort"
-          :hasList="true"
-          :size="iconSize || 'medium'"
-        />
-        <Button
-          icon="grid"
-          label="View"
-          :hasList="true"
-          :size="iconSize || 'medium'"
-        />
-        <Button
-          icon="plus"
-          label="Create New"
-          :hasList="true"
-          buttonStyle="secondary"
-          :size="iconSize || 'full'"
+        <Dropdown
+          v-for="(button, index) in buttons"
+          :key="index"
+          :button="button"
+          :menu="button.menu"
+          :visible="button.visible"
         />
       </div>
     </section>
@@ -37,34 +25,81 @@
 </template>
 
 <script>
-import SearchBar from "../../components/SearchBar";
-import Button from "../../components/Button";
-import Breadcrumbs from "../../containers/Breadcrumbs";
-import { mapGetters } from "vuex";
+import SearchBar from "@/components/SearchBar";
+import Button from "@/components/Button";
+import Breadcrumbs from "@/containers/Breadcrumbs";
+import Dropdown from "@/components/Dropdown";
+import FileUpload from "@/components/FileUpload/FileUpload";
+import MenuItem from "@/components/MenuItem";
 export default {
   name: "Header",
   components: {
     SearchBar,
     Button,
     Breadcrumbs,
+    Dropdown,
+    FileUpload,
+    MenuItem,
   },
   computed: {
-    ...mapGetters({
-      screenSize: "display/screenSize",
-    }),
     pageTitle() {
       return this.$route.name;
     },
-    iconSize() {
-      if (this.screenSize === "medium" || this.screenSize === "small") {
-        return "small";
-      }
-      return "";
+    buttons() {
+      const route = this.$route.name;
+      return [
+        {
+          icon: "sort",
+          label: "Sort",
+          hasList: true,
+          buttonStyle: "primary",
+          size: "medium",
+          menu: [],
+          visible: route !== "Dashboard",
+        },
+        {
+          icon: "grid",
+          label: "View",
+          hasList: true,
+          buttonStyle: "primary",
+          size: "medium",
+          menu: [],
+          visible: route !== "Dashboard",
+        },
+        {
+          icon: "plus",
+          label: "Create New",
+          hasList: true,
+          buttonStyle: "secondary",
+          size: "full",
+          menu: [
+            {
+              text: "Folder",
+              component: MenuItem,
+              props: {
+                icon: "folder",
+                label: "Folder",
+                isDropdown: true,
+                action: this.addFolder,
+              },
+            },
+            {
+              text: "File",
+              component: FileUpload,
+              props: { title: "File" },
+            },
+          ],
+          visible: route === "Folders",
+        },
+      ];
     },
   },
   methods: {
     handleSearchInput(val) {
       console.log("=>", val);
+    },
+    addFolder() {
+      this.$store.dispatch("data/addNewFolder", true);
     },
   },
 };

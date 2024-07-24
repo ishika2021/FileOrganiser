@@ -1,12 +1,13 @@
 .image-icon-wrapper {
-    padding-top: 20px;
-
+  padding-top: 20px;
 }
 
 .image-icon {
-    display: grid;
-    width: 118px;
-    align-items: center;
-    gap: 10px;
+  width: 130px;
+  padding: 10px;
+}
 
+img {
+  width: 100%;
+  height: 100%;
 }

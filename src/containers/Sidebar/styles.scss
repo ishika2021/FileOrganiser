@@ -33,7 +33,7 @@
 
 }
 
-@media screen and (max-width: 768px){
+@media screen and (max-width: $width-screen-md){
     .sidebar{
         width: 220px;
         header{
@@ -49,7 +49,7 @@
     }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: $width-screen-sm) {
    .sidebar{
         width: 100px;
        header{

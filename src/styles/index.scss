@@ -1,12 +1,21 @@
 @import 'config';
 @import 'constants';
 
-
-@import '../containers/Header/styles.scss';
-@import '../containers/Sidebar/styles.scss';
+// Components
 @import '../components/MenuItem/styles.scss';
 @import '../components/Icon/styles.scss';
 @import '../components/SearchBar/styles.scss';
 @import '../components/Button/styles.scss';
-@import '../containers/Breadcrumbs/styles.scss';
 @import '../components/BreadcrumbItem/styles.scss';
+@import '../components/ActionMenu/styles.scss';
+@import '../components/Dropdown/styles.scss';
+@import '../components/FileUpload/styles.scss';
+
+// Containers
+@import '../containers/Breadcrumbs/styles.scss';
+@import '../containers/Header/styles.scss';
+@import '../containers/Sidebar/styles.scss';
+@import '../containers/Folder/styles.scss';
+
+// Views
+@import '../views/BaseWrapper/styles.scss';
