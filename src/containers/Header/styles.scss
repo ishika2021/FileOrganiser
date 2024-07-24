@@ -1,0 +1,49 @@
+.header {
+  width: 100%;
+  .search {
+    background-color: $background-primary;
+    padding: 10px 33px 10px 20px;
+    border-bottom: 1px solid $border-color;
+  }
+  .page-head {
+    padding: 0px 21px 0px 21px;
+    height: 62px;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    .page-information {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      color: $heading-color;
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 768px) {
+    .search {
+      padding: 12px 20px 12px 20px;
+    }
+    .page-head {
+      padding: 0px 20px 0px 20px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .search {
+      padding: 8px 20px 8px 20px;
+    }
+    .page-head {
+      padding: 0px 20px 0px 20px;
+    }
+  }
+}

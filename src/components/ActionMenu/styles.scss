@@ -1,0 +1,10 @@
+.action-menu{
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    .icon{
+        height:22px;
+        width:22px;
+        cursor: pointer;
+    }
+}

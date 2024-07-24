@@ -1,0 +1,33 @@
+.base-wrapper{
+    padding: 10px 25px 35px 25px;
+    display: grid;
+    gap: 5px;
+    .folder-container{
+        display: flex;
+        gap: 10px;
+    }
+
+}
+
+.selectable {
+    cursor: pointer;
+}
+.folder-selected {
+    background-color: #cce5ff;
+    border: 1px solid #007bff;
+}
+.selectable {
+    cursor: pointer;
+    user-select: none
+}
+.selected {
+    background-color: #cce5ff;
+    border-color: #007bff;
+    user-select: none;
+}
+.drag-select {
+    border: 1px dashed #007bff;
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+}

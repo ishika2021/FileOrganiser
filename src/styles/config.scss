@@ -1,0 +1,36 @@
+
+[data-theme="light"] {
+    --bg-color-primary: #FFFFFF;
+    --bg-color-secondary: #F9F9F9;
+    --text-color-light: #A6A8A8;
+    --text-color-dark: #858585;
+    --header-color: #595C5B;
+    --border-color: #E8E8E8;
+    
+}
+
+[data-theme="dark"] {
+    --bg-color-primary: red;
+    --bg-color-secondary: #F9F9F9;
+    --text-color-light: #A6A8A8;
+    --text-color-dark: #858585;
+    --header-color: #323C47;
+    --border-color: #E8E8E8;
+
+}
+.app{
+    display: flex;
+}
+body, html {
+    margin: 0;
+    height: 100%;
+    padding: 0;
+    overflow: hidden; //to remove the scrollbar
+    font-family: "Nunito Sans", sans-serif;
+  }
+  
+  ul{
+    list-style-type: none;
+  }
+
+
