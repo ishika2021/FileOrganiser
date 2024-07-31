@@ -21,9 +21,8 @@
           />
         </div>
       </div>
-      <div>
+      <div v-if="newFolder">
         <Folder
-          v-if="newFolder"
           :isEdit="false"
           :autoFocus="true"
           name="New Folder"
@@ -33,11 +32,12 @@
       </div>
       <div v-for="(file, index) in selectedFiles" :key="index">
         <div :class="selected === file.id ? 'folder-selected' : ''">
-          <ImageFile
+          <File
             :file="file"
             :action="handleItemSelected"
             class="selectable"
             :data-id="file.id"
+            :isEdit="false"
           />
         </div>
       </div>
@@ -49,10 +49,11 @@
 import { useStore } from "vuex";
 import ActionMenu from "../../components/ActionMenu";
 import Folder from "@/containers/Folder";
-import ImageFile from "@/components/ImageFile/ImageFile.vue";
+import File from "@/containers/File";
 import { computed, ref } from "vue";
 import { transformDuplicateFolderName } from "@/utils/functionUtils/folderHelpers.js";
 import { v4 as uuidv4 } from "uuid";
+import { addDataToDB } from "@/utils/functionUtils/indexedDB";
 const store = useStore();
 const actionMenu = ref([
   {
@@ -124,7 +125,7 @@ const saveFolder = ($name) => {
   }
 };
 
-const handleFolderDoubleClick = ($event, folder) => {
+const handleFolderDoubleClick = async ($event, folder) => {
   $event.stopPropagation();
   const lastTitlePath = breadcrumbs.value[breadcrumbs.value.length - 1].path;
   const path =
@@ -138,7 +139,7 @@ const handleFolderDoubleClick = ($event, folder) => {
   };
   store.dispatch("breadcrumbs/addBreadcrumb", obj);
   store.dispatch("data/updateSelectedFolder", folder.id);
-  localStorage.setItem("selectedFolder", folder.id);
+  await addDataToDB("currentFolderID", folder.id);
 };
 
 const handleSelectedFolder = (selectedFolderIds) => {
@@ -147,5 +148,9 @@ const handleSelectedFolder = (selectedFolderIds) => {
 const handleBoardClick = (e) => {
   e.stopPropagation();
   store.dispatch("header/updateLastActiveFolder", null);
+};
+
+const handleItemSelected = ($event) => {
+  $event.stopPropagation();
 };
 </script>

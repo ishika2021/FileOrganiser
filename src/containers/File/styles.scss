@@ -1,0 +1,40 @@
+.file {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0px;
+  .image-icon {
+    width: 130px;
+    height: 98px;
+    padding: 10px;
+  }
+  .file-icon {
+    svg {
+      width: 65px;
+      height: 98px;
+    }
+  }
+  .input {
+    width: 130px;
+    font-size: 13px;
+    text-align: center;
+    color: $heading-color;
+  }
+
+  @media screen and (max-width: $width-screen-md) {
+    padding: 10px 0px;
+    .image-icon {
+      height: 80px;
+      width: 120px;
+    }
+    .file-icon {
+      svg {
+        width: 50px;
+        height: 80px;
+      }
+    }
+    .input {
+      font-size: 11px;
+    }
+  }
+}
