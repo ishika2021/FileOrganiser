@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="base-wrapper"
-    v-drag-select="{ getSelectedItems: handleSelectedFolder }"
-    @click="handleBoardClick"
-    ref="scrollContainer"
-  >
+  <div class="base-wrapper" @click="handleBoardClick" ref="scrollContainer">
     <ActionMenu :menu="actionMenu" />
     <div class="folder-container">
       <div v-for="(folder, index) in currentSubFolders" :key="index">
@@ -50,39 +45,16 @@ import { useStore } from "vuex";
 import ActionMenu from "../../components/ActionMenu";
 import Folder from "@/containers/Folder";
 import File from "@/containers/File";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { transformDuplicateFolderName } from "@/utils/functionUtils/folderHelpers.js";
 import { v4 as uuidv4 } from "uuid";
 import { addDataToDB } from "@/utils/functionUtils/indexedDB";
+import { useSelectable } from "@/composables/useSelectable";
+import { menu } from "./utils/menu";
 const store = useStore();
-const actionMenu = ref([
-  {
-    name: "Copy",
-    icon: "copy",
-    action: () => {},
-  },
-  {
-    name: "Cut",
-    icon: "cut",
-    action: () => {},
-  },
-  {
-    name: "Paste",
-    icon: "paste",
-    action: () => {},
-  },
-  {
-    name: "Rename",
-    icon: "rename",
-    action: () => {},
-  },
-  {
-    name: "Delete",
-    icon: "delete",
-    action: () => {},
-  },
-]);
+const actionMenu = ref(menu);
 const selected = ref(null);
+const currentFolderList = ref([]);
 
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
@@ -145,6 +117,7 @@ const handleFolderDoubleClick = async ($event, folder) => {
 const handleSelectedFolder = (selectedFolderIds) => {
   console.log("SELECTED_FILES:", selectedFolderIds);
 };
+
 const handleBoardClick = (e) => {
   e.stopPropagation();
   store.dispatch("header/updateLastActiveFolder", null);
@@ -153,4 +126,15 @@ const handleBoardClick = (e) => {
 const handleItemSelected = ($event) => {
   $event.stopPropagation();
 };
+
+watch(
+  selectedFolder,
+  (val) => {
+    currentFolderList.value = val.children;
+
+    // load the composable for drag-select on change of currentFolderList
+    useSelectable(handleSelectedFolder, currentFolderList);
+  },
+  { deep: true, immediate: true }
+);
 </script>
