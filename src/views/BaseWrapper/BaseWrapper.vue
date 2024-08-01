@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="base-wrapper"
-    v-drag-select="{ getSelectedItems: handleSelectedFolder }"
-    @click="handleBoardClick"
-    ref="scrollContainer"
-  >
+  <div class="base-wrapper" @click="handleBoardClick" ref="scrollContainer">
     <ActionMenu :menu="actionMenu" />
     <div class="folder-container">
       <div v-for="(folder, index) in currentSubFolders" :key="index">
@@ -21,9 +16,8 @@
           />
         </div>
       </div>
-      <div>
+      <div v-if="newFolder">
         <Folder
-          v-if="newFolder"
           :isEdit="false"
           :autoFocus="true"
           name="New Folder"
@@ -33,11 +27,12 @@
       </div>
       <div v-for="(file, index) in selectedFiles" :key="index">
         <div :class="selected === file.id ? 'folder-selected' : ''">
-          <ImageFile
+          <File
             :file="file"
             :action="handleItemSelected"
             class="selectable"
             :data-id="file.id"
+            :isEdit="false"
           />
         </div>
       </div>
@@ -49,39 +44,17 @@
 import { useStore } from "vuex";
 import ActionMenu from "../../components/ActionMenu";
 import Folder from "@/containers/Folder";
-import ImageFile from "@/components/ImageFile/ImageFile.vue";
-import { computed, ref } from "vue";
+import File from "@/containers/File";
+import { computed, ref, watch } from "vue";
 import { transformDuplicateFolderName } from "@/utils/functionUtils/folderHelpers.js";
 import { v4 as uuidv4 } from "uuid";
+import { addDataToDB } from "@/utils/functionUtils/indexedDB";
+import { useSelectable } from "@/composables/useSelectable";
+import { menu } from "./utils/menu";
 const store = useStore();
-const actionMenu = ref([
-  {
-    name: "Copy",
-    icon: "copy",
-    action: () => {},
-  },
-  {
-    name: "Cut",
-    icon: "cut",
-    action: () => {},
-  },
-  {
-    name: "Paste",
-    icon: "paste",
-    action: () => {},
-  },
-  {
-    name: "Rename",
-    icon: "rename",
-    action: () => {},
-  },
-  {
-    name: "Delete",
-    icon: "delete",
-    action: () => {},
-  },
-]);
+const actionMenu = ref(menu);
 const selected = ref(null);
+const currentFolderList = ref([]);
 
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
@@ -124,7 +97,7 @@ const saveFolder = ($name) => {
   }
 };
 
-const handleFolderDoubleClick = ($event, folder) => {
+const handleFolderDoubleClick = async ($event, folder) => {
   $event.stopPropagation();
   const lastTitlePath = breadcrumbs.value[breadcrumbs.value.length - 1].path;
   const path =
@@ -138,14 +111,30 @@ const handleFolderDoubleClick = ($event, folder) => {
   };
   store.dispatch("breadcrumbs/addBreadcrumb", obj);
   store.dispatch("data/updateSelectedFolder", folder.id);
-  localStorage.setItem("selectedFolder", folder.id);
+  await addDataToDB("currentFolderID", folder.id);
 };
 
 const handleSelectedFolder = (selectedFolderIds) => {
   console.log("SELECTED_FILES:", selectedFolderIds);
 };
+
 const handleBoardClick = (e) => {
   e.stopPropagation();
   store.dispatch("header/updateLastActiveFolder", null);
 };
+
+const handleItemSelected = ($event) => {
+  $event.stopPropagation();
+};
+
+watch(
+  selectedFolder,
+  (val) => {
+    currentFolderList.value = val.children;
+
+    // load the composable for drag-select on change of currentFolderList
+    useSelectable(handleSelectedFolder, currentFolderList);
+  },
+  { deep: true, immediate: true }
+);
 </script>

@@ -1,13 +1,24 @@
 <template>
   <div class="app">
-    <router-view></router-view>
+    <div v-if="isLoading">Loading........</div>
+    <router-view v-else></router-view>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import {
+  initDB,
+  addDataToDB,
+  fetchDataFromDB,
+} from "@/utils/functionUtils/indexedDB";
 export default {
   name: "App",
+  data() {
+    return {
+      isLoading: true,
+    };
+  },
   computed: {
     ...mapGetters({
       screenSize: "display/screenSize",
@@ -40,10 +51,12 @@ export default {
   beforeUnmount() {
     window.removeEventListener("resize", this.handleScreenWidthChange);
   },
-  created() {
-    const rootDirectory = JSON.parse(localStorage.getItem("rootDirectory"));
-    const breadcrumbList = JSON.parse(localStorage.getItem("breadcrumbs"));
-    const selectedFolderID = localStorage.getItem("selectedFolder");
+  async created() {
+    await initDB();
+    const rootDirectory = await fetchDataFromDB("rootDirectory");
+    const breadcrumbList = await fetchDataFromDB("breadcrumbs");
+    const selectedFolderID = await fetchDataFromDB("currentFolderID");
+
     if (rootDirectory) {
       const obj = {
         folders: rootDirectory.children,
@@ -62,7 +75,11 @@ export default {
           id: "root",
         },
       ];
-      localStorage.setItem("breadcrumbs", JSON.stringify(defaultBreadcrumb));
+
+      await addDataToDB(
+        "breadcrumbs",
+        JSON.parse(JSON.stringify(defaultBreadcrumb))
+      );
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", defaultBreadcrumb);
     }
 
@@ -70,22 +87,23 @@ export default {
       this.$store.dispatch("data/updateSelectedFolder", selectedFolderID);
     } else {
       this.$store.dispatch("data/updateSelectedFolder", "root");
-      localStorage.setItem("selectedFolder", "root");
+      await addDataToDB("currentFolderID", "root");
     }
+    this.isLoading = false;
   },
   watch: {
     rootDirectory: {
-      handler: function (prev, curr) {
+      handler: async function (prev, curr) {
         if (curr >= prev) {
-          localStorage.setItem("rootDirectory", JSON.stringify(curr));
+          await addDataToDB("rootDirectory", JSON.parse(JSON.stringify(curr)));
           this.$store.dispatch("data/addNewFolder", false);
         }
       },
       deep: true,
     },
     breadcrumbs: {
-      handler: function (curr) {
-        localStorage.setItem("breadcrumbs", JSON.stringify(curr));
+      handler: async function (curr) {
+        await addDataToDB("breadcrumbs", JSON.parse(JSON.stringify(curr)));
       },
       deep: true,
     },

@@ -1,5 +1,5 @@
 <template>
-  <div class="folder">
+  <div class="folder" v-bind="$attrs">
     <Icon
       name="folder-full"
       class="icon"
@@ -24,7 +24,7 @@
 </template>
 <script setup>
 import Icon from "@/components/Icon";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, defineProps, defineEmits } from "vue";
 const props = defineProps({
   properties: {
     type: Object,
@@ -51,7 +51,7 @@ const props = defineProps({
     required: false,
   },
 });
-const emits = defineEmits(["save-folder"]);
+defineEmits(["save-folder"]);
 const modelValue = ref("");
 const focusInput = ref(null);
 const name = computed(() => props.properties.name);

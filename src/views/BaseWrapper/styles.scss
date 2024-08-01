@@ -1,33 +1,36 @@
-.base-wrapper{
-    padding: 10px 25px 35px 25px;
-    display: grid;
-    gap: 5px;
-    .folder-container{
-        display: flex;
-        gap: 10px;
-    }
+.base-wrapper {
+  padding: 10px 25px 35px 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  height: 100%;
+  background: $background-secondary;
 
-}
-
-.selectable {
-    cursor: pointer;
+  .folder-container {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    gap: 10px;
+  }
 }
 .folder-selected {
-    background-color: #cce5ff;
-    border: 1px solid #007bff;
+  background-color: #cce5ff;
+  border: 1px solid #007bff;
 }
 .selectable {
-    cursor: pointer;
-    user-select: none
+  cursor: pointer;
+  user-select: none;
 }
 .selected {
-    background-color: #cce5ff;
-    border-color: #007bff;
-    user-select: none;
+  background-color: #cce5ff;
+  border-color: #007bff;
+  user-select: none;
 }
 .drag-select {
-    border: 1px dashed #007bff;
-    position: absolute;
-    pointer-events: none;
-    z-index: 1000;
+  border: 1px dashed #007bff;
+  position: absolute;
+  pointer-events: none;
+  z-index: 1000;
+}
+.last-folder-selected {
+  background-color: rgb(225, 220, 220);
 }

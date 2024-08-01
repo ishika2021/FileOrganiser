@@ -16,8 +16,9 @@ const fileOperations = (allFileNames) => {
   const inner = (file) => {
     const name = generateUniqueFileName(file.name, updatedAllFileName);
     const size = formatFileSize(file.size);
-    const type = file.type;
-    const lastModified = getCurrentDateTime();
+    const { type, label } = formatFileType(file.name);
+    const category = type === "image" ? "image" : "file";
+    const createdAt = getCurrentDateTime();
 
     updatedAllFileName.push(name); //added for the case: when two similar name files are being uploaded
 
@@ -26,7 +27,9 @@ const fileOperations = (allFileNames) => {
       name: name,
       size: size,
       type: type,
-      lastModified: lastModified,
+      label: label,
+      category: category,
+      createdAt: createdAt,
     };
 
     return new Promise((resolve, reject) => {
@@ -103,4 +106,34 @@ const getCurrentDateTime = () => {
   const minutes = String(date.getMinutes()).padStart(2, "0");
 
   return `${day}-${month}-${year} ${hours}:${minutes}`;
+};
+
+// returs the type and label for file extension
+const formatFileType = (filename) => {
+  const extension = filename.split(".")[1];
+  let type = "";
+  let label = "";
+  switch (extension) {
+    case "xlsx":
+      type = "excel";
+      label = "Excel Worksheet";
+      break;
+    case "pdf":
+      type = "pdf";
+      label = "PDF Document";
+      break;
+    case "txt":
+      type = "text";
+      label = "Text Document";
+      break;
+    case "docx":
+      type = "docx";
+      label = "Word Document";
+      break;
+    default:
+      type = "image";
+      label = "Image";
+  }
+
+  return { type, label };
 };
