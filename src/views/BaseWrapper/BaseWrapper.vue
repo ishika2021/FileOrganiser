@@ -1,8 +1,8 @@
 <template>
   <div class="base-wrapper" @click="handleBoardClick" ref="scrollContainer">
-    <ActionMenu :menu="actionMenu" />
+    <ActionMenu />
     <div class="folder-container">
-      <div v-for="(folder, index) in currentSubFolders" :key="index">
+      <div v-for="(folder, index) in folders" :key="index">
         <div
           :class="lastActiveFolder === folder.id ? 'last-folder-selected' : ''"
           :key="folder.id"
@@ -22,14 +22,14 @@
           :autoFocus="true"
           name="New Folder"
           :isCreated="true"
-          @save-folder="saveFolder"
+          @save-folder="folderAction"
         />
       </div>
-      <div v-for="(file, index) in selectedFiles" :key="index">
+      <div v-for="(file, index) in files" :key="index">
         <div :class="selected === file.id ? 'folder-selected' : ''">
           <File
             :file="file"
-            :action="handleItemSelected"
+            :action="fileAction"
             class="selectable"
             :data-id="file.id"
             :isEdit="false"
@@ -42,60 +42,46 @@
 
 <script setup>
 import { useStore } from "vuex";
-import ActionMenu from "../../components/ActionMenu";
+import { computed, ref, watch, defineProps } from "vue";
+
+import ActionMenu from "@/containers/ActionMenu";
 import Folder from "@/containers/Folder";
 import File from "@/containers/File";
-import { computed, ref, watch } from "vue";
-import { transformDuplicateFolderName } from "@/utils/functionUtils/folderHelpers.js";
-import { v4 as uuidv4 } from "uuid";
 import { addDataToDB } from "@/utils/functionUtils/indexedDB";
 import { useSelectable } from "@/composables/useSelectable";
-import { menu } from "./utils/menu";
+
+defineProps({
+  folders: {
+    type: Array,
+    default: () => [],
+    required: true,
+  },
+  files: {
+    type: Array,
+    default: () => [],
+    required: true,
+  },
+  folderAction: {
+    type: Function,
+    default: () => {},
+    required: false,
+  },
+  fileAction: {
+    type: Function,
+    default: () => {},
+    required: false,
+  },
+});
 const store = useStore();
-const actionMenu = ref(menu);
 const selected = ref(null);
 const currentFolderList = ref([]);
 
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
 const selectedFolder = computed(() => store.getters["data/currentFolder"]);
-const selectedFiles = computed(() => store.getters["data/selectedFiles"]);
 const lastActiveFolder = computed(
-  () => store.getters["header/lastActiveFolder"]
+  () => store.getters["actions/lastActiveFolder"]
 );
-const currentSubFolders = computed(() => selectedFolder.value.children);
-
-const saveFolder = ($name) => {
-  const name = $name.length > 0 ? $name : "New Folder";
-  const selectedFolderObj = selectedFolder.value || {};
-
-  const folderName = transformDuplicateFolderName(name, selectedFolderObj);
-  const obj = {
-    id: "D-" + uuidv4(),
-    name: folderName,
-    children: [],
-    files: [],
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
-
-  if (breadcrumbs.value.length <= 1) {
-    const payload = {
-      folder: obj,
-      parent: "root",
-    };
-    store.dispatch("data/addFolder", payload);
-    store.dispatch("data/updateSelectedFolder", "root");
-  } else {
-    const id = breadcrumbs.value[breadcrumbs.value.length - 1].id;
-    const payload = {
-      folder: obj,
-      parent: id,
-    };
-    store.dispatch("data/addFolder", payload);
-    store.dispatch("data/updateSelectedFolder", id);
-  }
-};
 
 const handleFolderDoubleClick = async ($event, folder) => {
   $event.stopPropagation();
@@ -115,16 +101,20 @@ const handleFolderDoubleClick = async ($event, folder) => {
 };
 
 const handleSelectedFolder = (selectedFolderIds) => {
-  console.log("SELECTED_FILES:", selectedFolderIds);
+  if (!selectedFolderIds.length) {
+    handleActionMenuVisibility(false);
+  }
+
+  store.dispatch("actions/updateSelectedItem", selectedFolderIds);
+};
+
+const handleActionMenuVisibility = (state) => {
+  store.dispatch("actions/updateActionMenuVisibility", state);
 };
 
 const handleBoardClick = (e) => {
   e.stopPropagation();
-  store.dispatch("header/updateLastActiveFolder", null);
-};
-
-const handleItemSelected = ($event) => {
-  $event.stopPropagation();
+  store.dispatch("actions/updateLastActiveFolder", null);
 };
 
 watch(
@@ -133,7 +123,11 @@ watch(
     currentFolderList.value = val.children;
 
     // load the composable for drag-select on change of currentFolderList
-    useSelectable(handleSelectedFolder, currentFolderList);
+    useSelectable(
+      handleSelectedFolder,
+      currentFolderList,
+      handleActionMenuVisibility
+    );
   },
   { deep: true, immediate: true }
 );

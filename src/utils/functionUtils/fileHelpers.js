@@ -30,6 +30,9 @@ const fileOperations = (allFileNames) => {
       label: label,
       category: category,
       createdAt: createdAt,
+      recent: false,
+      starred: false,
+      trash: false,
     };
 
     return new Promise((resolve, reject) => {

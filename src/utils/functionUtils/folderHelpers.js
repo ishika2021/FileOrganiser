@@ -54,13 +54,15 @@ const findFolder = (target, folders) => {
   return null;
 };
 
-export const deleteFromParent = (parent, items) => {
+export const updateTrashFlag = (parent, items) => {
   items.forEach((item) => {
     const type = item.charAt(0);
     if (type === "F") {
-      parent.files = parent.files.filter((file) => file.id !== item);
+      const res = parent.files.find(({ id }) => id === item);
+      res.trash = true;
     } else if (type === "D") {
-      parent.children = parent.children.filter((folder) => folder.id !== item);
+      const res = parent.children.find(({ id }) => id === item);
+      res.trash = true;
     }
   });
   return parent;
