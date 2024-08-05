@@ -42,6 +42,7 @@ const saveFolder = ($name) => {
     updatedAt: Date.now(),
     starred: false,
     trash: false,
+    parentID: selectedFolderObj.id,
   };
 
   if (breadcrumbs.value.length <= 1) {

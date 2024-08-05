@@ -100,12 +100,15 @@ const handleFolderDoubleClick = async ($event, folder) => {
   await addDataToDB("currentFolderID", folder.id);
 };
 
-const handleSelectedFolder = (selectedFolderIds) => {
-  if (!selectedFolderIds.length) {
+const handleSelectedFolder = (selectedItemIDs) => {
+  if (!selectedItemIDs.length) {
     handleActionMenuVisibility(false);
   }
-
-  store.dispatch("actions/updateSelectedItem", selectedFolderIds);
+  const payload = {
+    parentID: selectedFolder.value.id,
+    selectedItemID: selectedItemIDs,
+  };
+  store.dispatch("actions/updateSelectedItem", payload);
 };
 
 const handleActionMenuVisibility = (state) => {

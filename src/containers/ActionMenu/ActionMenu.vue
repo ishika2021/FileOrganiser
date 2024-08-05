@@ -19,31 +19,69 @@ import Icon from "@/components/Icon";
 const store = useStore();
 const selectedItems = computed(() => store.getters["actions/selectedItems"]);
 const isActive = computed(() => store.getters["actions/actionMenuVisibility"]);
-const currentFolder = computed(() => store.getters["data/currentFolder"]);
+const copiedItems = computed(() => store.getters["actions/copiedItems"]);
+const cutItems = computed(() => store.getters["actions/cutItems"]);
 
-const deleteItem = () => {
+const trash = () => {
+  const { parentID, selectedItemID } = selectedItems.value;
   const payload = {
-    parent: currentFolder.value,
-    toBeDeleted: selectedItems.value,
+    parent: parentID,
+    toBeDeleted: selectedItemID,
   };
   store.dispatch("actions/moveToTrash", payload);
+};
+
+const copy = () => {
+  const { selectedItemID } = selectedItems.value;
+  store.dispatch("actions/updateCutItems", []);
+  store.dispatch("actions/updateCopiedItems", selectedItemID);
+};
+
+const cut = () => {
+  const { selectedItemID } = selectedItems.value;
+  store.dispatch("actions/updateCopiedItems", []);
+  store.dispatch("actions/updateCutItems", selectedItemID);
+};
+
+const paste = () => {
+  let items, operation;
+  const { parentID } = selectedItems.value;
+
+  if (copiedItems.value.length) {
+    items = copiedItems.value;
+    operation = "copy";
+  } else if (cutItems.value.length) {
+    items = cutItems.value;
+    operation = "cut";
+  } else {
+    items = [];
+  }
+
+  if (items.length) {
+    const payload = {
+      items: items,
+      operation: operation,
+      parentID: parentID,
+    };
+    store.dispatch("actions/pasteItems", payload);
+  }
 };
 
 const actionMenu = ref([
   {
     name: "Copy",
     icon: "copy",
-    action: () => {},
+    action: copy,
   },
   {
     name: "Cut",
     icon: "cut",
-    action: () => {},
+    action: cut,
   },
   {
     name: "Paste",
     icon: "paste",
-    action: () => {},
+    action: paste,
   },
   {
     name: "Rename",
@@ -53,7 +91,7 @@ const actionMenu = ref([
   {
     name: "Delete",
     icon: "delete",
-    action: deleteItem,
+    action: trash,
   },
 ]);
 </script>

@@ -5,11 +5,11 @@
         <label for="file-upload">
           {{ title }}
         </label>
-        <input 
-          type="file" 
-          id="file-upload" 
-          multiple 
-          @change="handleChange($event)" 
+        <input
+          type="file"
+          id="file-upload"
+          multiple
+          @change="handleChange($event)"
         />
       </template>
     </MenuItem>
@@ -36,12 +36,17 @@ export default {
   computed: {
     ...mapGetters({
       selectedFiles: "data/selectedFiles",
+      currentFolder: "data/currentFolder",
     }),
   },
   methods: {
     async handleChange(e) {
       const files = e.target.files;
-      const convertedFiles = await fileConverter(files, this.selectedFiles);
+      const convertedFiles = await fileConverter(
+        files,
+        this.selectedFiles,
+        this.currentFolder.id
+      );
       this.$store.dispatch("data/addNewFiles", convertedFiles);
     },
   },

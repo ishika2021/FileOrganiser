@@ -1,11 +1,35 @@
 import { v4 as uuidv4 } from "uuid";
 
-export const fileConverter = async (newFiles, allFiles) => {
+export const getCurrentFile = (fileID, rootDirectory) => {
+  const result = rootDirectory.files.find(({ id }) => id === fileID);
+  if (result) {
+    return result;
+  } else {
+    const result = findFile(fileID, rootDirectory.children);
+    return result;
+  }
+};
+
+const findFile = (target, folders) => {
+  for (const folder of folders) {
+    const result = folder.files.find(({ id }) => id === target);
+    if (result) {
+      return result;
+    } else {
+      const found = findFile(target, folder.children);
+      if (found) {
+        return found;
+      }
+    }
+  }
+};
+
+export const fileConverter = async (newFiles, allFiles, parentID) => {
   const allFileNames = allFiles.map((file) => file.name);
   newFiles = Array.from(newFiles);
   const formatFile = fileOperations(allFileNames);
 
-  const fileUploadPromises = newFiles.map((file) => formatFile(file));
+  const fileUploadPromises = newFiles.map((file) => formatFile(file, parentID));
   const filePaths = await Promise.all(fileUploadPromises);
   return filePaths;
 };
@@ -13,7 +37,7 @@ export const fileConverter = async (newFiles, allFiles) => {
 const fileOperations = (allFileNames) => {
   const updatedAllFileName = [...allFileNames];
 
-  const inner = (file) => {
+  const inner = (file, parentID) => {
     const name = generateUniqueFileName(file.name, updatedAllFileName);
     const size = formatFileSize(file.size);
     const { type, label } = formatFileType(file.name);
@@ -33,6 +57,7 @@ const fileOperations = (allFileNames) => {
       recent: false,
       starred: false,
       trash: false,
+      parentID: parentID,
     };
 
     return new Promise((resolve, reject) => {
