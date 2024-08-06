@@ -77,11 +77,11 @@ const fileOperations = (allFileNames) => {
 };
 
 // returns unique name for the file
-const generateUniqueFileName = (currentFileName, allFileNames) => {
+export const generateUniqueFileName = (targetName, allFileNames) => {
   if (!allFileNames.length) {
-    return currentFileName;
+    return targetName;
   }
-  return ensureUniqueFileName(currentFileName, allFileNames);
+  return ensureUniqueFileName(targetName, allFileNames);
 };
 
 // check if the target name already exists and updates it

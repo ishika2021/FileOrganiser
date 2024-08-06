@@ -1,14 +1,16 @@
-import { updateTrashFlag } from "@/utils/functionUtils/folderHelpers";
-import { handlePaste } from "@/utils/functionUtils/actionHelpers";
+import {
+  handlePaste,
+  updateTrashFlag,
+} from "@/utils/functionUtils/actionHelpers";
 
 export default {
   namespaced: true,
   state: {
     lastActiveFolder: null,
-    selectedItems: {},
+    selectedItems: [],
     actionMenuVisibility: false,
-    copiedItems: [],
-    cutItems: [],
+    copiedItems: null,
+    cutItems: null,
   },
   getters: {
     lastActiveFolder: (state) => state.lastActiveFolder,
@@ -25,10 +27,9 @@ export default {
       state.selectedItems = payload;
     },
     MOVE_TO_TRASH(state, payload) {
-      const { parent, toBeDeleted } = payload;
-      const updatedParent = updateTrashFlag(parent, toBeDeleted);
-
-      state.selectedFiles = updatedParent.files;
+      const { obj, rootState } = payload;
+      const rootDirectory = rootState.data.rootDirectory;
+      updateTrashFlag(rootDirectory, obj);
     },
     UPDATE_ACTION_MENU_VISIBILITY(state, payload) {
       state.actionMenuVisibility = payload;
@@ -54,8 +55,8 @@ export default {
     updateSelectedItem({ commit }, items) {
       commit("UPDATE_SELECTED_ITEM", items);
     },
-    moveToTrash({ commit }, obj) {
-      commit("MOVE_TO_TRASH", obj);
+    moveToTrash({ commit, rootState }, obj) {
+      commit("MOVE_TO_TRASH", { obj, rootState });
     },
     updateActionMenuVisibility({ commit }, obj) {
       commit("UPDATE_ACTION_MENU_VISIBILITY", obj);

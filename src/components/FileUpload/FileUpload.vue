@@ -38,13 +38,16 @@ export default {
       selectedFiles: "data/selectedFiles",
       currentFolder: "data/currentFolder",
     }),
+    unTrashedFiles() {
+      return this.selectedFiles.filter(({ trash }) => !trash);
+    },
   },
   methods: {
     async handleChange(e) {
       const files = e.target.files;
       const convertedFiles = await fileConverter(
         files,
-        this.selectedFiles,
+        this.unTrashedFiles,
         this.currentFolder.id
       );
       this.$store.dispatch("data/addNewFiles", convertedFiles);

@@ -19,42 +19,52 @@ import Icon from "@/components/Icon";
 const store = useStore();
 const selectedItems = computed(() => store.getters["actions/selectedItems"]);
 const isActive = computed(() => store.getters["actions/actionMenuVisibility"]);
-const copiedItems = computed(() => store.getters["actions/copiedItems"]);
-const cutItems = computed(() => store.getters["actions/cutItems"]);
+const copiedObject = computed(() => store.getters["actions/copiedItems"]);
+const cutObject = computed(() => store.getters["actions/cutItems"]);
+const currentFolder = computed(() => store.getters["data/currentFolder"]);
 
 const trash = () => {
-  const { parentID, selectedItemID } = selectedItems.value;
   const payload = {
-    parent: parentID,
-    toBeDeleted: selectedItemID,
+    parentID: currentFolder.value.id,
+    toBeDeleted: selectedItems.value,
   };
+
   store.dispatch("actions/moveToTrash", payload);
 };
 
 const copy = () => {
-  const { selectedItemID } = selectedItems.value;
-  store.dispatch("actions/updateCutItems", []);
-  store.dispatch("actions/updateCopiedItems", selectedItemID);
+  const payload = {
+    parentID: currentFolder.value.id,
+    items: selectedItems.value,
+  };
+
+  store.dispatch("actions/updateCutItems", null); //both cut and copy can't have values at the same time
+  store.dispatch("actions/updateCopiedItems", payload);
 };
 
 const cut = () => {
-  const { selectedItemID } = selectedItems.value;
-  store.dispatch("actions/updateCopiedItems", []);
-  store.dispatch("actions/updateCutItems", selectedItemID);
+  const payload = {
+    parentID: currentFolder.value.id,
+    items: selectedItems.value,
+  };
+
+  store.dispatch("actions/updateCopiedItems", null);
+  store.dispatch("actions/updateCutItems", payload);
 };
 
 const paste = () => {
-  let items, operation;
-  const { parentID } = selectedItems.value;
+  let items = [];
+  let operation = "";
+  let parentID = null;
 
-  if (copiedItems.value.length) {
-    items = copiedItems.value;
+  if (copiedObject.value) {
+    items = copiedObject.value.items;
+    parentID = copiedObject.value.parentID;
     operation = "copy";
-  } else if (cutItems.value.length) {
-    items = cutItems.value;
+  } else if (cutObject.value) {
+    items = cutObject.value.items;
+    parentID = cutObject.value.parentID;
     operation = "cut";
-  } else {
-    items = [];
   }
 
   if (items.length) {

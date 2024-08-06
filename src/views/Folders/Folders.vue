@@ -1,7 +1,7 @@
 <template>
   <BaseWrapper
-    :folders="updatedFolders"
-    :files="updatedFiles"
+    :folders="unTrashedFolders"
+    :files="unTrashedFiles"
     :folder-action="saveFolder"
     :file-action="handleItemSelected"
   />
@@ -11,7 +11,7 @@
 import { useStore } from "vuex";
 import { v4 as uuidv4 } from "uuid";
 import { computed } from "vue";
-import { transformDuplicateFolderName } from "@/utils/functionUtils/folderHelpers.js";
+import { generateUniqueFolderName } from "@/utils/functionUtils/folderHelpers.js";
 
 import BaseWrapper from "../BaseWrapper";
 
@@ -21,18 +21,20 @@ const selectedFiles = computed(() => store.getters["data/selectedFiles"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
 
 //returns only the folders/files which aren't trashed
-const updatedFolders = computed(() => {
+const unTrashedFolders = computed(() => {
   return selectedFolder.value.children.filter(({ trash }) => !trash);
 });
-const updatedFiles = computed(() => {
+const unTrashedFiles = computed(() => {
   return selectedFiles.value.filter(({ trash }) => !trash);
 });
 
 const saveFolder = ($name) => {
   const name = $name.length > 0 ? $name : "New Folder";
-  const selectedFolderObj = selectedFolder.value || {};
+  const allSubFolderNames = selectedFolder.value.children
+    .filter(({ trash }) => !trash)
+    .map((folder) => folder.name);
+  const folderName = generateUniqueFolderName(name, allSubFolderNames);
 
-  const folderName = transformDuplicateFolderName(name, selectedFolderObj);
   const obj = {
     id: "D-" + uuidv4(),
     name: folderName,
@@ -42,7 +44,7 @@ const saveFolder = ($name) => {
     updatedAt: Date.now(),
     starred: false,
     trash: false,
-    parentID: selectedFolderObj.id,
+    parentID: selectedFolder.value.id,
   };
 
   if (breadcrumbs.value.length <= 1) {
@@ -50,6 +52,7 @@ const saveFolder = ($name) => {
       folder: obj,
       parent: "root",
     };
+
     store.dispatch("data/addFolder", payload);
     store.dispatch("data/updateSelectedFolder", "root");
   } else {
@@ -58,6 +61,7 @@ const saveFolder = ($name) => {
       folder: obj,
       parent: id,
     };
+
     store.dispatch("data/addFolder", payload);
     store.dispatch("data/updateSelectedFolder", id);
   }

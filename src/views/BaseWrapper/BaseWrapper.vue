@@ -103,12 +103,10 @@ const handleFolderDoubleClick = async ($event, folder) => {
 const handleSelectedFolder = (selectedItemIDs) => {
   if (!selectedItemIDs.length) {
     handleActionMenuVisibility(false);
+    return;
   }
-  const payload = {
-    parentID: selectedFolder.value.id,
-    selectedItemID: selectedItemIDs,
-  };
-  store.dispatch("actions/updateSelectedItem", payload);
+
+  store.dispatch("actions/updateSelectedItem", selectedItemIDs);
 };
 
 const handleActionMenuVisibility = (state) => {

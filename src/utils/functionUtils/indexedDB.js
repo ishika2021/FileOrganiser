@@ -23,7 +23,6 @@ const IDB = {
       };
 
       request.onsuccess = (event) => {
-        console.log("Database opened successfully !!!", event.target.result);
         this.db = event.target.result;
         resolve(this.db);
       };
