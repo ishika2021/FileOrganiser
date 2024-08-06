@@ -47,8 +47,8 @@ import { computed, ref, watch, defineProps } from "vue";
 import ActionMenu from "@/containers/ActionMenu";
 import Folder from "@/containers/Folder";
 import File from "@/containers/File";
-import { addDataToDB } from "@/utils/functionUtils/indexedDB";
 import { useSelectable } from "@/composables/useSelectable";
+import { ConstantStore } from "@/database";
 
 defineProps({
   folders: {
@@ -95,9 +95,9 @@ const handleFolderDoubleClick = async ($event, folder) => {
     path: path,
     id: folder.id,
   };
+  await ConstantStore.updateCurrentFolder(folder.id);
   store.dispatch("breadcrumbs/addBreadcrumb", obj);
   store.dispatch("data/updateSelectedFolder", folder.id);
-  await addDataToDB("currentFolderID", folder.id);
 };
 
 const handleSelectedFolder = (selectedItemIDs) => {

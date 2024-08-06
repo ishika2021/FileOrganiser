@@ -12,7 +12,8 @@
 <script>
 import BreadcrumbItem from "../../components/BreadcrumbItem";
 import { mapGetters } from "vuex";
-import { addDataToDB } from "@/utils/functionUtils/indexedDB";
+import { ConstantStore } from "@/database";
+
 export default {
   name: "Breadcrumbs",
   components: {
@@ -39,7 +40,7 @@ export default {
       // const lastActiveFolder = currentBreadcrumbs[++titleIndex];
 
       // localStorage.setItem("selectedFolder", id);
-      await addDataToDB("currentFolderID", id);
+      await ConstantStore.updateCurrentFolder(id);
       this.$store.dispatch("data/updateSelectedFolder", id);
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", updatedBreadcrumbs);
       // this.$store.dispatch("header/updateLastActiveFolder", lastActiveFolder.id);

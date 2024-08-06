@@ -22,17 +22,18 @@ const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
 
 //returns only the folders/files which aren't trashed
 const unTrashedFolders = computed(() => {
-  return selectedFolder.value.children.filter(({ trash }) => !trash);
+  return selectedFolder.value.children?.filter(({ trash }) => !trash);
 });
 const unTrashedFiles = computed(() => {
-  return selectedFiles.value.filter(({ trash }) => !trash);
+  return selectedFiles.value?.filter(({ trash }) => !trash);
 });
 
 const saveFolder = ($name) => {
   const name = $name.length > 0 ? $name : "New Folder";
-  const allSubFolderNames = selectedFolder.value.children
-    .filter(({ trash }) => !trash)
-    .map((folder) => folder.name);
+  const allSubFolderNames =
+    selectedFolder.value.children
+      ?.filter(({ trash }) => !trash)
+      .map((folder) => folder.name) || [];
   const folderName = generateUniqueFolderName(name, allSubFolderNames);
 
   const obj = {
