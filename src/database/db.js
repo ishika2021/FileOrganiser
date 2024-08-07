@@ -78,6 +78,23 @@ const DB = {
       };
     });
   },
+
+  getAllData(storeName) {
+    return new Promise((resolve, reject) => {
+      const db = IDB.getDB();
+      const transaction = db.transaction([storeName], "readonly");
+      const store = transaction.objectStore(storeName);
+      const request = store.getAll();
+
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
+
+      request.onerror = (error) => {
+        reject(error);
+      };
+    });
+  },
 };
 
 export default DB;

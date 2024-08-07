@@ -68,6 +68,14 @@ export default {
     const selectedFolderID = await ConstantStore.getCurrentFolder(
       "currentFolderID"
     );
+    const [copy, cut] = await ActionStore.getAllActions();
+
+    if (copy && copy.value) {
+      this.$store.dispatch("actions/updateCopiedItems", copy.value);
+    }
+    if (cut && cut.value) {
+      this.$store.dispatch("actions/updateCutItems", cut.value);
+    }
 
     if (rootDirectory) {
       const obj = {

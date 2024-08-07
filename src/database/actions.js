@@ -5,12 +5,7 @@ import DB from "./db";
 const Actions = {
   async init() {
     try {
-      const res = await DB.init(storeName, "type");
-      if (res) {
-        // default initialization of copy and cut
-        this.updateCopy([]);
-        this.updateCut([]);
-      }
+      await DB.init(storeName, "type");
     } catch (error) {
       console.log(error);
     }
@@ -18,6 +13,7 @@ const Actions = {
 
   async updateCopy(item) {
     try {
+      item = JSON.parse(JSON.stringify(item));
       await addItemToAction("copy", item);
     } catch (error) {
       console.log(error);
@@ -26,6 +22,7 @@ const Actions = {
 
   async updateCut(item) {
     try {
+      item = JSON.parse(JSON.stringify(item));
       await addItemToAction("cut", item);
     } catch (error) {
       console.log(error);
@@ -40,11 +37,20 @@ const Actions = {
       console.log(error);
     }
   },
+
+  async getAllActions() {
+    try {
+      const res = await DB.getAllData(storeName);
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
-const addItemToAction = async (type, item) => {
+const addItemToAction = async (type, obj) => {
   try {
-    await DB.addData(storeName, { type, value: item });
+    await DB.addData(storeName, { type, value: obj });
   } catch (error) {
     console.log(error);
   }

@@ -5,6 +5,10 @@
   gap: 5px;
   height: 100%;
   background: $background-secondary;
+  
+  #mainContainer {
+    height: 100%;
+  }
 
   .folder-container {
     display: flex;

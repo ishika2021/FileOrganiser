@@ -1,39 +1,43 @@
 <template>
-  <div class="base-wrapper" @click="handleBoardClick" ref="scrollContainer">
+  <div class="base-wrapper">
     <ActionMenu />
-    <div class="folder-container">
-      <div v-for="(folder, index) in folders" :key="index">
-        <div
-          :class="lastActiveFolder === folder.id ? 'last-folder-selected' : ''"
-          :key="folder.id"
-        >
+    <div id="mainContainer" @click="handleBoardClick" ref="scrollContainer">
+      <div class="folder-container">
+        <div v-for="(folder, index) in folders" :key="index">
+          <div
+            :class="
+              lastActiveFolder === folder.id ? 'last-folder-selected' : ''
+            "
+            :key="folder.id"
+          >
+            <Folder
+              :properties="folder"
+              :singleClickAction="fileAction"
+              :doubleClickAction="handleFolderDoubleClick"
+              class="selectable"
+              :data-id="folder.id"
+            />
+          </div>
+        </div>
+        <div v-if="newFolder">
           <Folder
-            :properties="folder"
-            :singleClickAction="handleItemSelected"
-            :doubleClickAction="handleFolderDoubleClick"
-            class="selectable"
-            :data-id="folder.id"
+            :isEdit="false"
+            :autoFocus="true"
+            name="New Folder"
+            :isCreated="true"
+            @save-folder="folderAction"
           />
         </div>
-      </div>
-      <div v-if="newFolder">
-        <Folder
-          :isEdit="false"
-          :autoFocus="true"
-          name="New Folder"
-          :isCreated="true"
-          @save-folder="folderAction"
-        />
-      </div>
-      <div v-for="(file, index) in files" :key="index">
-        <div :class="selected === file.id ? 'folder-selected' : ''">
-          <File
-            :file="file"
-            :action="fileAction"
-            class="selectable"
-            :data-id="file.id"
-            :isEdit="false"
-          />
+        <div v-for="(file, index) in files" :key="index">
+          <div :class="selected === file.id ? 'folder-selected' : ''">
+            <File
+              :file="file"
+              :action="fileAction"
+              class="selectable"
+              :data-id="file.id"
+              :isEdit="false"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -95,6 +99,7 @@ const handleFolderDoubleClick = async ($event, folder) => {
     path: path,
     id: folder.id,
   };
+
   await ConstantStore.updateCurrentFolder(folder.id);
   store.dispatch("breadcrumbs/addBreadcrumb", obj);
   store.dispatch("data/updateSelectedFolder", folder.id);

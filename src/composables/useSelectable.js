@@ -93,15 +93,19 @@ export function useSelectable(
 
   onMounted(() => {
     updateSelectableElements();
-    document.addEventListener("mousedown", handleMouseDown);
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    const referencedElement = document.getElementById("mainContainer");
+
+    referencedElement.addEventListener("mousedown", handleMouseDown);
+    referencedElement.addEventListener("mousemove", handleMouseMove);
+    referencedElement.addEventListener("mouseup", handleMouseUp);
   });
 
   onBeforeUnmount(() => {
-    document.removeEventListener("mousedown", handleMouseDown);
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
+    const referencedElement = document.getElementById("mainContainer");
+
+    referencedElement.removeEventListener("mousedown", handleMouseDown);
+    referencedElement.removeEventListener("mousemove", handleMouseMove);
+    referencedElement.removeEventListener("mouseup", handleMouseUp);
   });
 
   watch(
