@@ -3,15 +3,18 @@
   flex-direction: column;
   align-items: center;
   padding: 10px 0px;
+  width: 100px;
+  gap: 5px;
   .image-icon {
-    width: 130px;
-    height: 98px;
+    max-width: 100%;
+    height: 95px;
     padding: 10px;
+    padding-bottom: 0px;
   }
   .file-icon {
     svg {
-      width: 65px;
-      height: 98px;
+      width: 80px;
+      height: 95px;
     }
   }
   .input {
@@ -37,4 +40,11 @@
       font-size: 11px;
     }
   }
+}
+
+.file-cover {
+  height: 140px;
+  width: 100px;
+  position: absolute;
+  background-color: #62585833;
 }

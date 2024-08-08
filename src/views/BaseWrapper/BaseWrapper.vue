@@ -16,6 +16,7 @@
               :doubleClickAction="handleFolderDoubleClick"
               class="selectable"
               :data-id="folder.id"
+              @save-folder="folderAction"
             />
           </div>
         </div>
@@ -78,7 +79,6 @@ defineProps({
 });
 const store = useStore();
 const selected = ref(null);
-const currentFolderList = ref([]);
 
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
@@ -125,15 +125,9 @@ const handleBoardClick = (e) => {
 
 watch(
   selectedFolder,
-  (val) => {
-    currentFolderList.value = val.children;
-
-    // load the composable for drag-select on change of currentFolderList
-    useSelectable(
-      handleSelectedFolder,
-      currentFolderList,
-      handleActionMenuVisibility
-    );
+  (value) => {
+    // load the composable for drag-select on change of currentFolder
+    useSelectable(handleSelectedFolder, value, handleActionMenuVisibility);
   },
   { deep: true, immediate: true }
 );

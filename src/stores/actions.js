@@ -11,6 +11,7 @@ export default {
     actionMenuVisibility: false,
     copiedItems: null,
     cutItems: null,
+    temporaryCutItems: [],
   },
   getters: {
     lastActiveFolder: (state) => state.lastActiveFolder,
@@ -18,6 +19,7 @@ export default {
     actionMenuVisibility: (state) => state.actionMenuVisibility,
     cutItems: (state) => state.cutItems,
     copiedItems: (state) => state.copiedItems,
+    temporaryCutItems: (state) => state.temporaryCutItems,
   },
   mutations: {
     UPDATE_LAST_ACTIVE_FOLDER(state, payload) {
@@ -47,6 +49,9 @@ export default {
 
       handlePaste(rootDirectory, currentFolder, obj);
     },
+    UPDATE_TEMPORARY_CUT_ITEMS(state, payload) {
+      state.temporaryCutItems = payload;
+    },
   },
   actions: {
     updateLastActiveFolder({ commit }, id) {
@@ -66,6 +71,9 @@ export default {
     },
     updateCutItems({ commit }, items) {
       commit("UPDATE_CUT_ITEMS", items);
+    },
+    updateTemporaryCutItems({ commit }, items) {
+      commit("UPDATE_TEMPORARY_CUT_ITEMS", items);
     },
     pasteItems({ commit, rootState }, obj) {
       commit("PASTE_ITEMS", { obj, rootState });

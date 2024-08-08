@@ -16,7 +16,7 @@
   }
   .icon {
     height: 100px;
-    width: 100px;
+    max-width: 110px;
   }
 
   @media screen and (max-width: $width-screen-md) {
@@ -29,4 +29,12 @@
       font-size: 11px;
     }
   }
+}
+
+.folder-cover{
+  height: 140px;
+  width: 130px;
+  position: absolute;
+  z-index: 5;
+  background-color: #62585833;
 }

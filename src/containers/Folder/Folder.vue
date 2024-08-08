@@ -1,30 +1,34 @@
 <template>
-  <div class="folder" v-bind="$attrs">
-    <Icon
-      name="folder-full"
-      class="icon"
-      @dblclick="doubleClickAction($event, properties)"
-    />
-    <input
-      v-if="isCreated"
-      class="input"
-      v-model="modelValue"
-      ref="focusInput"
-      @keyup.enter="this.$emit('save-folder', modelValue)"
-    />
-    <input
-      v-else
-      class="input"
-      :value="name"
-      :disabled="isEdit"
-      ref="focusInput"
-      @keyup.enter="this.$emit('save-folder', name)"
-    />
+  <div v-bind="$attrs">
+    <div class="folder-cover" v-if="isCut"></div>
+    <div class="folder">
+      <Icon
+        name="folder-full"
+        class="icon"
+        @dblclick="doubleClickAction($event, properties)"
+      />
+      <input
+        v-if="isCreated"
+        class="input"
+        v-model="modelValue"
+        ref="focusInput"
+        @keyup.enter="this.$emit('save-folder', modelValue)"
+      />
+      <input
+        v-else
+        class="input"
+        :value="name"
+        :disabled="isEdit"
+        ref="focusInput"
+        @keyup.enter="this.$emit('save-folder', name)"
+      />
+    </div>
   </div>
 </template>
 <script setup>
 import Icon from "@/components/Icon";
 import { computed, onMounted, ref, defineProps, defineEmits } from "vue";
+import { useStore } from "vuex";
 const props = defineProps({
   properties: {
     type: Object,
@@ -55,6 +59,16 @@ defineEmits(["save-folder"]);
 const modelValue = ref("");
 const focusInput = ref(null);
 const name = computed(() => props.properties.name);
+
+const store = useStore();
+const cutItems = computed(() => store.getters["actions/temporaryCutItems"]);
+const isCut = computed(() => {
+  if (cutItems.value?.includes(props.properties?.id)) {
+    return true;
+  }
+  return false;
+});
+
 onMounted(() => {
   focusInput.value.focus();
   if (props.properties) {

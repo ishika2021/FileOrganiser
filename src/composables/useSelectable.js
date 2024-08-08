@@ -2,7 +2,7 @@ import { ref, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
 
 export function useSelectable(
   getSelectedItems,
-  currentFolderList,
+  currentFolder,
   actionMenuVisibility
 ) {
   const isSelecting = ref(false);
@@ -14,7 +14,8 @@ export function useSelectable(
   const updateSelectableElements = () => {
     actionMenuVisibility(false); //to make file action menu inactive on folder navigation
     nextTick(() => {
-      selectableElements = document.querySelectorAll(".selectable");
+      const referencedElement = document.getElementById("mainContainer");
+      selectableElements = referencedElement.querySelectorAll(".selectable");
     });
   };
 
@@ -109,7 +110,7 @@ export function useSelectable(
   });
 
   watch(
-    currentFolderList,
+    currentFolder,
     () => {
       updateSelectableElements();
     },

@@ -51,6 +51,8 @@ const copy = () => {
     updateCut(null);
     store.dispatch("actions/updateCutItems", null); //both cut and copy can't have values at the same time
     store.dispatch("actions/updateCopiedItems", payload);
+    store.dispatch("actions/updateTemporaryCutItems", []);
+
     showActionMenu.value = false;
   }
 };
@@ -66,6 +68,7 @@ const cut = () => {
     updateCut(payload);
     store.dispatch("actions/updateCopiedItems", null);
     store.dispatch("actions/updateCutItems", payload);
+    store.dispatch("actions/updateTemporaryCutItems", selectedItems.value);
     showActionMenu.value = false;
   }
 };
@@ -87,6 +90,7 @@ const paste = () => {
       operation = "cut";
       updateCut(null);
       store.dispatch("actions/updateCutItems", null);
+      store.dispatch("actions/updateTemporaryCutItems", []);
     }
 
     if (items.length) {
@@ -133,6 +137,7 @@ watch(
   currentFolder,
   () => {
     handleActionMenuVisibility();
+    store.dispatch("actions/updateTemporaryCutItems", []);
   },
   { deep: true }
 );
