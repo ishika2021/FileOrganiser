@@ -16,7 +16,7 @@
               :doubleClickAction="handleFolderDoubleClick"
               class="selectable"
               :data-id="folder.id"
-              @save-folder="folderAction"
+              @rename-folder="renameFolder"
             />
           </div>
         </div>
@@ -37,6 +37,7 @@
               class="selectable"
               :data-id="file.id"
               :isEdit="false"
+              @rename-file="renameFile"
             />
           </div>
         </div>
@@ -72,6 +73,16 @@ defineProps({
     required: false,
   },
   fileAction: {
+    type: Function,
+    default: () => {},
+    required: false,
+  },
+  renameFolder: {
+    type: Function,
+    default: () => {},
+    required: false,
+  },
+  renameFile: {
     type: Function,
     default: () => {},
     required: false,

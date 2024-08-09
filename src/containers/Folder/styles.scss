@@ -4,6 +4,7 @@
   justify-content: center;
   width: min-content;
   padding: 10px;
+  position: relative;
 
   .input {
     width: 100%;
@@ -35,6 +36,10 @@
   height: 140px;
   width: 130px;
   position: absolute;
-  z-index: 5;
   background-color: #62585833;
+}
+
+.rename-input{
+  border: 1px solid black;
+  
 }

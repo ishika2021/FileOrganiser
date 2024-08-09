@@ -12,6 +12,7 @@ export default {
     copiedItems: null,
     cutItems: null,
     temporaryCutItems: [],
+    renamedItems: {},
   },
   getters: {
     lastActiveFolder: (state) => state.lastActiveFolder,
@@ -20,6 +21,7 @@ export default {
     cutItems: (state) => state.cutItems,
     copiedItems: (state) => state.copiedItems,
     temporaryCutItems: (state) => state.temporaryCutItems,
+    renamedItems: (state) => state.renamedItems,
   },
   mutations: {
     UPDATE_LAST_ACTIVE_FOLDER(state, payload) {
@@ -52,6 +54,9 @@ export default {
     UPDATE_TEMPORARY_CUT_ITEMS(state, payload) {
       state.temporaryCutItems = payload;
     },
+    UPDATE_RENAMED_ITEMS(state, payload) {
+      state.renamedItems = payload;
+    },
   },
   actions: {
     updateLastActiveFolder({ commit }, id) {
@@ -77,6 +82,9 @@ export default {
     },
     pasteItems({ commit, rootState }, obj) {
       commit("PASTE_ITEMS", { obj, rootState });
+    },
+    updateRenamedItems({ commit }, obj) {
+      commit("UPDATE_RENAMED_ITEMS", obj);
     },
   },
 };

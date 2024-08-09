@@ -106,6 +106,19 @@ const paste = () => {
   }
 };
 
+const rename = () => {
+  const state = actionMenu.value.find(({ name }) => name === "Rename");
+  if (state.isActive) {
+    if (selectedItems.value.length <= 1) {
+      const payload = {
+        parentID: currentFolder.value.id,
+        item: selectedItems.value[0],
+      };
+      store.dispatch("actions/updateRenamedItems", payload);
+    }
+  }
+};
+
 const handleActionMenuVisibility = () => {
   const menu = actionMenu.value;
   if (showActionMenu.value) {
@@ -176,7 +189,7 @@ const actionMenu = ref([
   {
     name: "Rename",
     icon: "rename",
-    action: () => {},
+    action: rename,
     isActive: false,
   },
   {

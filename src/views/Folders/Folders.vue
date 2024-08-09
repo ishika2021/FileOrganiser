@@ -4,6 +4,8 @@
     :files="unTrashedFiles"
     :folder-action="saveFolder"
     :file-action="handleItemSelected"
+    :renameFolder="renameFolder"
+    :renameFile="renameFile"
   />
 </template>
 
@@ -12,6 +14,7 @@ import { useStore } from "vuex";
 import { v4 as uuidv4 } from "uuid";
 import { computed } from "vue";
 import { generateUniqueFolderName } from "@/utils/functionUtils/folderHelpers.js";
+import { generateUniqueFileName } from "@/utils/functionUtils/fileHelpers.js";
 
 import BaseWrapper from "../BaseWrapper";
 
@@ -66,6 +69,33 @@ const saveFolder = ($name) => {
     store.dispatch("data/addFolder", payload);
     store.dispatch("data/updateSelectedFolder", id);
   }
+};
+
+const renameFolder = (obj) => {
+  if (obj.name !== obj.folder.name) {
+    const name = obj.name.length > 0 ? obj.name : "New Folder";
+    const allSubFolderNames =
+      selectedFolder.value.children
+        ?.filter(({ trash }) => !trash)
+        .map((folder) => folder.name) || [];
+    const folderName = generateUniqueFolderName(name, allSubFolderNames);
+    console.log("selected-folder:", folderName);
+    obj.folder.name = folderName;
+  }
+  store.dispatch("actions/updateRenamedItems", {});
+};
+
+const renameFile = (obj) => {
+  if (obj.name !== obj.file.name) {
+    const allFileNames =
+      selectedFolder.value.files
+        ?.filter(({ trash }) => !trash)
+        .map((file) => file.name) || [];
+    const newName = generateUniqueFileName(obj.name, allFileNames);
+    obj.name = newName;
+    obj.file.name = newName;
+  }
+  store.dispatch("actions/updateRenamedItems", {});
 };
 
 const handleItemSelected = ($event) => {

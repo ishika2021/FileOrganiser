@@ -1,6 +1,6 @@
 <template>
   <div v-bind="$attrs">
-    <div class="folder-cover" v-if="isCut"></div>
+    <div class="folder-cover" v-if="isCut || isRenamed"></div>
     <div class="folder">
       <Icon
         name="folder-full"
@@ -17,10 +17,13 @@
       <input
         v-else
         class="input"
-        :value="name"
-        :disabled="isEdit"
+        :class="isRenamed ? 'rename-input' : ''"
+        v-model="modelValue"
+        :disabled="!isRenamed"
         ref="focusInput"
-        @keyup.enter="this.$emit('save-folder', name)"
+        @keyup.enter="
+          this.$emit('rename-folder', { name: modelValue, folder: properties })
+        "
       />
     </div>
   </div>
@@ -55,20 +58,25 @@ const props = defineProps({
     required: false,
   },
 });
-defineEmits(["save-folder"]);
+defineEmits(["save-folder", "rename-folder"]);
 const modelValue = ref("");
 const focusInput = ref(null);
-const name = computed(() => props.properties.name);
 
 const store = useStore();
 const cutItems = computed(() => store.getters["actions/temporaryCutItems"]);
+const renamedItems = computed(() => store.getters["actions/renamedItems"]);
 const isCut = computed(() => {
   if (cutItems.value?.includes(props.properties?.id)) {
     return true;
   }
   return false;
 });
-
+const isRenamed = computed(() => {
+  if (renamedItems.value?.item === props.properties?.id) {
+    return true;
+  }
+  return false;
+});
 onMounted(() => {
   focusInput.value.focus();
   if (props.properties) {

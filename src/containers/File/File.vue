@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="file-cover" v-if="isCut"></div>
+    <div class="file-cover" v-if="isCut || isRenamed"></div>
     <div class="file" @click="action($event, id)">
       <img
         v-if="type === 'image'"
@@ -11,9 +11,13 @@
       <Icon v-else :name="type" class="file-icon" />
       <input
         class="input"
-        :value="title"
-        :disabled="!isEdit"
+        :class="isRenamed ? 'rename-input' : ''"
+        v-model="modelValue"
+        :disabled="!isRenamed"
         ref="focusInput"
+        @keyup.enter="
+          this.$emit('rename-file', { name: modelValue, file: file })
+        "
       />
     </div>
   </div>
@@ -44,6 +48,7 @@ const props = defineProps({
 const store = useStore();
 
 const state = reactive({
+  modelValue: props.file.name,
   id: computed(() => {
     return props.file.id;
   }),
@@ -53,9 +58,6 @@ const state = reactive({
   imageSource: computed(() => {
     return props.file.base64;
   }),
-  title: computed(() => {
-    return props.file.name;
-  }),
   cutItems: computed(() => store.getters["actions/temporaryCutItems"]),
   isCut: computed(() => {
     if (state.cutItems?.includes(state.id)) {
@@ -63,7 +65,14 @@ const state = reactive({
     }
     return false;
   }),
+  renamedItems: computed(() => store.getters["actions/renamedItems"]),
+  isRenamed: computed(() => {
+    if (state.renamedItems?.item === state.id) {
+      return true;
+    }
+    return false;
+  }),
 });
 
-const { id, type, imageSource, title, isCut } = toRefs(state);
+const { id, type, imageSource, isCut, isRenamed, modelValue } = toRefs(state);
 </script>
