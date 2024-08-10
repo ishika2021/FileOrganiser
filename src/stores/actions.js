@@ -12,7 +12,7 @@ export default {
     copiedItems: null,
     cutItems: null,
     temporaryCutItems: [],
-    renamedItems: {},
+    renamedItems: null,
   },
   getters: {
     lastActiveFolder: (state) => state.lastActiveFolder,

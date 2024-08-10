@@ -2,10 +2,10 @@ export const generateUniqueFolderName = (targetName, allFolderNames) => {
   if (!allFolderNames.length) {
     return targetName;
   }
-  return ensureUniqueFileName(targetName, allFolderNames);
+  return ensureUniqueFolderName(targetName, allFolderNames);
 };
 
-const ensureUniqueFileName = (target, currentNames) => {
+const ensureUniqueFolderName = (target, currentNames) => {
   if (!currentNames.includes(target)) {
     return target;
   }
@@ -18,7 +18,7 @@ const ensureUniqueFileName = (target, currentNames) => {
   } else {
     target = target + "_2";
   }
-  return ensureUniqueFileName(target, currentNames);
+  return ensureUniqueFolderName(target, currentNames);
 };
 
 export const getCurrentFolder = (folderID, rootDirectory) => {

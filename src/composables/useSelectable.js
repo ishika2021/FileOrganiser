@@ -63,6 +63,9 @@ export function useSelectable(
     if (!isSelecting.value) {
       actionMenuVisibility(false); //makes actionMenu inactive when selection is removed
     }
+    if (selectionSquare) {
+      selectionSquare.remove();
+    }
     isSelecting.value = true;
     initialClickX = event.pageX;
     initialClickY = event.pageY;
@@ -89,6 +92,13 @@ export function useSelectable(
     if (isSelecting.value) {
       isSelecting.value = false;
       selectionSquare.remove();
+    } else {
+      // to remove selected elements on clicking on menu option
+      if (selectableElements.length) {
+        selectableElements.forEach((selectable) => {
+          selectable.classList.remove("selected");
+        });
+      }
     }
   };
 
@@ -98,7 +108,7 @@ export function useSelectable(
 
     referencedElement.addEventListener("mousedown", handleMouseDown);
     referencedElement.addEventListener("mousemove", handleMouseMove);
-    referencedElement.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("mouseup", handleMouseUp);
   });
 
   onBeforeUnmount(() => {
@@ -106,7 +116,7 @@ export function useSelectable(
 
     referencedElement.removeEventListener("mousedown", handleMouseDown);
     referencedElement.removeEventListener("mousemove", handleMouseMove);
-    referencedElement.removeEventListener("mouseup", handleMouseUp);
+    document.removeEventListener("mouseup", handleMouseUp);
   });
 
   watch(

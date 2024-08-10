@@ -11,7 +11,7 @@
             :key="folder.id"
           >
             <Folder
-              :properties="folder"
+              :folder="folder"
               :singleClickAction="fileAction"
               :doubleClickAction="handleFolderDoubleClick"
               class="selectable"
@@ -22,11 +22,9 @@
         </div>
         <div v-if="newFolder">
           <Folder
-            :isEdit="false"
-            :autoFocus="true"
-            name="New Folder"
             :isCreated="true"
             @save-folder="folderAction"
+            :suggestedName="suggestedName"
           />
         </div>
         <div v-for="(file, index) in files" :key="index">
@@ -56,7 +54,7 @@ import File from "@/containers/File";
 import { useSelectable } from "@/composables/useSelectable";
 import { ConstantStore } from "@/database";
 
-defineProps({
+const props = defineProps({
   folders: {
     type: Array,
     default: () => [],
@@ -87,9 +85,15 @@ defineProps({
     default: () => {},
     required: false,
   },
+  getFolderNamesuggestion: {
+    type: Function,
+    default: () => {},
+    required: false,
+  },
 });
 const store = useStore();
 const selected = ref(null);
+const suggestedName = ref("");
 
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
@@ -132,14 +136,28 @@ const handleActionMenuVisibility = (state) => {
 const handleBoardClick = (e) => {
   e.stopPropagation();
   store.dispatch("actions/updateLastActiveFolder", null);
+  store.dispatch("actions/updateRenamedItems", {}); //to disable rename input
 };
 
 watch(
   selectedFolder,
-  (value) => {
+  () => {
     // load the composable for drag-select on change of currentFolder
-    useSelectable(handleSelectedFolder, value, handleActionMenuVisibility);
+    useSelectable(
+      handleSelectedFolder,
+      selectedFolder,
+      handleActionMenuVisibility
+    );
   },
   { deep: true, immediate: true }
 );
+
+watch(newFolder, () => {
+  // To show folder name suggestion on adding a new folder
+  const result = props.getFolderNamesuggestion(
+    "New Folder",
+    selectedFolder.value.children
+  );
+  suggestedName.value = result;
+});
 </script>

@@ -27,7 +27,6 @@ export default {
       screenSize: "display/screenSize",
       rootDirectory: "data/rootDirectory",
       breadcrumbs: "breadcrumbs/breadcrumbs",
-      selectedFolder: "data/selectedFolder",
     }),
   },
   methods: {

@@ -14,7 +14,7 @@
         :class="isRenamed ? 'rename-input' : ''"
         v-model="modelValue"
         :disabled="!isRenamed"
-        ref="focusInput"
+        ref="focusRenameInput"
         @keyup.enter="
           this.$emit('rename-file', { name: modelValue, file: file })
         "
@@ -24,7 +24,16 @@
 </template>
 
 <script setup>
-import { computed, defineProps, reactive, toRefs } from "vue";
+import {
+  computed,
+  defineProps,
+  reactive,
+  toRefs,
+  ref,
+  onMounted,
+  watch,
+  nextTick,
+} from "vue";
 import Icon from "@/components/Icon";
 import { useStore } from "vuex";
 
@@ -45,10 +54,12 @@ const props = defineProps({
   },
 });
 
+const modelValue = ref("");
+const focusRenameInput = ref(null);
+
 const store = useStore();
 
 const state = reactive({
-  modelValue: props.file.name,
   id: computed(() => {
     return props.file.id;
   }),
@@ -60,19 +71,30 @@ const state = reactive({
   }),
   cutItems: computed(() => store.getters["actions/temporaryCutItems"]),
   isCut: computed(() => {
-    if (state.cutItems?.includes(state.id)) {
-      return true;
-    }
-    return false;
+    return state.cutItems?.includes(state.id);
   }),
   renamedItems: computed(() => store.getters["actions/renamedItems"]),
   isRenamed: computed(() => {
-    if (state.renamedItems?.item === state.id) {
-      return true;
-    }
-    return false;
+    return state.renamedItems?.item === state.id;
   }),
 });
 
-const { id, type, imageSource, isCut, isRenamed, modelValue } = toRefs(state);
+onMounted(() => {
+  if (props.file) {
+    modelValue.value = props.file.name;
+  }
+});
+
+watch(
+  () => state.isRenamed,
+  () => {
+    nextTick(() => {
+      if (focusRenameInput.value) {
+        focusRenameInput.value.focus();
+      }
+    });
+  }
+);
+
+const { id, type, imageSource, isCut, isRenamed } = toRefs(state);
 </script>

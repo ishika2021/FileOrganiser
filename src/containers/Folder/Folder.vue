@@ -1,18 +1,18 @@
 <template>
-  <div v-bind="$attrs">
+  <div>
     <div class="folder-cover" v-if="isCut || isRenamed"></div>
     <div class="folder">
       <Icon
         name="folder-full"
         class="icon"
-        @dblclick="doubleClickAction($event, properties)"
+        @dblclick="doubleClickAction($event, folder)"
       />
       <input
         v-if="isCreated"
         class="input"
-        v-model="modelValue"
+        v-model="inputfolderName"
         ref="focusInput"
-        @keyup.enter="this.$emit('save-folder', modelValue)"
+        @keyup.enter="this.$emit('save-folder', inputfolderName)"
       />
       <input
         v-else
@@ -20,27 +20,31 @@
         :class="isRenamed ? 'rename-input' : ''"
         v-model="modelValue"
         :disabled="!isRenamed"
-        ref="focusInput"
-        @keyup.enter="
-          this.$emit('rename-folder', { name: modelValue, folder: properties })
-        "
+        ref="focusRenameInput"
+        @keyup.enter="this.$emit('rename-folder', { name: modelValue, folder })"
       />
     </div>
   </div>
 </template>
 <script setup>
 import Icon from "@/components/Icon";
-import { computed, onMounted, ref, defineProps, defineEmits } from "vue";
+import {
+  computed,
+  onMounted,
+  ref,
+  defineProps,
+  defineEmits,
+  reactive,
+  toRefs,
+  watch,
+  nextTick,
+} from "vue";
 import { useStore } from "vuex";
 const props = defineProps({
-  properties: {
+  folder: {
     type: Object,
     required: true,
     default: () => {},
-  },
-  isEdit: {
-    type: Boolean,
-    default: true,
   },
   singleClickAction: {
     type: Function,
@@ -57,30 +61,58 @@ const props = defineProps({
     default: false,
     required: false,
   },
+  suggestedName: {
+    type: String,
+    default: "",
+    required: false,
+  },
 });
+
 defineEmits(["save-folder", "rename-folder"]);
+
 const modelValue = ref("");
+const inputfolderName = ref(props.suggestedName);
 const focusInput = ref(null);
+const focusRenameInput = ref(null);
 
 const store = useStore();
-const cutItems = computed(() => store.getters["actions/temporaryCutItems"]);
-const renamedItems = computed(() => store.getters["actions/renamedItems"]);
-const isCut = computed(() => {
-  if (cutItems.value?.includes(props.properties?.id)) {
-    return true;
-  }
-  return false;
+
+const state = reactive({
+  cutItems: computed(() => store.getters["actions/temporaryCutItems"]),
+  renamedItems: computed(() => store.getters["actions/renamedItems"]),
+  isCut: computed(() => {
+    return state.cutItems?.includes(props.folder?.id);
+  }),
+  isRenamed: computed(() => {
+    if (props.folder) {
+      // both become undefined on creating a new folder and make folder-cover visible
+      return state.renamedItems?.item === props.folder?.id;
+    }
+    return false;
+  }),
 });
-const isRenamed = computed(() => {
-  if (renamedItems.value?.item === props.properties?.id) {
-    return true;
-  }
-  return false;
-});
+
 onMounted(() => {
-  focusInput.value.focus();
-  if (props.properties) {
-    modelValue.value = props.properties.name;
+  nextTick(() => {
+    if (focusInput.value) {
+      focusInput.value.focus();
+    }
+  });
+  if (props.folder) {
+    modelValue.value = props.folder.name;
   }
 });
+
+watch(
+  () => state.isRenamed,
+  () => {
+    nextTick(() => {
+      if (focusRenameInput.value) {
+        focusRenameInput.value.focus();
+      }
+    });
+  }
+);
+
+const { isCut, isRenamed } = toRefs(state);
 </script>

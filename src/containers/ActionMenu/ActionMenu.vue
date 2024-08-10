@@ -12,27 +12,34 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, reactive } from "vue";
 import { useStore } from "vuex";
 import Icon from "@/components/Icon";
 import { ActionStore } from "@/database";
+import { getMenuItemState, handleActionMenu } from "./utils/functionHelpers";
 
 const store = useStore();
-const selectedItems = computed(() => store.getters["actions/selectedItems"]);
-const isActive = computed(() => store.getters["actions/actionMenuVisibility"]);
-const copiedObject = computed(() => store.getters["actions/copiedItems"]);
-const cutObject = computed(() => store.getters["actions/cutItems"]);
-const currentFolder = computed(() => store.getters["data/currentFolder"]);
+
+const state = reactive({
+  selectedItems: computed(() => store.getters["actions/selectedItems"]),
+  menuVisibilityStatus: computed(
+    () => store.getters["actions/actionMenuVisibility"]
+  ),
+  copiedObject: computed(() => store.getters["actions/copiedItems"]),
+  cutObject: computed(() => store.getters["actions/cutItems"]),
+  currentFolder: computed(() => store.getters["data/currentFolder"]),
+});
 
 const { updateCut, updateCopy } = ActionStore;
 const showActionMenu = ref(false);
 
 const trash = () => {
-  const state = actionMenu.value.find(({ name }) => name === "Delete");
-  if (state.isActive) {
+  const isActive = getMenuItemState(actionMenu.value, "Delete");
+
+  if (isActive) {
     const payload = {
-      parentID: currentFolder.value.id,
-      toBeDeleted: selectedItems.value,
+      parentID: state.currentFolder.id,
+      toBeDeleted: state.selectedItems,
     };
 
     store.dispatch("actions/moveToTrash", payload);
@@ -41,12 +48,14 @@ const trash = () => {
 };
 
 const copy = () => {
-  const state = actionMenu.value.find(({ name }) => name === "Copy");
-  if (state.isActive) {
+  const isActive = getMenuItemState(actionMenu.value, "Copy");
+
+  if (isActive) {
     const payload = {
-      parentID: currentFolder.value.id,
-      items: selectedItems.value,
+      parentID: state.currentFolder.id,
+      items: state.selectedItems,
     };
+
     updateCopy(payload);
     updateCut(null);
     store.dispatch("actions/updateCutItems", null); //both cut and copy can't have values at the same time
@@ -58,35 +67,42 @@ const copy = () => {
 };
 
 const cut = () => {
-  const state = actionMenu.value.find(({ name }) => name === "Cut");
-  if (state.isActive) {
+  const isActive = getMenuItemState(actionMenu.value, "Cut");
+
+  if (isActive) {
     const payload = {
-      parentID: currentFolder.value.id,
-      items: selectedItems.value,
+      parentID: state.currentFolder.id,
+      items: state.selectedItems,
     };
+
     updateCopy(null);
     updateCut(payload);
     store.dispatch("actions/updateCopiedItems", null);
     store.dispatch("actions/updateCutItems", payload);
-    store.dispatch("actions/updateTemporaryCutItems", selectedItems.value);
+    store.dispatch("actions/updateTemporaryCutItems", state.selectedItems);
+
     showActionMenu.value = false;
   }
 };
 
 const paste = () => {
-  const state = actionMenu.value.find(({ name }) => name === "Paste");
-  if (state.isActive) {
+  const isActive = getMenuItemState(actionMenu.value, "Paste");
+
+  if (isActive) {
     let items = [];
     let operation = "";
     let parentID = null;
 
-    if (copiedObject.value) {
-      items = copiedObject.value.items;
-      parentID = copiedObject.value.parentID;
+    const copy = state.copiedObject;
+    const cut = state.cutObject;
+
+    if (copy) {
+      items = copy.items;
+      parentID = copy.parentID;
       operation = "copy";
-    } else if (cutObject.value) {
-      items = cutObject.value.items;
-      parentID = cutObject.value.parentID;
+    } else if (cut) {
+      items = cut.items;
+      parentID = cut.parentID;
       operation = "cut";
       updateCut(null);
       store.dispatch("actions/updateCutItems", null);
@@ -107,13 +123,15 @@ const paste = () => {
 };
 
 const rename = () => {
-  const state = actionMenu.value.find(({ name }) => name === "Rename");
-  if (state.isActive) {
-    if (selectedItems.value.length <= 1) {
+  const isActive = getMenuItemState(actionMenu.value, "Rename");
+
+  if (isActive) {
+    if (state.selectedItems.length <= 1) {
       const payload = {
-        parentID: currentFolder.value.id,
-        item: selectedItems.value[0],
+        parentID: state.currentFolder.id,
+        item: state.selectedItems[0],
       };
+
       store.dispatch("actions/updateRenamedItems", payload);
     }
   }
@@ -121,33 +139,16 @@ const rename = () => {
 
 const handleActionMenuVisibility = () => {
   const menu = actionMenu.value;
-  if (showActionMenu.value) {
-    menu.map((menuItem) => {
-      if (menuItem.name === "Paste") {
-        menuItem.isActive = false;
-      } else {
-        menuItem.isActive = true;
-      }
-    });
-  } else if (copiedObject.value || cutObject.value) {
-    menu.map((menuItem) => {
-      if (menuItem.name === "Paste") {
-        menuItem.isActive = true;
-      } else {
-        menuItem.isActive = false;
-      }
-    });
-  } else {
-    menu.map((menuItem) => (menuItem.isActive = false));
-  }
+  const isCutCopy = state.copiedObject || state.cutObject ? true : false;
+  handleActionMenu(menu, showActionMenu.value, isCutCopy);
 };
 
 onMounted(() => {
-  showActionMenu.value = isActive.value;
+  showActionMenu.value = state.menuVisibilityStatus;
 });
 
 watch(
-  currentFolder,
+  () => state.currentFolder,
   () => {
     handleActionMenuVisibility();
     store.dispatch("actions/updateTemporaryCutItems", []);
@@ -156,9 +157,9 @@ watch(
 );
 
 watch(
-  isActive,
+  () => state.menuVisibilityStatus,
   () => {
-    showActionMenu.value = isActive.value;
+    showActionMenu.value = state.menuVisibilityStatus;
   },
   { deep: true }
 );
