@@ -1,10 +1,11 @@
-export const transformDuplicateFolderName = (name, selectedFolder) => {
-  const allFolderNames = selectedFolder.children.map((folder) => folder.name);
-  const result = checkEquality(name, allFolderNames);
-  return result;
+export const generateUniqueFolderName = (targetName, allFolderNames) => {
+  if (!allFolderNames.length) {
+    return targetName;
+  }
+  return ensureUniqueFolderName(targetName, allFolderNames);
 };
 
-const checkEquality = (target, currentNames) => {
+const ensureUniqueFolderName = (target, currentNames) => {
   if (!currentNames.includes(target)) {
     return target;
   }
@@ -17,7 +18,7 @@ const checkEquality = (target, currentNames) => {
   } else {
     target = target + "_2";
   }
-  return checkEquality(target, currentNames);
+  return ensureUniqueFolderName(target, currentNames);
 };
 
 export const getCurrentFolder = (folderID, rootDirectory) => {
@@ -52,16 +53,4 @@ const findFolder = (target, folders) => {
   }
   // if target not found in folders
   return null;
-};
-
-export const deleteFromParent = (parent, items) => {
-  items.forEach((item) => {
-    const type = item.charAt(0);
-    if (type === "F") {
-      parent.files = parent.files.filter((file) => file.id !== item);
-    } else if (type === "D") {
-      parent.children = parent.children.filter((folder) => folder.id !== item);
-    }
-  });
-  return parent;
 };

@@ -1,13 +1,13 @@
 import folder from "./folder.js";
 import breadcrumbs from "./breadcrumbs.js";
-import header from "./header.js";
+import actions from "./actions.js";
 import display from "./display.js";
 import data from "./data.js";
 
 export default {
   folder,
   breadcrumbs,
-  header,
+  actions,
   display,
-  data
+  data,
 };

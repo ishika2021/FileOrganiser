@@ -1,6 +1,10 @@
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
 
-export function useSelectable(getSelectedItems, currentFolderList) {
+export function useSelectable(
+  getSelectedItems,
+  currentFolder,
+  actionMenuVisibility
+) {
   const isSelecting = ref(false);
   let selectionSquare = null;
   let initialClickX = null;
@@ -8,8 +12,10 @@ export function useSelectable(getSelectedItems, currentFolderList) {
   let selectableElements = [];
 
   const updateSelectableElements = () => {
+    actionMenuVisibility(false); //to make file action menu inactive on folder navigation
     nextTick(() => {
-      selectableElements = document.querySelectorAll(".selectable");
+      const referencedElement = document.getElementById("mainContainer");
+      selectableElements = referencedElement.querySelectorAll(".selectable");
     });
   };
 
@@ -37,6 +43,7 @@ export function useSelectable(getSelectedItems, currentFolderList) {
       } else {
         selectable.classList.remove("selected");
       }
+      actionMenuVisibility(true);
     });
     getSelectedItems(selectedItemID);
   };
@@ -53,6 +60,12 @@ export function useSelectable(getSelectedItems, currentFolderList) {
   };
 
   const handleMouseDown = (event) => {
+    if (!isSelecting.value) {
+      actionMenuVisibility(false); //makes actionMenu inactive when selection is removed
+    }
+    if (selectionSquare) {
+      selectionSquare.remove();
+    }
     isSelecting.value = true;
     initialClickX = event.pageX;
     initialClickY = event.pageY;
@@ -79,24 +92,35 @@ export function useSelectable(getSelectedItems, currentFolderList) {
     if (isSelecting.value) {
       isSelecting.value = false;
       selectionSquare.remove();
+    } else {
+      // to remove selected elements on clicking on menu option
+      if (selectableElements.length) {
+        selectableElements.forEach((selectable) => {
+          selectable.classList.remove("selected");
+        });
+      }
     }
   };
 
   onMounted(() => {
     updateSelectableElements();
-    document.addEventListener("mousedown", handleMouseDown);
-    document.addEventListener("mousemove", handleMouseMove);
+    const referencedElement = document.getElementById("mainContainer");
+
+    referencedElement.addEventListener("mousedown", handleMouseDown);
+    referencedElement.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   });
 
   onBeforeUnmount(() => {
-    document.removeEventListener("mousedown", handleMouseDown);
-    document.removeEventListener("mousemove", handleMouseMove);
+    const referencedElement = document.getElementById("mainContainer");
+
+    referencedElement.removeEventListener("mousedown", handleMouseDown);
+    referencedElement.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   });
 
   watch(
-    currentFolderList,
+    currentFolder,
     () => {
       updateSelectableElements();
     },

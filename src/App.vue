@@ -8,10 +8,13 @@
 <script>
 import { mapGetters } from "vuex";
 import {
-  initDB,
-  addDataToDB,
-  fetchDataFromDB,
-} from "@/utils/functionUtils/indexedDB";
+  ConstantStore,
+  BreadcrumbStore,
+  DirectoryStore,
+  ActionStore,
+} from "@/database";
+import { initDB } from "./database/config";
+
 export default {
   name: "App",
   data() {
@@ -24,7 +27,6 @@ export default {
       screenSize: "display/screenSize",
       rootDirectory: "data/rootDirectory",
       breadcrumbs: "breadcrumbs/breadcrumbs",
-      selectedFolder: "data/selectedFolder",
     }),
   },
   methods: {
@@ -44,6 +46,13 @@ export default {
         this.$store.dispatch("display/updateScreenSize", size);
       }
     },
+    async initializeDatabase() {
+      await initDB();
+      await ActionStore.init();
+      await ConstantStore.init();
+      await BreadcrumbStore.init();
+      await DirectoryStore.init();
+    },
   },
   mounted() {
     window.addEventListener("resize", this.handleScreenWidthChange);
@@ -52,10 +61,20 @@ export default {
     window.removeEventListener("resize", this.handleScreenWidthChange);
   },
   async created() {
-    await initDB();
-    const rootDirectory = await fetchDataFromDB("rootDirectory");
-    const breadcrumbList = await fetchDataFromDB("breadcrumbs");
-    const selectedFolderID = await fetchDataFromDB("currentFolderID");
+    await this.initializeDatabase();
+    const rootDirectory = await DirectoryStore.getDirectories();
+    const breadcrumbList = await BreadcrumbStore.getBreadcrumbs();
+    const selectedFolderID = await ConstantStore.getCurrentFolder(
+      "currentFolderID"
+    );
+    const [copy, cut] = await ActionStore.getAllActions();
+
+    if (copy && copy.value) {
+      this.$store.dispatch("actions/updateCopiedItems", copy.value);
+    }
+    if (cut && cut.value) {
+      this.$store.dispatch("actions/updateCutItems", cut.value);
+    }
 
     if (rootDirectory) {
       const obj = {
@@ -76,8 +95,7 @@ export default {
         },
       ];
 
-      await addDataToDB(
-        "breadcrumbs",
+      await BreadcrumbStore.updateBreadcrumbs(
         JSON.parse(JSON.stringify(defaultBreadcrumb))
       );
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", defaultBreadcrumb);
@@ -87,7 +105,7 @@ export default {
       this.$store.dispatch("data/updateSelectedFolder", selectedFolderID);
     } else {
       this.$store.dispatch("data/updateSelectedFolder", "root");
-      await addDataToDB("currentFolderID", "root");
+      await ConstantStore.updateCurrentFolder("root");
     }
     this.isLoading = false;
   },
@@ -95,7 +113,9 @@ export default {
     rootDirectory: {
       handler: async function (prev, curr) {
         if (curr >= prev) {
-          await addDataToDB("rootDirectory", JSON.parse(JSON.stringify(curr)));
+          await DirectoryStore.updateDirectories(
+            JSON.parse(JSON.stringify(curr))
+          );
           this.$store.dispatch("data/addNewFolder", false);
         }
       },
@@ -103,7 +123,9 @@ export default {
     },
     breadcrumbs: {
       handler: async function (curr) {
-        await addDataToDB("breadcrumbs", JSON.parse(JSON.stringify(curr)));
+        await BreadcrumbStore.updateBreadcrumbs(
+          JSON.parse(JSON.stringify(curr))
+        );
       },
       deep: true,
     },

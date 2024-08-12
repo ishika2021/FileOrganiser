@@ -45,7 +45,7 @@
 <script>
 import Folder from "../../components/Folder/Folder.vue";
 import ImageFile from "../../components/ImageFile/ImageFile.vue";
-import { transformDuplicateFolderName } from "../../utils/functionUtils/folderHelpers.js";
+import { generateUniqueFolderName } from "../../utils/functionUtils/folderHelpers.js";
 import { mapGetters } from "vuex";
 import { v4 as uuidv4 } from "uuid";
 
@@ -78,7 +78,7 @@ export default {
       const name = $name.length > 0 ? $name : "New Folder";
       const selectedFolder = this.selectedFolder || {};
 
-      const folderName = transformDuplicateFolderName(name, selectedFolder);
+      const folderName = generateUniqueFolderName(name, selectedFolder);
       const obj = {
         id: "D-" + uuidv4(),
         name: folderName,
