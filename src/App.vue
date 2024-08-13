@@ -30,10 +30,7 @@ export default {
     }),
   },
   methods: {
-    changeTheme(newTheme) {
-      document.documentElement.setAttribute("data-theme", newTheme);
-    },
-    handleScreenWidthChange() {
+    async handleScreenWidthChange() {
       const width = window.innerWidth;
       let size = "full";
       if (width < 768 && width > 480) {
@@ -44,6 +41,7 @@ export default {
 
       if (size !== this.screenSize) {
         this.$store.dispatch("display/updateScreenSize", size);
+        await ConstantStore.updateScreenSize(size);
       }
     },
     async initializeDatabase() {
@@ -64,9 +62,8 @@ export default {
     await this.initializeDatabase();
     const rootDirectory = await DirectoryStore.getDirectories();
     const breadcrumbList = await BreadcrumbStore.getBreadcrumbs();
-    const selectedFolderID = await ConstantStore.getCurrentFolder(
-      "currentFolderID"
-    );
+    const [selectedFolderID, screenSize, theme] =
+      await ConstantStore.getAllConstants();
     const [copy, cut] = await ActionStore.getAllActions();
 
     if (copy && copy.value) {
@@ -74,6 +71,15 @@ export default {
     }
     if (cut && cut.value) {
       this.$store.dispatch("actions/updateCutItems", cut.value);
+    }
+
+    if (theme && theme.value) {
+      this.$store.dispatch("display/updateTheme", theme.value);
+      document.documentElement.setAttribute("data-theme", theme.value);
+    }
+
+    if (screenSize && screenSize.value) {
+      this.$store.dispatch("display/updateScreenSize", screenSize.value);
     }
 
     if (rootDirectory) {
@@ -102,7 +108,7 @@ export default {
     }
 
     if (selectedFolderID) {
-      this.$store.dispatch("data/updateSelectedFolder", selectedFolderID);
+      this.$store.dispatch("data/updateSelectedFolder", selectedFolderID.value);
     } else {
       this.$store.dispatch("data/updateSelectedFolder", "root");
       await ConstantStore.updateCurrentFolder("root");

@@ -1,16 +1,21 @@
 .header {
   width: 100%;
-  .search {
-    background-color: $background-primary;
-    padding: 10px 33px 10px 20px;
+
+  .sub-header-1 {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px 10px 20px;
     border-bottom: 1px solid $border-color;
+    background-color: $background-primary;
   }
-  .page-head {
+
+  .sub-header-2 {
     padding: 0px 21px 0px 21px;
     height: 62px;
     border-bottom: 1px solid $border-color;
     display: flex;
     justify-content: space-between;
+    background: $background-primary;
     .page-information {
       display: flex;
       flex-direction: column;
@@ -33,7 +38,7 @@
     .search {
       padding: 12px 20px 12px 20px;
     }
-    .page-head {
+    .sub-header-2 {
       padding: 0px 20px 0px 20px;
     }
   }
@@ -42,7 +47,7 @@
     .search {
       padding: 8px 20px 8px 20px;
     }
-    .page-head {
+    .sub-header-2 {
       padding: 0px 20px 0px 20px;
     }
   }

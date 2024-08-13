@@ -7,9 +7,3 @@ export default {
   name: "Dashboard",
 };
 </script>
-
-<style>
-.test {
-  background-color: pink;
-}
-</style>

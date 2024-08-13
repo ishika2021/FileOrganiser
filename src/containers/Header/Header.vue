@@ -1,9 +1,14 @@
 <template>
   <nav class="header">
-    <section class="search">
-      <SearchBar @update:modelValue="handleSearchInput($event)" />
+    <section class="sub-header-1">
+      <div class="search">
+        <SearchBar @update:modelValue="handleSearchInput($event)" />
+      </div>
+      <div class="theme">
+        <ThemeSwitch />
+      </div>
     </section>
-    <section class="page-head">
+    <section class="sub-header-2">
       <div class="page-information">
         <div class="breadcrumbs">
           <Breadcrumbs />
@@ -26,20 +31,18 @@
 
 <script>
 import SearchBar from "@/components/SearchBar";
-import Button from "@/components/Button";
 import Breadcrumbs from "@/containers/Breadcrumbs";
 import Dropdown from "@/components/Dropdown";
 import FileUpload from "@/components/FileUpload/FileUpload";
 import MenuItem from "@/components/MenuItem";
+import ThemeSwitch from "@/containers/ThemeSwitch";
 export default {
   name: "Header",
   components: {
     SearchBar,
-    Button,
     Breadcrumbs,
     Dropdown,
-    FileUpload,
-    MenuItem,
+    ThemeSwitch,
   },
   computed: {
     pageTitle() {
@@ -77,7 +80,7 @@ export default {
               text: "Folder",
               component: MenuItem,
               props: {
-                icon: "folder",
+                icon: "folder-outline",
                 label: "Folder",
                 isDropdown: true,
                 action: this.addFolder,

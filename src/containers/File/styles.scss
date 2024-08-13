@@ -48,5 +48,7 @@
   height: 140px;
   width: 100px;
   position: absolute;
-  background-color: #62585833;
+  background-color: $cut-item-visibility;
+  z-index: 1;
+  border-radius: 6px;
 }
