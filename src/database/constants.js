@@ -19,10 +19,35 @@ const Constants = {
     }
   },
 
-  async getCurrentFolder(key) {
+  async updateTheme(item) {
+    try {
+      await addToConstants("theme", item);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async updateScreenSize(item) {
+    try {
+      await addToConstants("screenSize", item);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async getConstant(key) {
     try {
       const res = await DB.getData(storeName, key);
       return res.value;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async getAllConstants() {
+    try {
+      const res = await DB.getAllData(storeName);
+      return res;
     } catch (error) {
       console.log(error);
     }

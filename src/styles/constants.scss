@@ -1,9 +1,11 @@
-// colors ---------------------------------------
-$color-blue : #00ADEF;
-$color-yellow: #FDB93E;
-$color-red: #F7685B;
-$color-green: #2DBD96;
-$color-purple: #8260D8;
+// common colors ---------------------------------------
+$color-blue: #00adef;
+$color-yellow: #fdb93e;
+$color-red: #f7685b;
+$color-green: #2dbd96;
+$color-purple: #8260d8;
+$color-white: #f9f9f9;
+$selecting-square: #007bff;
 $shadow-green: rgba(8, 149, 111, 0.28);
 
 // category-colors
@@ -14,7 +16,12 @@ $font-color-dark: var(--text-color-dark);
 $heading-color: var(--header-color);
 $border-color: var(--border-color);
 
+// element-colors
+$theme-btn-color: var(--theme-btn-color);
+$selection-color: var(--selection-color);
+$cut-item-visibility: var(--cut-item-blur-color);
+$action-menu-visibility: var(--action-blur-color);
+
 // width
 $width-screen-md: 768px;
 $width-screen-sm: 480px;
-

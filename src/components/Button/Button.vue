@@ -4,7 +4,7 @@
       <Icon :name="icon" :color="color" />
     </div>
     <div class="btn-label">
-      <span>{{ label }}</span>
+      <span :style="`{color:${color}}`">{{ label }}</span>
       <div v-if="hasList" class="icon down">
         <Icon name="down" :color="color" />
       </div>

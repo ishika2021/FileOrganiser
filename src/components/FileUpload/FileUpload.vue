@@ -1,18 +1,20 @@
 <template>
   <div class="file-upload">
-    <MenuItem icon="folder" :isDropdown="true">
-      <template v-slot:label>
-        <label for="file-upload">
-          {{ title }}
-        </label>
-        <input
-          type="file"
-          id="file-upload"
-          multiple
-          @change="handleChange($event)"
-        />
-      </template>
-    </MenuItem>
+    <label for="file-upload">
+      <MenuItem icon="file-outline" :isDropdown="true">
+        <template v-slot:label>
+          <div class="title">
+            {{ title }}
+            <input
+              type="file"
+              id="file-upload"
+              multiple
+              @change="handleChange($event)"
+            />
+          </div>
+        </template>
+      </MenuItem>
+    </label>
   </div>
 </template>
 
