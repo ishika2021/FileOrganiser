@@ -44,6 +44,7 @@ const trash = () => {
 
     store.dispatch("actions/moveToTrash", payload);
     showActionMenu.value = false;
+    setNotification("Item deleted");
   }
 };
 
@@ -63,6 +64,7 @@ const copy = () => {
     store.dispatch("actions/updateTemporaryCutItems", []);
 
     showActionMenu.value = false;
+    setNotification("Item copied");
   }
 };
 
@@ -82,6 +84,7 @@ const cut = () => {
     store.dispatch("actions/updateTemporaryCutItems", state.selectedItems);
 
     showActionMenu.value = false;
+    setNotification("Item cut");
   }
 };
 
@@ -118,6 +121,7 @@ const paste = () => {
 
       store.dispatch("actions/pasteItems", payload);
       showActionMenu.value = false;
+      setNotification("Item pasted");
     }
   }
 };
@@ -133,6 +137,7 @@ const rename = () => {
       };
 
       store.dispatch("actions/updateRenamedItems", payload);
+      setNotification("Item renamed");
     }
   }
 };
@@ -141,6 +146,14 @@ const handleActionMenuVisibility = () => {
   const menu = actionMenu.value;
   const isCutCopy = state.copiedObject || state.cutObject ? true : false;
   handleActionMenu(menu, showActionMenu.value, isCutCopy);
+};
+
+const setNotification = (message) => {
+  const notification = {
+    type: "default",
+    message: message,
+  };
+  store.dispatch("display/updateNotification", notification);
 };
 
 onMounted(() => {
