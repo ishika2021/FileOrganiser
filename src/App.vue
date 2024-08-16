@@ -1,4 +1,5 @@
 <template>
+  <Notification />
   <div class="app">
     <div v-if="isLoading">Loading........</div>
     <router-view v-else></router-view>
@@ -7,6 +8,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import Notification from "./components/Notification";
 import {
   ConstantStore,
   BreadcrumbStore,
@@ -21,6 +23,9 @@ export default {
     return {
       isLoading: true,
     };
+  },
+  components: {
+    Notification,
   },
   computed: {
     ...mapGetters({

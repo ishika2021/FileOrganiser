@@ -3,10 +3,12 @@ export default {
   state: {
     screenSize: "full",
     theme: "light",
+    notification: null,
   },
   getters: {
     screenSize: (state) => state.screenSize,
     theme: (state) => state.theme,
+    notification: (state) => state.notification,
   },
   mutations: {
     UPDATE_SCREEN_SIZE(state, payload) {
@@ -15,6 +17,9 @@ export default {
     UPDATE_THEME(state, payload) {
       state.theme = payload;
     },
+    UPDATE_NOTIFICATION(state, payload) {
+      state.notification = payload;
+    },
   },
   actions: {
     updateScreenSize({ commit }, size) {
@@ -22,6 +27,9 @@ export default {
     },
     updateTheme({ commit }, theme) {
       commit("UPDATE_THEME", theme);
+    },
+    updateNotification({ commit }, obj) {
+      commit("UPDATE_NOTIFICATION", obj);
     },
   },
 };
