@@ -43,8 +43,8 @@ const saveFolder = ($name) => {
     folder: newFolder,
     parent: parentID,
   };
-
   store.dispatch("data/addFolder", payload);
+  setNotification("Folder is created successfully");
 };
 
 const renameFolder = (obj) => {
@@ -56,6 +56,7 @@ const renameFolder = (obj) => {
     obj.folder.name = folderName;
   }
   store.dispatch("actions/updateRenamedItems", null);
+  setNotification("Folder is renamed successfully");
 };
 
 const renameFile = (obj) => {
@@ -64,10 +65,19 @@ const renameFile = (obj) => {
     obj.file.name = fileName;
   }
   store.dispatch("actions/updateRenamedItems", null);
+  setNotification("File is renamed successfully");
 };
 
 const handleItemSelected = ($event) => {
   $event.stopPropagation();
+};
+
+const setNotification = (message, type = "default") => {
+  const notification = {
+    type: type,
+    message: message,
+  };
+  store.dispatch("display/updateNotification", notification);
 };
 
 const { unTrashedFolders, unTrashedFiles } = toRefs(state);

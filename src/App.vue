@@ -1,7 +1,7 @@
 <template>
   <Notification />
   <div class="app">
-    <div v-if="isLoading">Loading........</div>
+    <div v-if="isLoading"><SkeletonLoader /></div>
     <router-view v-else></router-view>
   </div>
 </template>
@@ -9,6 +9,8 @@
 <script>
 import { mapGetters } from "vuex";
 import Notification from "./components/Notification";
+import { getNewFolder } from "@/views/Folders/utils/functionHelper";
+import SkeletonLoader from "@/components/SkeletonLoader";
 import {
   ConstantStore,
   BreadcrumbStore,
@@ -26,6 +28,7 @@ export default {
   },
   components: {
     Notification,
+    SkeletonLoader,
   },
   computed: {
     ...mapGetters({
@@ -55,6 +58,19 @@ export default {
       await ConstantStore.init();
       await BreadcrumbStore.init();
       await DirectoryStore.init();
+    },
+    createDefaultFolders() {
+      const folders = ["Document", "Images", "Important"];
+      const currentFolder = {
+        id: "root",
+        children: [],
+      };
+      const result = [];
+      folders.forEach((folder) => {
+        const newFolder = getNewFolder(folder, currentFolder);
+        result.push(newFolder);
+      });
+      return result;
     },
   },
   mounted() {
@@ -92,6 +108,15 @@ export default {
         folders: rootDirectory.children,
         files: rootDirectory.files,
       };
+
+      this.$store.dispatch("data/updateFolders", obj);
+    } else {
+      // gives default folder for new user
+      const children = this.createDefaultFolders();
+      const obj = {
+        folders: children,
+        files: [],
+      };
       this.$store.dispatch("data/updateFolders", obj);
     }
 
@@ -118,7 +143,11 @@ export default {
       this.$store.dispatch("data/updateSelectedFolder", "root");
       await ConstantStore.updateCurrentFolder("root");
     }
-    this.isLoading = false;
+
+    //shows skeleton loader longer
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1000);
   },
   watch: {
     rootDirectory: {

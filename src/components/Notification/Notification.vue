@@ -20,13 +20,23 @@ export default {
     return {
       showNotification: false,
       message: "",
-      timeoutDuration: 2000,
+      timeoutDuration: 3000,
     };
   },
   computed: {
     ...mapGetters({
       notification: "display/notification",
     }),
+    color() {
+      const type = this.notification?.type;
+      switch (type) {
+        case "error":
+          return "#f7685b";
+        case "default":
+          return "#2dbd96";
+      }
+      return "";
+    },
   },
   watch: {
     notification: {
@@ -51,6 +61,17 @@ export default {
         this.handleClose();
       }, this.timeoutDuration);
     },
+    setNotificationType() {
+      this.$nextTick(() => {
+        const snackbar = document.querySelector(".v-snackbar__wrapper");
+        if (snackbar) {
+          snackbar.style.borderRight = `8px solid ${this.color}`;
+        }
+      });
+    },
+  },
+  updated() {
+    this.setNotificationType();
   },
 };
 </script>

@@ -25,7 +25,10 @@
     text-align: center;
     color: $heading-color;
   }
-
+  .rename-input {
+    background-color: $selection-color;
+  }
+  
   @media screen and (max-width: $width-screen-md) {
     padding: 10px 0px;
     .image-icon {

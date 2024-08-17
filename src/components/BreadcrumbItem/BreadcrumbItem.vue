@@ -1,15 +1,12 @@
 <template>
   <li class="breadcrumb-item">
     <Icon
-      v-if="item.title !== 'Home'"
+      v-if="item.id !== 'root'"
       name="right-arrow"
       class="icon"
       color="#A6A8A8"
     />
-    <span 
-      @click="action(item)" 
-      :class="item.title === 'Home' ? 'bold' : ''"
-    >
+    <span @click="action(item)" :class="item.id === 'root' ? 'bold' : ''">
       {{ item.title }}
     </span>
   </li>
