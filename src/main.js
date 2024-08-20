@@ -2,7 +2,6 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import "@mdi/font/css/materialdesignicons.css";
 import router from "./router";
-import selectable from "./directives/selectable.js";
 import store from "./store";
 // Vuetify
 import "vuetify/styles";
@@ -20,8 +19,6 @@ const vuetify = createVuetify({
 const app = createApp({
   extends: App,
 });
-
-app.directive("drag-select", selectable);
 
 app.use(vuetify);
 app.use(store);
