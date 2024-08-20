@@ -9,7 +9,7 @@
           width="100%"
         />
       </div>
-      <div class="project-name">Project Name</div>
+      <div class="project-name">Local Drop</div>
     </header>
     <section>
       <MenuItem
@@ -18,6 +18,7 @@
         :key="index"
         :label="item.title"
         :isActive="activeMenuTitle === item.title ? true : false"
+        :isAllowed="item.isAllowed"
         @click="handleMenuItem(item)"
       />
     </section>
@@ -38,26 +39,31 @@ export default {
           title: "Dashboard",
           label: "dashboard",
           icon: "dashboard",
+          isAllowed: false,
         },
         {
           title: "Folders",
           label: "folders",
           icon: "folder",
+          isAllowed: true,
         },
         {
           title: "Recent",
           label: "recent",
           icon: "recent",
+          isAllowed: false,
         },
         {
           title: "Starred",
           label: "starred",
           icon: "starred",
+          isAllowed: false,
         },
         {
           title: "Trash",
           label: "trash",
           icon: "trash",
+          isAllowed: false,
         },
       ],
     };
@@ -70,7 +76,7 @@ export default {
   methods: {
     handleMenuItem(item) {
       let title = "/";
-      if (item.label !== "dashboard") {
+      if (item.label !== "folders") {
         title += item.label;
       }
       this.$router.push(title);

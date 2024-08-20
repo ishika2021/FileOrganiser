@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
-import { getCurrentFolder, generateUniqueFolderName } from "./folderHelpers.js";
+import { getFolderByID, generateUniqueFolderName } from "./folderHelpers.js";
 import { generateUniqueFileName } from "./fileHelpers.js";
 import _ from "lodash";
 
 export const handlePaste = (rootDirectory, currentFolder, pasteObject) => {
   const { items, operation, parentID } = pasteObject;
-  const parentFolder = getCurrentFolder(parentID, rootDirectory);
+  const parentFolder = getFolderByID(parentID, rootDirectory);
 
   items.forEach((item) => {
     const type = item.charAt(0);
@@ -42,7 +42,7 @@ export const handlePaste = (rootDirectory, currentFolder, pasteObject) => {
 // Changes the trash flag of the target
 export const updateTrashFlag = (rootDirectory, trashObject) => {
   const { parentID, toBeDeleted } = trashObject;
-  const parentFolder = getCurrentFolder(parentID, rootDirectory);
+  const parentFolder = getFolderByID(parentID, rootDirectory);
 
   toBeDeleted.forEach((item) => {
     const type = item.charAt(0);

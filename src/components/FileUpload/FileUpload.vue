@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { fileConverter } from "../../utils/functionUtils/fileHelpers.js";
+import { fileConverter } from "@/utils/functionUtils/fileHelpers";
 import MenuItem from "@/components/MenuItem";
 import { mapGetters } from "vuex";
 

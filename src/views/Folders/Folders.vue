@@ -24,11 +24,11 @@ import {
 const store = useStore();
 
 const state = reactive({
-  selectedFolder: computed(() => store.getters["data/currentFolder"]),
+  currentFolder: computed(() => store.getters["data/currentFolder"]),
   selectedFiles: computed(() => store.getters["data/selectedFiles"]),
   breadcrumbs: computed(() => store.getters["breadcrumbs/breadcrumbs"]),
   unTrashedFolders: computed(() => {
-    return state.selectedFolder.children?.filter(({ trash }) => !trash);
+    return state.currentFolder.children?.filter(({ trash }) => !trash);
   }), //returns only the folders/files which aren't trashed
   unTrashedFiles: computed(() => {
     return state.selectedFiles?.filter(({ trash }) => !trash);
@@ -36,7 +36,7 @@ const state = reactive({
 });
 
 const saveFolder = ($name) => {
-  const newFolder = getNewFolder($name, state.selectedFolder);
+  const newFolder = getNewFolder($name, state.currentFolder);
   const parentID = state.breadcrumbs[state.breadcrumbs.length - 1].id;
 
   const payload = {
@@ -49,10 +49,7 @@ const saveFolder = ($name) => {
 
 const renameFolder = (obj) => {
   if (obj.name !== obj.folder.name) {
-    const folderName = getNewFolderName(
-      obj.name,
-      state.selectedFolder.children
-    );
+    const folderName = getNewFolderName(obj.name, state.currentFolder.children);
     obj.folder.name = folderName;
   }
   store.dispatch("actions/updateRenamedItems", null);
@@ -61,7 +58,7 @@ const renameFolder = (obj) => {
 
 const renameFile = (obj) => {
   if (obj.name !== obj.file.name) {
-    const fileName = getNewFileName(obj.name, state.selectedFolder.files);
+    const fileName = getNewFileName(obj.name, state.currentFolder.files);
     obj.file.name = fileName;
   }
   store.dispatch("actions/updateRenamedItems", null);

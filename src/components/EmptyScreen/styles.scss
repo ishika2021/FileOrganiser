@@ -1,0 +1,22 @@
+.empty-screen {
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .content {
+    display: grid;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    .image {
+      height: 200px;
+      width: 300px;
+    }
+
+    .text {
+      text-align: center;
+      font-size: 14px;
+      color: $font-color-dark;
+    }
+  }
+}

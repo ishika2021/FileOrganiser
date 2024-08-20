@@ -37,13 +37,9 @@ export default {
       const updatedBreadcrumbs = [...currentBreadcrumbs];
       updatedBreadcrumbs.splice(titleIndex + 1);
       const id = updatedBreadcrumbs[updatedBreadcrumbs.length - 1].id;
-      // const lastActiveFolder = currentBreadcrumbs[++titleIndex];
-
-      // localStorage.setItem("selectedFolder", id);
       await ConstantStore.updateCurrentFolder(id);
-      this.$store.dispatch("data/updateSelectedFolder", id);
+      this.$store.dispatch("data/updateCurrentFolder", id);
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", updatedBreadcrumbs);
-      // this.$store.dispatch("header/updateLastActiveFolder", lastActiveFolder.id);
     },
   },
 };

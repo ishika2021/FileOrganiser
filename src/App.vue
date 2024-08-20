@@ -83,7 +83,7 @@ export default {
     await this.initializeDatabase();
     const rootDirectory = await DirectoryStore.getDirectories();
     const breadcrumbList = await BreadcrumbStore.getBreadcrumbs();
-    const [selectedFolderID, screenSize, theme] =
+    const [currentFolderID, screenSize, theme] =
       await ConstantStore.getAllConstants();
     const [copy, cut] = await ActionStore.getAllActions();
 
@@ -137,10 +137,10 @@ export default {
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", defaultBreadcrumb);
     }
 
-    if (selectedFolderID) {
-      this.$store.dispatch("data/updateSelectedFolder", selectedFolderID.value);
+    if (currentFolderID) {
+      this.$store.dispatch("data/updateCurrentFolder", currentFolderID.value);
     } else {
-      this.$store.dispatch("data/updateSelectedFolder", "root");
+      this.$store.dispatch("data/updateCurrentFolder", "root");
       await ConstantStore.updateCurrentFolder("root");
     }
 

@@ -21,7 +21,7 @@ const ensureUniqueFolderName = (target, currentNames) => {
   return ensureUniqueFolderName(target, currentNames);
 };
 
-export const getCurrentFolder = (folderID, rootDirectory) => {
+export const getFolderByID = (folderID, rootDirectory) => {
   if (folderID === "root") {
     return rootDirectory;
   }

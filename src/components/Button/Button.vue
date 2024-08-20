@@ -1,5 +1,5 @@
 <template>
-  <div :class="`button button-${size} button-${buttonStyle}`">
+  <div :class="`button button-${size} button-${type}`">
     <div class="icon">
       <Icon :name="icon" :color="color" />
     </div>
@@ -24,7 +24,7 @@ export default {
       type: String,
       required: true,
     },
-    buttonStyle: {
+    type: {
       type: String,
       required: true,
       default: "primary",
@@ -46,9 +46,9 @@ export default {
   },
   computed: {
     color() {
-      if (this.buttonStyle === "primary") {
+      if (this.type === "primary") {
         return "#2DBD96";
-      } else if (this.buttonStyle === "secondary") {
+      } else if (this.type === "secondary") {
         return "#ffffff";
       }
       return "";

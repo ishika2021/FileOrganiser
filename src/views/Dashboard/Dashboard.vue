@@ -1,9 +1,13 @@
 <template>
-  <div class="test">This is Dashboard</div>
+  <div>
+    <EmptyScreen />
+  </div>
 </template>
 
 <script>
+import EmptyScreen from "@/components/EmptyScreen";
 export default {
   name: "Dashboard",
+  components: { EmptyScreen },
 };
 </script>
