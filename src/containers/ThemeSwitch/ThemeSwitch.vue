@@ -1,7 +1,7 @@
 <template>
   <div class="theme-switch" @click="handleThemeChange">
-    <Icon v-if="theme === 'dark'" name="dark" />
-    <Icon v-else name="light" />
+    <Icon v-if="theme === 'dark'" name="dark" tooltip="Dark Mode" />
+    <Icon v-else name="light" tooltip="Light Mode" />
   </div>
 </template>
 

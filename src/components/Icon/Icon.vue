@@ -1,10 +1,20 @@
 <template>
-  <div :id="uniqueID" class="svg-icon"></div>
+  <Tooltip v-if="showTooltip">
+    <div :id="uniqueID" class="svg-icon"></div>
+    <template #tooltip-content>
+      {{ tooltip }}
+    </template>
+  </Tooltip>
+  <div v-else :id="uniqueID" class="svg-icon"></div>
 </template>
 
 <script>
+import Tooltip from "@/components/Tooltip";
 export default {
   name: "Icon",
+  components: {
+    Tooltip,
+  },
   props: {
     name: {
       type: String,
@@ -14,13 +24,21 @@ export default {
       type: String,
       default: "",
     },
+    tooltip: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
       uniqueID: `icon-${Math.random().toString(36).substring(2, 9)}`,
     };
   },
-
+  computed: {
+    showTooltip() {
+      return this.tooltip;
+    },
+  },
   mounted() {
     this.svgLoader();
   },

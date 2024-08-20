@@ -1,12 +1,16 @@
 .base-wrapper {
-  padding: 10px 25px 35px 25px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   height: 100%;
   background: $background-secondary;
-
-  #mainContainer {
+  
+  .action-menu-container{
+    //separate padding is required to make drag-select work from the edge of first item
+    padding: 10px 25px 0px 25px; 
+  }
+  
+  .main-conatainer {
     height: 100%;
   }
 
@@ -17,6 +21,7 @@
     overflow-y: auto;
     height: 396px;
     scrollbar-gutter: stable;
+    padding: 10px 25px 35px 25px;  //separate padding is required to make drag-select work from the edge of first item
 
     &::-webkit-scrollbar {
       width: 10px;

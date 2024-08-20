@@ -1,7 +1,14 @@
 <template>
   <div class="base-wrapper">
-    <ActionMenu />
-    <div id="mainContainer" @click="handleBoardClick" ref="scrollContainer">
+    <div class="action-menu-container">
+      <ActionMenu />
+    </div>
+    <div
+      id="mainContainer"
+      class="main-conatainer"
+      @click="handleBoardClick"
+      ref="scrollContainer"
+    >
       <div class="folder-container">
         <div v-for="(folder, index) in folders" :key="index">
           <div
@@ -136,7 +143,8 @@ const handleActionMenuVisibility = (state) => {
 const handleBoardClick = (e) => {
   e.stopPropagation();
   store.dispatch("actions/updateLastActiveFolder", null);
-  store.dispatch("actions/updateRenamedItems", {}); //to disable rename input
+  store.dispatch("actions/updateRenamedItems", {}); //disables rename input
+  store.dispatch("data/addNewFolder", false); //removes the new unsaved folder
 };
 
 watch(
@@ -153,7 +161,7 @@ watch(
 );
 
 watch(newFolder, () => {
-  // To show folder name suggestion on adding a new folder
+  // reflects folder name suggestion on adding a new folder
   const result = props.getFolderNamesuggestion(
     "New Folder",
     selectedFolder.value.children

@@ -9,6 +9,7 @@
   --selection-color: #cce5ff;
   --cut-item-blur-color: #62585833;
   --action-blur-color: #d6d7d7;
+  --skeleton-loader-color: #e8e8e8d9;
 }
 
 [data-theme="dark"] {
@@ -22,6 +23,7 @@
   --selection-color: #595c5b;
   --cut-item-blur-color: #7b757561;
   --action-blur-color: #d6d7d72e;
+  --skeleton-loader-color: #222626d9;
 }
 .app {
   display: flex;
@@ -31,11 +33,17 @@ html {
   margin: 0;
   height: 100%;
   padding: 0;
-  overflow: hidden; //to remove the scrollbar
+  overflow: hidden !important; //removes the scrollbar
   font-family: "Nunito Sans", sans-serif;
   background: var(--bg-color-secondary);
 }
 
 ul {
   list-style-type: none;
+}
+
+input {
+  // removes default text-selection on drag-select
+  user-select: none;
+  pointer-events: none;
 }

@@ -1,0 +1,139 @@
+.skeleton-loader {
+  width: 100vw;
+  display: flex;
+
+  .v-skeleton-loader__bone {
+    background-color: $skeleton-loader-color;
+  }
+
+  .sidebar {
+    width: 300px;
+    height: 100%;
+    background-color: $background-primary;
+
+    .project-title {
+      background-color: $skeleton-loader-color;
+
+      .v-skeleton-loader__heading {
+        background-color: $skeleton-loader-color !important;
+      }
+    }
+
+    .side-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .v-skeleton-loader__avatar {
+      min-height: 25px;
+      min-width: 25px;
+      height: 25px;
+      width: 25px;
+      background-color: $skeleton-loader-color !important;
+    }
+
+    .v-skeleton-loader {
+      background-color: $background-primary;
+    }
+
+    .v-skeleton-loader__bone {
+      background-color: $background-primary;
+    }
+
+    .v-skeleton-loader__text {
+      background-color: $skeleton-loader-color !important;
+      height: 9px;
+    }
+  }
+
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .header-skeleton {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      border: 1px solid $border-color;
+      background-color: $background-primary;
+      padding: 10px 20px 10px 20px;
+
+      .search {
+        width: 360px;
+        background-color: $background-secondary;
+      }
+
+      .v-skeleton-loader__chip {
+        max-width: 400px;
+        max-height: 25px;
+        margin: 0;
+        background-color: $skeleton-loader-color;
+      }
+
+      .sub-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        height: 50px;
+        background-color: $background-primary;
+
+        .breadcrumb {
+          width: 150px;
+          background-color: $background-primary;
+
+          .v-skeleton-loader__text {
+            margin: 0;
+          }
+        }
+
+        .menu-items {
+          display: flex;
+          background-color: $background-primary;
+          gap: 5px;
+
+          .button {
+            width: 100px;
+            background-color: $background-primary;
+          }
+
+          .v-skeleton-loader__button {
+            max-width: none;
+            max-height: 34px;
+            margin: 0;
+            background-color: $skeleton-loader-color;
+          }
+        }
+
+        @media screen and (max-width: 768px) {
+          .breadcrumb {
+            display: none;
+          }
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        padding: 0px 20px 0px 20px;
+      }
+    }
+
+    .item-container {
+      height: 100%;
+      display: flex;
+      gap: 10px;
+      padding: 40px 25px 35px 25px;
+      flex-wrap: wrap;
+
+      .folder {
+        height: fit-content;
+        width: 130px;
+        background-color: $background-primary;
+      }
+
+      .v-skeleton-loader__image {
+        height: 74px;
+      }
+    }
+  }
+}

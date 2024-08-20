@@ -7,7 +7,9 @@
       class="icon"
       @click="menu.action"
       :class="menu.isActive ? '' : 'blur'"
-    />
+      :tooltip="menu.tooltip"
+    >
+    </Icon>
   </div>
 </template>
 
@@ -137,7 +139,8 @@ const rename = () => {
       };
 
       store.dispatch("actions/updateRenamedItems", payload);
-      setNotification("Item renamed");
+    } else {
+      setNotification("Multiple items can't be renamed together", "error");
     }
   }
 };
@@ -148,9 +151,9 @@ const handleActionMenuVisibility = () => {
   handleActionMenu(menu, showActionMenu.value, isCutCopy);
 };
 
-const setNotification = (message) => {
+const setNotification = (message, type = "default") => {
   const notification = {
-    type: "default",
+    type: type,
     message: message,
   };
   store.dispatch("display/updateNotification", notification);
@@ -187,30 +190,35 @@ const actionMenu = ref([
     icon: "copy",
     action: copy,
     isActive: false,
+    tooltip: "Copy",
   },
   {
     name: "Cut",
     icon: "cut",
     action: cut,
     isActive: false,
+    tooltip: "Cut",
   },
   {
     name: "Paste",
     icon: "paste",
     action: paste,
     isActive: false,
+    tooltip: "Paste",
   },
   {
     name: "Rename",
     icon: "rename",
     action: rename,
     isActive: false,
+    tooltip: "Rename",
   },
   {
     name: "Delete",
     icon: "delete",
     action: trash,
     isActive: false,
+    tooltip: "Delete",
   },
 ]);
 </script>

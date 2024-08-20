@@ -48,10 +48,6 @@ const props = defineProps({
     default: () => {},
     required: true,
   },
-  isEdit: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const modelValue = ref("");
