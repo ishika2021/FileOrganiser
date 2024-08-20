@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import baseLayout from "../layout/baseLayout.vue";
-import Dashboard from "../views/Dashboard";
 import Folders from "../views/Folders";
 import Recent from "../views/Recent";
 import Starred from "../views/Starred";
@@ -12,12 +11,7 @@ const routes = [
     component: baseLayout,
     children: [
       {
-        path: "",
-        name: "Dashboard",
-        component: Dashboard,
-      },
-      {
-        path: "/folders",
+        path: "/",
         name: "Folders",
         component: Folders,
       },

@@ -1,7 +1,11 @@
-<template>This is trash</template>
+<template>
+  <EmptyScreen />
+</template>
 
 <script>
+import EmptyScreen from "@/components/EmptyScreen";
 export default {
   name: "Trash",
+  components: { EmptyScreen },
 };
 </script>

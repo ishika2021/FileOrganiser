@@ -1,12 +1,18 @@
 <template>
-  <div 
-    :class="isDropdown ? 'dropdown-menu-item' : 'menu-item'" 
+  <div
+    :class="
+      !isAllowed
+        ? 'not-allowed menu-item'
+        : isDropdown
+        ? 'dropdown-menu-item'
+        : 'menu-item'
+    "
     @click="action()"
   >
-    <Icon 
-      :name="icon" 
-      :color="!isDropdown && isActive ? '#11A37B' : ''" 
-      class="icon" 
+    <Icon
+      :name="icon"
+      :color="!isDropdown && isActive ? '#11A37B' : ''"
+      class="icon"
     />
     <slot name="label" />
     <span
@@ -49,6 +55,10 @@ export default {
       type: Function,
       required: false,
       default: () => {},
+    },
+    isAllowed: {
+      type: Boolean,
+      required: false,
     },
   },
 };

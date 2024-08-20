@@ -2,7 +2,7 @@
   <v-snackbar v-model="showNotification" location="left">
     {{ message }}
     <template v-slot:actions>
-      <Icon name="starred" @click="handleClose" />
+      <Icon name="close" @click="handleClose" />
     </template>
   </v-snackbar>
 </template>
