@@ -1,6 +1,4 @@
-import {
-  getCurrentFolder
-} from "../utils/functionUtils/folderHelpers";
+import { getFolderByID } from "../utils/functionUtils/folderHelpers";
 export default {
   namespaced: true,
   state: {
@@ -22,7 +20,7 @@ export default {
   mutations: {
     ADD_FOLDER(state, payload) {
       const { folder, parent } = payload;
-      const res = getCurrentFolder(parent, state.rootDirectory);
+      const res = getFolderByID(parent, state.rootDirectory);
       if (res) {
         res.children.push(folder);
       }
@@ -35,11 +33,11 @@ export default {
       state.rootDirectory.children = folders;
       state.rootDirectory.files = files;
     },
-    UPDATE_SELECTED_FOLDER(state, title) {
-      const selectedFolder = getCurrentFolder(title, state.rootDirectory);
-      if (selectedFolder) {
-        state.currentFolder = selectedFolder;
-        state.selectedFiles = selectedFolder.files;
+    UPDATE_CURRENT_FOLDER(state, title) {
+      const res = getFolderByID(title, state.rootDirectory);
+      if (res) {
+        state.currentFolder = res;
+        state.selectedFiles = res.files;
       }
     },
     UPDATE_SELECTED_FILES(state, payload) {
@@ -60,8 +58,8 @@ export default {
     addNewFolder({ commit }, status) {
       commit("ADD_NEW_FOLDER", status);
     },
-    updateSelectedFolder({ commit }, folder) {
-      commit("UPDATE_SELECTED_FOLDER", folder);
+    updateCurrentFolder({ commit }, folder) {
+      commit("UPDATE_CURRENT_FOLDER", folder);
     },
     updateSelectedFiles({ commit }, files) {
       commit("UPDATE_FILES", files);

@@ -7,13 +7,13 @@
           :icon="button.icon"
           :label="button.label"
           :hasList="button.hasList"
-          :buttonStyle="button.buttonStyle"
+          :type="button.type"
           :size="iconSize || button.size"
           v-bind="props"
         />
       </template>
       <v-list v-if="menu.length">
-        <v-list-item v-for="menuItem in menu">
+        <v-list-item v-for="menuItem in menu" :key="menuItem.icon">
           <v-list-item-title>
             <component :is="menuItem.component" v-bind="menuItem.props">
               {{ menuItem.text }}
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import Button from "../Button";
+import Button from "@/components/Button";
 import { mapGetters } from "vuex";
 export default {
   name: "Dropdown",

@@ -55,7 +55,7 @@ export default {
           icon: "sort",
           label: "Sort",
           hasList: true,
-          buttonStyle: "primary",
+          type: "primary",
           size: "medium",
           menu: [],
           visible: route !== "Dashboard",
@@ -64,7 +64,7 @@ export default {
           icon: "grid",
           label: "View",
           hasList: true,
-          buttonStyle: "primary",
+          type: "primary",
           size: "medium",
           menu: [],
           visible: route !== "Dashboard",
@@ -73,7 +73,7 @@ export default {
           icon: "plus",
           label: "Create New",
           hasList: true,
-          buttonStyle: "secondary",
+          type: "secondary",
           size: "full",
           menu: [
             {

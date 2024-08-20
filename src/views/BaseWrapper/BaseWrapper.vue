@@ -104,7 +104,7 @@ const suggestedName = ref("");
 
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
-const selectedFolder = computed(() => store.getters["data/currentFolder"]);
+const currentFolder = computed(() => store.getters["data/currentFolder"]);
 const lastActiveFolder = computed(
   () => store.getters["actions/lastActiveFolder"]
 );
@@ -124,7 +124,7 @@ const handleFolderDoubleClick = async ($event, folder) => {
 
   await ConstantStore.updateCurrentFolder(folder.id);
   store.dispatch("breadcrumbs/addBreadcrumb", obj);
-  store.dispatch("data/updateSelectedFolder", folder.id);
+  store.dispatch("data/updateCurrentFolder", folder.id);
 };
 
 const handleSelectedFolder = (selectedItemIDs) => {
@@ -148,12 +148,12 @@ const handleBoardClick = (e) => {
 };
 
 watch(
-  selectedFolder,
+  currentFolder,
   () => {
     // load the composable for drag-select on change of currentFolder
     useSelectable(
       handleSelectedFolder,
-      selectedFolder,
+      currentFolder,
       handleActionMenuVisibility
     );
   },
@@ -164,7 +164,7 @@ watch(newFolder, () => {
   // reflects folder name suggestion on adding a new folder
   const result = props.getFolderNamesuggestion(
     "New Folder",
-    selectedFolder.value.children
+    currentFolder.value.children
   );
   suggestedName.value = result;
 });
