@@ -60,7 +60,10 @@ import Folder from "@/containers/Folder";
 import File from "@/containers/File";
 import { useSelectable } from "@/composables/useSelectable";
 import { ConstantStore } from "@/database";
-import { getRecentFilePayload } from "./utils/helperFunctions";
+import {
+  getNewBreadcrumb,
+  getRecentFilePayload,
+} from "./utils/functionHelpers";
 
 const props = defineProps({
   folders: {
@@ -107,29 +110,16 @@ const suggestedName = ref("");
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
 const currentFolder = computed(() => store.getters["data/currentFolder"]);
+const currentBreadcrumb = computed(
+  () => breadcrumbs.value[route.name.toLowerCase()]
+);
 const lastActiveFolder = computed(
   () => store.getters["actions/lastActiveFolder"]
 );
 
 const handleFolderDoubleClick = async ($event, folder) => {
   $event.stopPropagation();
-  const page = route.name.toLowerCase();
-  const breadcrumb = breadcrumbs.value[page];
-  const lastTitlePath = breadcrumb[breadcrumb.length - 1].path;
-  const path =
-    lastTitlePath === "/"
-      ? "/" + folder.name
-      : lastTitlePath + "/" + folder.name;
-  const obj = {
-    title: folder.name,
-    path: path,
-    id: folder.id,
-  };
-
-  const payload = {
-    page: route.name.toLowerCase(),
-    breadcrumb: obj,
-  };
+  const payload = getNewBreadcrumb(currentBreadcrumb.value, folder, route.name);
 
   await ConstantStore.updateCurrentFolder(folder.id);
   store.dispatch("breadcrumbs/addBreadcrumb", payload);

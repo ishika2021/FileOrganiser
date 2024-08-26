@@ -13,6 +13,7 @@
 import BreadcrumbItem from "../../components/BreadcrumbItem";
 import { mapGetters } from "vuex";
 import { ConstantStore } from "@/database";
+import getUpdatedBreadcrumbs from "./utils/functionHelpers";
 
 export default {
   name: "Breadcrumbs",
@@ -29,23 +30,14 @@ export default {
   },
   methods: {
     async handleBreadcrumbClick(breadcrumb) {
-      const currentBreadcrumbs = this.currentBreadcrumb;
-      let titleIndex = 0;
-      currentBreadcrumbs.map((item, index) => {
-        if (item.id === breadcrumb.id) {
-          titleIndex = index;
-        }
-      });
+      const { nextCurrentFolderID, payload } = getUpdatedBreadcrumbs(
+        this.currentBreadcrumb,
+        breadcrumb,
+        this.$route.name
+      );
 
-      const updatedBreadcrumbs = [...currentBreadcrumbs];
-      updatedBreadcrumbs.splice(titleIndex + 1);
-      const id = updatedBreadcrumbs[updatedBreadcrumbs.length - 1].id;
-      const payload = {
-        page: this.$route.name.toLowerCase(),
-        breadcrumb: updatedBreadcrumbs,
-      };
-      await ConstantStore.updateCurrentFolder(id);
-      this.$store.dispatch("data/updateCurrentFolder", id);
+      await ConstantStore.updateCurrentFolder(nextCurrentFolderID);
+      this.$store.dispatch("data/updateCurrentFolder", nextCurrentFolderID);
       this.$store.dispatch("breadcrumbs/updateSingleBreadcrumb", payload);
     },
   },
