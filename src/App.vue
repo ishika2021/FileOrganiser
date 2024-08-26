@@ -16,6 +16,7 @@ import {
   BreadcrumbStore,
   DirectoryStore,
   ActionStore,
+  ViewStore,
 } from "@/database";
 import { initDB } from "./database/config";
 
@@ -58,6 +59,7 @@ export default {
       await ConstantStore.init();
       await BreadcrumbStore.init();
       await DirectoryStore.init();
+      await ViewStore.init();
     },
     createDefaultFolders() {
       const folders = ["Document", "Images", "Important"];
@@ -86,6 +88,7 @@ export default {
     const [currentFolderID, screenSize, theme] =
       await ConstantStore.getAllConstants();
     const [copy, cut] = await ActionStore.getAllActions();
+    const [recent] = await ViewStore.getAllViews();
 
     if (copy && copy.value) {
       this.$store.dispatch("actions/updateCopiedItems", copy.value);
@@ -123,13 +126,16 @@ export default {
     if (breadcrumbList) {
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", breadcrumbList);
     } else {
-      const defaultBreadcrumb = [
-        {
-          title: "Home",
-          path: "/",
-          id: "root",
-        },
-      ];
+      const obj = {
+        title: "Home",
+        path: "/",
+        id: "root",
+      };
+      const defaultBreadcrumb = {
+        folders: [obj],
+        starred: [obj],
+        trash: [obj],
+      };
 
       await BreadcrumbStore.updateBreadcrumbs(
         JSON.parse(JSON.stringify(defaultBreadcrumb))
@@ -142,6 +148,10 @@ export default {
     } else {
       this.$store.dispatch("data/updateCurrentFolder", "root");
       await ConstantStore.updateCurrentFolder("root");
+    }
+
+    if (recent && recent.value) {
+      this.$store.dispatch("views/updateRecent", recent.value);
     }
 
     //shows skeleton loader longer

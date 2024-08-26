@@ -19,7 +19,6 @@
           >
             <Folder
               :folder="folder"
-              :singleClickAction="fileAction"
               :doubleClickAction="handleFolderDoubleClick"
               class="selectable"
               :data-id="folder.id"
@@ -38,11 +37,11 @@
           <div :class="selected === file.id ? 'folder-selected' : ''">
             <File
               :file="file"
-              :action="fileAction"
               class="selectable"
               :data-id="file.id"
               :isEdit="false"
               @rename-file="renameFile"
+              :doubleClickAction="handleFileDoubleClick"
             />
           </div>
         </div>
@@ -53,6 +52,7 @@
 
 <script setup>
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 import { computed, ref, watch, defineProps } from "vue";
 
 import ActionMenu from "@/containers/ActionMenu";
@@ -60,17 +60,21 @@ import Folder from "@/containers/Folder";
 import File from "@/containers/File";
 import { useSelectable } from "@/composables/useSelectable";
 import { ConstantStore } from "@/database";
+import {
+  getNewBreadcrumb,
+  getRecentFilePayload,
+} from "./utils/functionHelpers";
 
 const props = defineProps({
   folders: {
     type: Array,
     default: () => [],
-    required: true,
+    required: false,
   },
   files: {
     type: Array,
     default: () => [],
-    required: true,
+    required: false,
   },
   folderAction: {
     type: Function,
@@ -99,31 +103,26 @@ const props = defineProps({
   },
 });
 const store = useStore();
+const route = useRoute();
 const selected = ref(null);
 const suggestedName = ref("");
 
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
 const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
 const currentFolder = computed(() => store.getters["data/currentFolder"]);
+const currentBreadcrumb = computed(
+  () => breadcrumbs.value[route.name.toLowerCase()]
+);
 const lastActiveFolder = computed(
   () => store.getters["actions/lastActiveFolder"]
 );
 
 const handleFolderDoubleClick = async ($event, folder) => {
   $event.stopPropagation();
-  const lastTitlePath = breadcrumbs.value[breadcrumbs.value.length - 1].path;
-  const path =
-    lastTitlePath === "/"
-      ? "/" + folder.name
-      : lastTitlePath + "/" + folder.name;
-  const obj = {
-    title: folder.name,
-    path: path,
-    id: folder.id,
-  };
+  const payload = getNewBreadcrumb(currentBreadcrumb.value, folder, route.name);
 
   await ConstantStore.updateCurrentFolder(folder.id);
-  store.dispatch("breadcrumbs/addBreadcrumb", obj);
+  store.dispatch("breadcrumbs/addBreadcrumb", payload);
   store.dispatch("data/updateCurrentFolder", folder.id);
 };
 
@@ -145,6 +144,13 @@ const handleBoardClick = (e) => {
   store.dispatch("actions/updateLastActiveFolder", null);
   store.dispatch("actions/updateRenamedItems", {}); //disables rename input
   store.dispatch("data/addNewFolder", false); //removes the new unsaved folder
+};
+
+const handleFileDoubleClick = ($event, file) => {
+  // Add file to recent files
+  $event.stopPropagation();
+  const updatedFile = getRecentFilePayload(file);
+  store.dispatch("views/addToRecent", updatedFile);
 };
 
 watch(

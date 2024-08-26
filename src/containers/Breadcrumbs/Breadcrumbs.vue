@@ -1,7 +1,7 @@
 <template>
   <ul class="breadcrumbs">
     <BreadcrumbItem
-      v-for="(item, index) in breadcrumbs"
+      v-for="(item, index) in currentBreadcrumb"
       :key="index"
       :item="item"
       :action="handleBreadcrumbClick"
@@ -13,6 +13,7 @@
 import BreadcrumbItem from "../../components/BreadcrumbItem";
 import { mapGetters } from "vuex";
 import { ConstantStore } from "@/database";
+import getUpdatedBreadcrumbs from "./utils/functionHelpers";
 
 export default {
   name: "Breadcrumbs",
@@ -23,23 +24,21 @@ export default {
     ...mapGetters({
       breadcrumbs: "breadcrumbs/breadcrumbs",
     }),
+    currentBreadcrumb() {
+      return this.breadcrumbs[this.$route.name.toLowerCase()];
+    },
   },
   methods: {
     async handleBreadcrumbClick(breadcrumb) {
-      const currentBreadcrumbs = this.breadcrumbs;
-      let titleIndex = 0;
-      currentBreadcrumbs.map((item, index) => {
-        if (item.id === breadcrumb.id) {
-          titleIndex = index;
-        }
-      });
+      const { nextCurrentFolderID, payload } = getUpdatedBreadcrumbs(
+        this.currentBreadcrumb,
+        breadcrumb,
+        this.$route.name
+      );
 
-      const updatedBreadcrumbs = [...currentBreadcrumbs];
-      updatedBreadcrumbs.splice(titleIndex + 1);
-      const id = updatedBreadcrumbs[updatedBreadcrumbs.length - 1].id;
-      await ConstantStore.updateCurrentFolder(id);
-      this.$store.dispatch("data/updateCurrentFolder", id);
-      this.$store.dispatch("breadcrumbs/updateBreadcrumbs", updatedBreadcrumbs);
+      await ConstantStore.updateCurrentFolder(nextCurrentFolderID);
+      this.$store.dispatch("data/updateCurrentFolder", nextCurrentFolderID);
+      this.$store.dispatch("breadcrumbs/updateSingleBreadcrumb", payload);
     },
   },
 };
