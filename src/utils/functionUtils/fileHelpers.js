@@ -54,6 +54,7 @@ const fileOperations = (allFileNames) => {
       label: label,
       category: category,
       createdAt: createdAt,
+      modifiedAt: createdAt,
       recent: false,
       starred: false,
       trash: false,
@@ -123,7 +124,7 @@ const formatFileSize = (fileSize) => {
 };
 
 // return the current date and time in DD-MM-YY HH:SS format
-const getCurrentDateTime = () => {
+export const getCurrentDateTime = () => {
   const date = new Date();
 
   const day = String(date.getDate()).padStart(2, "0");

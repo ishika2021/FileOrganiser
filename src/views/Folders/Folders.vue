@@ -13,6 +13,7 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed, reactive, toRefs } from "vue";
+import { useRoute } from "vue-router";
 
 import BaseWrapper from "../BaseWrapper";
 import {
@@ -22,11 +23,16 @@ import {
 } from "./utils/functionHelper";
 
 const store = useStore();
+const route = useRoute();
 
 const state = reactive({
   currentFolder: computed(() => store.getters["data/currentFolder"]),
   selectedFiles: computed(() => store.getters["data/selectedFiles"]),
-  breadcrumbs: computed(() => store.getters["breadcrumbs/breadcrumbs"]),
+  breadcrumbs: computed(() => {
+    const breadcrumbs = store.getters["breadcrumbs/breadcrumbs"];
+    const page = route.name.toLowerCase();
+    return breadcrumbs[page];
+  }),
   unTrashedFolders: computed(() => {
     return state.currentFolder.children?.filter(({ trash }) => !trash);
   }), //returns only the folders/files which aren't trashed

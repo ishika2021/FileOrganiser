@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="file-cover" v-if="isCut || isRenamed"></div>
-    <div class="file" @click="action($event, id)">
+    <div class="file" @dblclick="doubleClickAction($event, file)">
       <img
         v-if="type === 'image'"
         :src="imageSource"
@@ -43,7 +43,12 @@ const props = defineProps({
     default: () => {},
     required: true,
   },
-  action: {
+  singleClickAction: {
+    type: Function,
+    default: () => {},
+    required: true,
+  },
+  doubleClickAction: {
     type: Function,
     default: () => {},
     required: true,
@@ -92,5 +97,5 @@ watch(
   }
 );
 
-const { id, type, imageSource, isCut, isRenamed } = toRefs(state);
+const { type, imageSource, isCut, isRenamed } = toRefs(state);
 </script>
