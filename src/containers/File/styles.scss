@@ -28,6 +28,19 @@
   .rename-input {
     background-color: $selection-color;
   }
+  .restore{
+    position: absolute;
+    top: -60px;
+    left: 58px;
+    path{
+      fill: $action-menu-visibility;
+    }
+    &:hover{
+      path{
+        fill: $font-color-dark;
+      }
+    }
+  }
   
   @media screen and (max-width: $width-screen-md) {
     padding: 10px 0px;

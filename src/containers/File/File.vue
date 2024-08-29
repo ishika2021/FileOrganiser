@@ -2,6 +2,12 @@
   <div>
     <div class="file-cover" v-if="isCut || isRenamed"></div>
     <div class="file" @dblclick="doubleClickAction($event, file)">
+      <Icon
+        v-if="itemAction"
+        :name="itemAction"
+        :class="`icon ${itemAction}`"
+        @click="handleItemAction($event, itemAction)"
+      />
       <img
         v-if="type === 'image'"
         :src="imageSource"
@@ -78,7 +84,24 @@ const state = reactive({
   isRenamed: computed(() => {
     return state.renamedItems?.item === state.id;
   }),
+  itemAction: computed(() => {
+    if (props.file.trash) {
+      return "restore";
+    } else if (props.file.starred) {
+      return "starred";
+    } else {
+      return null;
+    }
+  }),
 });
+
+const handleItemAction = ($event, type) => {
+  if (type === "restore") {
+    store.dispatch("views/restoreItem", props.file);
+  } else if (type === "starred") {
+    //  add starred logic
+  }
+};
 
 onMounted(() => {
   if (props.file) {
@@ -97,5 +120,5 @@ watch(
   }
 );
 
-const { type, imageSource, isCut, isRenamed } = toRefs(state);
+const { type, imageSource, isCut, isRenamed, itemAction } = toRefs(state);
 </script>

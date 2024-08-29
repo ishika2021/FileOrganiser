@@ -1,11 +1,17 @@
 <template>
-  <EmptyScreen />
+  <BaseWrapper :files="trashedItems.files" :folders="trashedItems.folders" />
 </template>
 
-<script>
-import EmptyScreen from "@/components/EmptyScreen";
-export default {
-  name: "Trash",
-  components: { EmptyScreen },
-};
+<script setup>
+import BaseWrapper from "@/views/BaseWrapper";
+import { useStore } from "vuex";
+import { computed, reactive, toRefs } from "vue";
+
+const store = useStore();
+
+const state = reactive({
+  trashedItems: computed(() => store.getters["views/trashedItems"]),
+});
+
+const { trashedItems } = toRefs(state);
 </script>

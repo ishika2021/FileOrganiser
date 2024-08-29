@@ -24,6 +24,14 @@
           :menu="button.menu"
           :visible="button.visible"
         />
+        <Button
+          v-if="pageTitle === 'Trash'"
+          icon="restore"
+          type="danger"
+          label="Restore All"
+          size="full"
+          @click="handleRestoreAll"
+        />
       </div>
     </section>
   </nav>
@@ -36,6 +44,7 @@ import Dropdown from "@/components/Dropdown";
 import FileUpload from "@/components/FileUpload/FileUpload";
 import MenuItem from "@/components/MenuItem";
 import ThemeSwitch from "@/containers/ThemeSwitch";
+import Button from "@/components/Button/Button.vue";
 export default {
   name: "Header",
   components: {
@@ -43,6 +52,7 @@ export default {
     Breadcrumbs,
     Dropdown,
     ThemeSwitch,
+    Button,
   },
   computed: {
     pageTitle() {
@@ -103,6 +113,9 @@ export default {
     },
     addFolder() {
       this.$store.dispatch("data/addNewFolder", true);
+    },
+    handleRestoreAll() {
+      this.$store.dispatch("views/restoreAllItems");
     },
   },
 };

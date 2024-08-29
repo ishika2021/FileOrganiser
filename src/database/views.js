@@ -28,6 +28,14 @@ const Views = {
     }
   },
 
+  async updateTrash(item) {
+    try {
+      await addToViews("trash", item);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   async getAllViews() {
     try {
       const res = await DB.getAllData(storeName);

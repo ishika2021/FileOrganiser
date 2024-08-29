@@ -88,7 +88,7 @@ export default {
     const [currentFolderID, screenSize, theme] =
       await ConstantStore.getAllConstants();
     const [copy, cut] = await ActionStore.getAllActions();
-    const [recent] = await ViewStore.getAllViews();
+    const [recent, trash] = await ViewStore.getAllViews();
 
     if (copy && copy.value) {
       this.$store.dispatch("actions/updateCopiedItems", copy.value);
@@ -152,6 +152,10 @@ export default {
 
     if (recent && recent.value) {
       this.$store.dispatch("views/updateRecent", recent.value);
+    }
+
+    if (trash && trash.value) {
+      this.$store.dispatch("views/updateTrash", trash.value);
     }
 
     //shows skeleton loader longer

@@ -3,6 +3,12 @@
     <div class="folder-cover" v-if="isCut || isRenamed"></div>
     <div class="folder">
       <Icon
+        v-if="itemAction"
+        :name="itemAction"
+        :class="`icon ${itemAction}`"
+        @click="handleItemAction($event, itemAction)"
+      />
+      <Icon
         name="folder-full"
         class="icon"
         @dblclick="doubleClickAction($event, folder)"
@@ -90,7 +96,23 @@ const state = reactive({
     }
     return false;
   }),
+  itemAction: computed(() => {
+    if (!props.isCreated) {
+      if (props.folder.trash) {
+        return "restore";
+      } else if (props.folder.starred) {
+        return "starred";
+      }
+    }
+    return null;
+  }),
 });
+
+const handleItemAction = ($event, type) => {
+  if (type === "restore") {
+    store.dispatch("views/restoreItem", props.folder);
+  }
+};
 
 onMounted(() => {
   nextTick(() => {
@@ -114,5 +136,5 @@ watch(
   }
 );
 
-const { isCut, isRenamed } = toRefs(state);
+const { isCut, isRenamed, itemAction } = toRefs(state);
 </script>

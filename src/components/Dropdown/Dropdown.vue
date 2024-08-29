@@ -1,9 +1,8 @@
 <template>
-  <div>
+  <div v-if="visible">
     <v-menu location="bottom">
       <template v-slot:activator="{ props }">
         <Button
-          v-if="visible"
           :icon="button.icon"
           :label="button.label"
           :hasList="button.hasList"
