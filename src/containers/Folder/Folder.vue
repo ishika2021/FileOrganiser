@@ -2,12 +2,22 @@
   <div>
     <div class="folder-cover" v-if="isCut || isRenamed"></div>
     <div class="folder">
-      <Icon
-        v-if="itemAction"
-        :name="itemAction"
-        :class="`icon ${itemAction}`"
-        @click="handleItemAction($event, itemAction)"
-      />
+      <div class="item-action">
+        <Icon
+          v-if="itemAction"
+          :name="itemAction"
+          :class="`icon ${itemAction}`"
+          :tooltip="`${itemAction} item`"
+          @click="handleItemAction($event, itemAction)"
+        />
+        <Icon
+          v-if="itemAction === 'restore'"
+          name="delete"
+          class="icon permanent-delete"
+          tooltip="Delete Permanently"
+          @click="this.$emit('trash-action', folder)"
+        />
+      </div>
       <Icon
         name="folder-full"
         class="icon"
@@ -74,7 +84,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["save-folder", "rename-folder"]);
+defineEmits(["save-folder", "rename-folder", "trash-action"]);
 
 const modelValue = ref("");
 const inputfolderName = ref(props.suggestedName);

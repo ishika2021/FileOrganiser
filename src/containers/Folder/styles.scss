@@ -15,38 +15,60 @@
     color: $heading-color;
     user-select: none;
   }
+
   .icon {
     height: 100px;
     max-width: 110px;
   }
-  
-  .restore{
-    position: absolute;
-    top: -42px;
-    left: 58px;
-    path{
-      fill:$action-menu-visibility;
+
+  .restore,
+  .permanent-delete {
+    path {
+      fill: $action-menu-visibility;
     }
-    &:hover{
-      path{
-        fill:$font-color-dark;
+
+    &:hover {
+      path {
+        fill: $font-color-dark;
       }
     }
   }
 
+  .item-action {
+    display: flex;
+    position: absolute;
+    top: -30%;
+    left: 57%;
+    width: 50px;
+  }
+
   @media screen and (max-width: $width-screen-md) {
     padding: 10px;
+
     .icon {
       height: 80px;
       width: 80px;
     }
+
     .input {
       font-size: 11px;
+    }
+    .item-action {
+      left: 52%;
+      top: -27%;
+      width: 40px;
+
+      .icon {
+        svg {
+          height: 20px;
+          width: 20px;
+        }
+      }
     }
   }
 }
 
-.folder-cover{
+.folder-cover {
   height: 140px;
   width: 130px;
   position: absolute;
@@ -55,6 +77,6 @@
   border-radius: 6px;
 }
 
-.rename-input{
+.rename-input {
   background-color: $selection-color;
 }

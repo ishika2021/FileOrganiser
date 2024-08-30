@@ -2,12 +2,22 @@
   <div>
     <div class="file-cover" v-if="isCut || isRenamed"></div>
     <div class="file" @dblclick="doubleClickAction($event, file)">
-      <Icon
-        v-if="itemAction"
-        :name="itemAction"
-        :class="`icon ${itemAction}`"
-        @click="handleItemAction($event, itemAction)"
-      />
+      <div class="item-action">
+        <Icon
+          v-if="itemAction"
+          :name="itemAction"
+          :class="`icon ${itemAction}`"
+          :tooltip="`${itemAction} item`"
+          @click="handleItemAction($event, itemAction)"
+        />
+        <Icon
+          v-if="itemAction === 'restore'"
+          name="delete"
+          class="icon permanent-delete"
+          tooltip="Delete Permanently"
+          @click="this.$emit('trash-action', file)"
+        />
+      </div>
       <img
         v-if="type === 'image'"
         :src="imageSource"
@@ -33,6 +43,7 @@
 import {
   computed,
   defineProps,
+  defineEmits,
   reactive,
   toRefs,
   ref,
@@ -61,6 +72,8 @@ const props = defineProps({
   },
 });
 
+defineEmits(["trash-action", "rename-file"]);
+
 const modelValue = ref("");
 const focusRenameInput = ref(null);
 
@@ -68,13 +81,13 @@ const store = useStore();
 
 const state = reactive({
   id: computed(() => {
-    return props.file.id;
+    return props.file?.id;
   }),
   type: computed(() => {
-    return props.file.type;
+    return props.file?.type;
   }),
   imageSource: computed(() => {
-    return props.file.base64;
+    return props.file?.base64;
   }),
   cutItems: computed(() => store.getters["actions/temporaryCutItems"]),
   isCut: computed(() => {
@@ -85,9 +98,9 @@ const state = reactive({
     return state.renamedItems?.item === state.id;
   }),
   itemAction: computed(() => {
-    if (props.file.trash) {
+    if (props.file?.trash) {
       return "restore";
-    } else if (props.file.starred) {
+    } else if (props.file?.starred) {
       return "starred";
     } else {
       return null;

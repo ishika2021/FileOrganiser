@@ -25,10 +25,13 @@ export const getRecentFiles = (recent, rootDirectory) => {
     if (parent) {
       obj.files?.forEach((fileID) => {
         const fileObj = parent.files.find(({ id }) => id === fileID);
-        result.push(fileObj);
+        if (fileObj) {
+          result.push(fileObj);
+        }
       });
     }
   });
+
   result = result.filter(({ trash }) => !trash);
   // Sort the recent files in decresing order of timestamp
   result.sort(
@@ -137,4 +140,48 @@ const modifyRestoreItem = (item, parent) => {
     const newName = generateUniqueFileName(item.name, allFileNames);
     item.name = newName;
   }
+};
+
+// Permanently deletes an item
+export const deleteItem = (item, trash, rootDirectory) => {
+  const parentID = item.parentID;
+  const parentTrashObj = trash.find(({ parent }) => parent === parentID);
+  parentTrashObj.content = parentTrashObj.content.filter(
+    (id) => id !== item.id
+  );
+
+  // removes the parent obj is content becomes empty
+  if (!parentTrashObj.content.length) {
+    trash = trash.filter(({ parent }) => parent !== parentID);
+  }
+
+  // delete the item from parent object
+  const parent = getFolderByID(parentID, rootDirectory);
+  const type = item.id.split("-")[0];
+  if (type === "D") {
+    parent.children = parent.children.filter((obj) => obj.id !== item.id);
+  } else if (type === "F") {
+    parent.files = parent.files.filter((obj) => obj.id !== item.id);
+  }
+
+  return trash;
+};
+
+// Permanently deletes all the items from trash view
+export const deleteAll = (trash, rootDirectory) => {
+  trash.forEach((obj) => {
+    const parentID = obj.parent;
+    const parent = getFolderByID(parentID, rootDirectory);
+
+    obj.content.forEach((id) => {
+      const type = id.split("-")[0];
+      if (type === "D") {
+        parent.children = parent.children.filter((obj) => obj.id !== id);
+      } else if (type === "F") {
+        parent.files = parent.files.filter((obj) => obj.id !== id);
+      }
+    });
+  });
+
+  return []; //makes trash empty
 };

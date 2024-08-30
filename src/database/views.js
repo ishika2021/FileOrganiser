@@ -15,6 +15,24 @@ const Views = {
   async init() {
     try {
       await DB.init(storeName, "type");
+      // adds default values to views object store
+      const isRecent = await this.getView("recent");
+      const isTrash = await this.getView("trash");
+      if (!isRecent) {
+        await this.updateRecent(null);
+      }
+      if (!isTrash) {
+        await this.updateTrash(null);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async getView(key) {
+    try {
+      const res = await DB.getData(storeName, key);
+      return res;
     } catch (error) {
       console.log(error);
     }

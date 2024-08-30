@@ -5,6 +5,8 @@ import {
   getTrashedContent,
   restoreItem,
   restoreAllItems,
+  deleteItem,
+  deleteAll,
 } from "@/utils/functionUtils/viewHelpers";
 import { ViewStore } from "@/database";
 export default {
@@ -70,6 +72,21 @@ export default {
         await ViewStore.updateTrash(JSON.parse(JSON.stringify(res)));
       }
     },
+    async PERMANENT_DELETE_ITEM(state, payload) {
+      const { item, rootState } = payload;
+      const res = deleteItem(item, state.trash, rootState.data.rootDirectory);
+      if (res) {
+        state.trash = res;
+        await ViewStore.updateTrash(JSON.parse(JSON.stringify(res)));
+      }
+    },
+    async PERMANENT_DELETE_ALL(state, rootState) {
+      const res = deleteAll(state.trash, rootState.data.rootDirectory);
+      if (res) {
+        state.trash = res;
+        await ViewStore.updateTrash(JSON.parse(JSON.stringify(res)));
+      }
+    },
   },
   actions: {
     addToRecent({ commit, dispatch }, file) {
@@ -100,6 +117,14 @@ export default {
     },
     restoreAllItems({ commit, dispatch, rootState }) {
       commit("RESTORE_ALL_ITEMS", rootState);
+      dispatch("updateTrashedContent");
+    },
+    permanentDeleteItem({ commit, dispatch, rootState }, item) {
+      commit("PERMANENT_DELETE_ITEM", { item, rootState });
+      dispatch("updateTrashedContent");
+    },
+    permanentDeleteAll({ commit, dispatch, rootState }) {
+      commit("PERMANENT_DELETE_ALL", rootState);
       dispatch("updateTrashedContent");
     },
   },

@@ -23,6 +23,7 @@
               class="selectable"
               :data-id="folder.id"
               @rename-folder="renameFolder"
+              @trash-action="handlePermanentDelete"
             />
           </div>
         </div>
@@ -34,14 +35,15 @@
           />
         </div>
         <div v-for="(file, index) in files" :key="index">
-          <div :class="selected === file.id ? 'folder-selected' : ''">
+          <div :class="selected === file?.id ? 'folder-selected' : ''">
             <File
               :file="file"
               class="selectable"
-              :data-id="file.id"
+              :data-id="file?.id"
               :isEdit="false"
               @rename-file="renameFile"
               :doubleClickAction="handleFileDoubleClick"
+              @trash-action="handlePermanentDelete"
             />
           </div>
         </div>
@@ -151,6 +153,10 @@ const handleFileDoubleClick = ($event, file) => {
   $event.stopPropagation();
   const updatedFile = getRecentFilePayload(file);
   store.dispatch("views/addToRecent", updatedFile);
+};
+
+const handlePermanentDelete = ($item) => {
+  store.dispatch("views/permanentDeleteItem", $item);
 };
 
 watch(
