@@ -2,6 +2,22 @@
   <div>
     <div class="folder-cover" v-if="isCut || isRenamed"></div>
     <div class="folder">
+      <div class="item-action">
+        <Icon
+          v-if="itemAction"
+          :name="itemAction"
+          :class="`icon ${itemAction}`"
+          :tooltip="`${itemAction} item`"
+          @click="handleItemAction($event, itemAction)"
+        />
+        <Icon
+          v-if="itemAction === 'restore'"
+          name="delete"
+          class="icon permanent-delete"
+          tooltip="Delete Permanently"
+          @click="this.$emit('trash-action', folder)"
+        />
+      </div>
       <Icon
         name="folder-full"
         class="icon"
@@ -68,7 +84,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["save-folder", "rename-folder"]);
+defineEmits(["save-folder", "rename-folder", "trash-action"]);
 
 const modelValue = ref("");
 const inputfolderName = ref(props.suggestedName);
@@ -90,7 +106,23 @@ const state = reactive({
     }
     return false;
   }),
+  itemAction: computed(() => {
+    if (!props.isCreated) {
+      if (props.folder.trash) {
+        return "restore";
+      } else if (props.folder.starred) {
+        return "starred";
+      }
+    }
+    return null;
+  }),
 });
+
+const handleItemAction = ($event, type) => {
+  if (type === "restore") {
+    store.dispatch("views/restoreItem", props.folder);
+  }
+};
 
 onMounted(() => {
   nextTick(() => {
@@ -114,5 +146,5 @@ watch(
   }
 );
 
-const { isCut, isRenamed } = toRefs(state);
+const { isCut, isRenamed, itemAction } = toRefs(state);
 </script>

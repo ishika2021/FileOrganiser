@@ -7,6 +7,7 @@
     :renameFolder="renameFolder"
     :renameFile="renameFile"
     :getFolderNamesuggestion="getNewFolderName"
+    @folder-double-click="handleFolderClick"
   />
 </template>
 
@@ -21,6 +22,8 @@ import {
   getNewFolderName,
   getNewFileName,
 } from "./utils/functionHelper";
+import { getNewBreadcrumb } from "@/utils/functionUtils/breadcrumbHelpers";
+import { ConstantStore } from "@/database";
 
 const store = useStore();
 const route = useRoute();
@@ -33,9 +36,11 @@ const state = reactive({
     const page = route.name.toLowerCase();
     return breadcrumbs[page];
   }),
+
+  //returns only the folders/files which aren't trashed
   unTrashedFolders: computed(() => {
     return state.currentFolder.children?.filter(({ trash }) => !trash);
-  }), //returns only the folders/files which aren't trashed
+  }),
   unTrashedFiles: computed(() => {
     return state.selectedFiles?.filter(({ trash }) => !trash);
   }),
@@ -81,6 +86,14 @@ const setNotification = (message, type = "default") => {
     message: message,
   };
   store.dispatch("display/updateNotification", notification);
+};
+
+const handleFolderClick = async ($folder) => {
+  const payload = getNewBreadcrumb(state.breadcrumbs, $folder, route.name);
+
+  await ConstantStore.updateCurrentFolder($folder.id);
+  store.dispatch("breadcrumbs/addBreadcrumb", payload);
+  store.dispatch("data/updateCurrentFolder", $folder.id);
 };
 
 const { unTrashedFolders, unTrashedFiles } = toRefs(state);

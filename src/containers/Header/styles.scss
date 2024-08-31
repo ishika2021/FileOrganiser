@@ -32,6 +32,9 @@
     display: flex;
     gap: 10px;
     align-items: center;
+    .trash-action{
+      width: 110px;
+    }
   }
 
   @media screen and (max-width: 768px) {
