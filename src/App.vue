@@ -123,7 +123,18 @@ export default {
       this.$store.dispatch("data/updateFolders", obj);
     }
 
+    if (trash && trash.value) {
+      //should stay before breadcrumbList so that it can be overriden if more than 1 breadcrumb exists for Trash view
+      this.$store.dispatch("views/updateTrash", trash.value);
+    }
+
     if (breadcrumbList) {
+      const { trash } = breadcrumbList;
+      if (trash.length > 1) {
+        // gets ID of folder that was open in the trash view before reload
+        const lastFolderID = trash[trash.length - 1].id;
+        this.$store.dispatch("views/updateTrashedContent", lastFolderID);
+      }
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", breadcrumbList);
     } else {
       const obj = {
@@ -152,10 +163,6 @@ export default {
 
     if (recent && recent.value) {
       this.$store.dispatch("views/updateRecent", recent.value);
-    }
-
-    if (trash && trash.value) {
-      this.$store.dispatch("views/updateTrash", trash.value);
     }
 
     //shows skeleton loader longer

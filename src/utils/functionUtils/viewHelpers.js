@@ -185,3 +185,14 @@ export const deleteAll = (trash, rootDirectory) => {
 
   return []; //makes trash empty
 };
+
+export const getTrashedContentFromFolder = (folderID, rootDirectory) => {
+  const parent = getFolderByID(folderID, rootDirectory);
+  const folders = parent.children.filter(({ trash }) => !trash);
+  const files = parent.files.filter(({ trash }) => !trash);
+
+  return {
+    folders: folders,
+    files: files,
+  };
+};

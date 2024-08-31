@@ -23,6 +23,7 @@
 
   .restore,
   .permanent-delete {
+    height: 100%;
     path {
       fill: $action-menu-visibility;
     }
@@ -37,9 +38,10 @@
   .item-action {
     display: flex;
     position: absolute;
-    top: -30%;
-    left: 57%;
+    top: -2%;
+    left: 63%;
     width: 50px;
+    height: 22px;
   }
 
   @media screen and (max-width: $width-screen-md) {
@@ -55,10 +57,11 @@
     }
     .item-action {
       left: 52%;
-      top: -27%;
+      top: -2%;
       width: 40px;
-
+      height: 22px;
       .icon {
+        height: 100%;
         svg {
           height: 20px;
           width: 20px;

@@ -7,6 +7,7 @@ import {
   restoreAllItems,
   deleteItem,
   deleteAll,
+  getTrashedContentFromFolder,
 } from "@/utils/functionUtils/viewHelpers";
 import { ViewStore } from "@/database";
 export default {
@@ -48,13 +49,26 @@ export default {
         await ViewStore.updateTrash(JSON.parse(JSON.stringify(res)));
       }
     },
-    UPDATE_TRASHED_CONTENT(state, rootState) {
-      const content = getTrashedContent(
-        state.trash,
-        rootState.data.rootDirectory
-      );
-      if (content) {
-        state.trashedItems = content;
+    UPDATE_TRASHED_CONTENT(state, payload) {
+      const { rootState, folderID } = payload;
+      // when trash has default view
+      if (folderID === "root") {
+        const content = getTrashedContent(
+          state.trash,
+          rootState.data.rootDirectory
+        );
+        if (content) {
+          state.trashedItems = content;
+        }
+      } else {
+        // when a folder is opened in trash view
+        const res = getTrashedContentFromFolder(
+          folderID,
+          rootState.data.rootDirectory
+        );
+        if (res) {
+          state.trashedItems = res;
+        }
       }
     },
     async RESTORE_ITEM(state, payload) {
@@ -108,8 +122,8 @@ export default {
       commit("UPDATE_TRASH", files);
       dispatch("updateTrashedContent");
     },
-    updateTrashedContent({ commit, rootState }) {
-      commit("UPDATE_TRASHED_CONTENT", rootState);
+    updateTrashedContent({ commit, rootState }, folderID = "root") {
+      commit("UPDATE_TRASHED_CONTENT", { rootState, folderID });
     },
     restoreItem({ commit, dispatch, rootState }, item) {
       commit("RESTORE_ITEM", { item, rootState });
