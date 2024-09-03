@@ -18,12 +18,14 @@
             :key="folder.id"
           >
             <Folder
-              :folder="folder"
-              :doubleClickAction="handleFolderDoubleClick"
               class="selectable"
+              :folder="folder"
               :data-id="folder.id"
+              :doubleClickAction="handleFolderDoubleClick"
               @rename-folder="renameFolder"
-              @trash-action="handlePermanentDelete"
+              @item-restored="handleRestore"
+              @item-trashed-permanently="handlePermanentDelete"
+              @starred-action="handleStarredClick"
             />
           </div>
         </div>
@@ -43,7 +45,9 @@
               :isEdit="false"
               @rename-file="renameFile"
               :doubleClickAction="handleFileDoubleClick"
-              @trash-action="handlePermanentDelete"
+              @item-restored="handleRestore"
+              @item-trashed-permanently="handlePermanentDelete"
+              @starred-action="handleStarredClick"
             />
           </div>
         </div>
@@ -142,8 +146,21 @@ const handleFileDoubleClick = ($event, file) => {
   store.dispatch("views/addToRecent", updatedFile);
 };
 
+const handleRestore = ($item) => {
+  store.dispatch("views/restoreItem", $item);
+};
+
 const handlePermanentDelete = ($item) => {
   store.dispatch("views/permanentDeleteItem", $item);
+};
+
+const handleStarredClick = ($item) => {
+  const isStarred = $item.starred;
+  if (isStarred) {
+    store.dispatch("starredView/removeFromStarred", $item);
+  } else {
+    store.dispatch("starredView/addToStarred", $item);
+  }
 };
 
 watch(

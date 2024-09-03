@@ -2,22 +2,27 @@
   <div>
     <div class="folder-cover" v-if="isCut || isRenamed"></div>
     <div class="folder">
-      <div class="item-action">
+      <div class="item-action" v-if="isTrashed">
         <Icon
-          v-if="itemAction"
-          :name="itemAction"
-          :class="`icon ${itemAction}`"
-          :tooltip="`${itemAction} item`"
-          @click="handleItemAction($event, itemAction)"
+          name="restore"
+          class="icon restore"
+          tooltip="Restore item"
+          @click="this.$emit('item-restored', folder)"
         />
         <Icon
-          v-if="itemAction === 'restore'"
           name="delete"
           class="icon permanent-delete"
           tooltip="Delete Permanently"
-          @click="this.$emit('trash-action', folder)"
+          @click="this.$emit('item-trashed-permanently', folder)"
         />
       </div>
+      <Icon
+        v-if="!isTrashView"
+        :name="starredIcon ? 'starred' : 'starred-outline'"
+        :color="starredIcon ? '#fdb93e' : ''"
+        :class="starredIcon ? 'starred-icon' : 'starred-icon starred-outline'"
+        @click="this.$emit('starred-action', props.folder)"
+      />
       <Icon
         name="folder-full"
         class="icon"
@@ -55,7 +60,17 @@ import {
   watch,
   nextTick,
 } from "vue";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+
+defineEmits([
+  "save-folder",
+  "rename-folder",
+  "item-restored",
+  "item-trashed-permanently",
+  "starred-action",
+]);
+
 const props = defineProps({
   folder: {
     type: Object,
@@ -84,14 +99,14 @@ const props = defineProps({
   },
 });
 
-defineEmits(["save-folder", "rename-folder", "trash-action"]);
-
 const modelValue = ref("");
 const inputfolderName = ref(props.suggestedName);
 const focusInput = ref(null);
 const focusRenameInput = ref(null);
+const item = reactive({ isStarred: props.folder?.starred });
 
 const store = useStore();
+const route = useRoute();
 
 const state = reactive({
   cutItems: computed(() => store.getters["actions/temporaryCutItems"]),
@@ -106,23 +121,10 @@ const state = reactive({
     }
     return false;
   }),
-  itemAction: computed(() => {
-    if (!props.isCreated) {
-      if (props.folder.trash) {
-        return "restore";
-      } else if (props.folder.starred) {
-        return "starred";
-      }
-    }
-    return null;
-  }),
+  isTrashed: computed(() => props.folder?.trash),
+  isTrashView: computed(() => route.name === "Trash"),
+  starredIcon: computed(() => item.isStarred),
 });
-
-const handleItemAction = ($event, type) => {
-  if (type === "restore") {
-    store.dispatch("views/restoreItem", props.folder);
-  }
-};
 
 onMounted(() => {
   nextTick(() => {
@@ -146,5 +148,13 @@ watch(
   }
 );
 
-const { isCut, isRenamed, itemAction } = toRefs(state);
+watch(
+  () => props.folder?.starred,
+  (newVal) => {
+    item.isStarred = newVal;
+  },
+  { immediate: true }
+);
+
+const { isCut, isRenamed, starredIcon, isTrashView, isTrashed } = toRefs(state);
 </script>

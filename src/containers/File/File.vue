@@ -2,22 +2,27 @@
   <div>
     <div class="file-cover" v-if="isCut || isRenamed"></div>
     <div class="file" @dblclick="doubleClickAction($event, file)">
-      <div class="item-action">
+      <div class="item-action" v-if="isTrashed">
         <Icon
-          v-if="itemAction"
-          :name="itemAction"
-          :class="`icon ${itemAction}`"
-          :tooltip="`${itemAction} item`"
-          @click="handleItemAction($event, itemAction)"
+          name="restore"
+          class="icon restore"
+          tooltip="Restore item"
+          @click="this.$emit('item-restored', file)"
         />
         <Icon
-          v-if="itemAction === 'restore'"
           name="delete"
           class="icon permanent-delete"
           tooltip="Delete Permanently"
-          @click="this.$emit('trash-action', file)"
+          @click="this.$emit('item-trashed-permanently', file)"
         />
       </div>
+      <Icon
+        v-if="!isTrashView"
+        :name="starredIcon ? 'starred' : 'starred-outline'"
+        :color="starredIcon ? '#fdb93e' : ''"
+        :class="starredIcon ? 'starred-icon' : 'starred-icon starred-outline'"
+        @click="this.$emit('starred-action', props.file)"
+      />
       <img
         v-if="type === 'image'"
         :src="imageSource"
@@ -53,6 +58,14 @@ import {
 } from "vue";
 import Icon from "@/components/Icon";
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
+
+defineEmits([
+  "item-restored",
+  "item-trashed-permanently",
+  "rename-file",
+  "starred-action",
+]);
 
 const props = defineProps({
   file: {
@@ -72,12 +85,12 @@ const props = defineProps({
   },
 });
 
-defineEmits(["trash-action", "rename-file"]);
-
 const modelValue = ref("");
 const focusRenameInput = ref(null);
+const item = reactive({ isStarred: props.file?.starred });
 
 const store = useStore();
+const route = useRoute();
 
 const state = reactive({
   id: computed(() => {
@@ -97,24 +110,10 @@ const state = reactive({
   isRenamed: computed(() => {
     return state.renamedItems?.item === state.id;
   }),
-  itemAction: computed(() => {
-    if (props.file?.trash) {
-      return "restore";
-    } else if (props.file?.starred) {
-      return "starred";
-    } else {
-      return null;
-    }
-  }),
+  isTrashed: computed(() => props.file?.trash),
+  isTrashView: computed(() => route.name === "Trash"),
+  starredIcon: computed(() => item.isStarred),
 });
-
-const handleItemAction = ($event, type) => {
-  if (type === "restore") {
-    store.dispatch("views/restoreItem", props.file);
-  } else if (type === "starred") {
-    //  add starred logic
-  }
-};
 
 onMounted(() => {
   if (props.file) {
@@ -133,5 +132,21 @@ watch(
   }
 );
 
-const { type, imageSource, isCut, isRenamed, itemAction } = toRefs(state);
+watch(
+  () => props.file?.starred,
+  (newVal) => {
+    item.isStarred = newVal;
+  },
+  { immediate: true }
+);
+
+const {
+  type,
+  imageSource,
+  isCut,
+  isRenamed,
+  starredIcon,
+  isTrashView,
+  isTrashed,
+} = toRefs(state);
 </script>

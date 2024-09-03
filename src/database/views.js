@@ -18,11 +18,16 @@ const Views = {
       // adds default values to views object store
       const isRecent = await this.getView("recent");
       const isTrash = await this.getView("trash");
+      const isStarred = await this.getView("starred");
       if (!isRecent) {
         await this.updateRecent(null);
       }
       if (!isTrash) {
         await this.updateTrash(null);
+      }
+
+      if (!isStarred) {
+        await this.updateStarred(null);
       }
     } catch (error) {
       console.log(error);
@@ -49,6 +54,14 @@ const Views = {
   async updateTrash(item) {
     try {
       await addToViews("trash", item);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async updateStarred(item) {
+    try {
+      await addToViews("starred", item);
     } catch (error) {
       console.log(error);
     }
