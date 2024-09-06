@@ -15,24 +15,86 @@
     color: $heading-color;
     user-select: none;
   }
+
   .icon {
     height: 100px;
     max-width: 110px;
   }
 
+  .restore,
+  .permanent-delete {
+    height: 100%;
+
+    path {
+      fill: $action-menu-visibility;
+    }
+
+    &:hover {
+      path {
+        fill: $font-color-dark;
+      }
+    }
+  }
+
+  .item-action {
+    display: flex;
+    position: absolute;
+    top: -2%;
+    left: 63%;
+    width: 50px;
+    height: 22px;
+  }
+
+  .starred-icon {
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    left: 78%;
+    top: -2%;
+
+  }
+
+  .starred-outline {
+    path {
+      fill: $action-menu-visibility;
+    }
+
+    &:hover {
+      path {
+        fill: $font-color-dark;
+      }
+    }
+  }
+
   @media screen and (max-width: $width-screen-md) {
     padding: 10px;
+
     .icon {
       height: 80px;
       width: 80px;
     }
+
     .input {
       font-size: 11px;
+    }
+
+    .item-action {
+      left: 52%;
+      top: -25%;
+      width: 40px;
+      height: 22px;
+    }
+
+    .starred-icon {
+      left: 72%;
+      height: 23px;
+      width: 23px;
+      top: -2%;
     }
   }
 }
 
-.folder-cover{
+.folder-cover {
   height: 140px;
   width: 130px;
   position: absolute;
@@ -41,6 +103,6 @@
   border-radius: 6px;
 }
 
-.rename-input{
+.rename-input {
   background-color: $selection-color;
 }

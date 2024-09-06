@@ -1,6 +1,5 @@
 .v-snackbar__wrapper {
   top: 95% !important;
-  border: 1px solid $border-color;
-  background-color: $background-secondary;
-  color: $font-color-dark;
+  background-color: $background-secondary  !important;
+  color: $font-color-dark  !important;
 }

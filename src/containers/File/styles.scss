@@ -6,18 +6,21 @@
   width: 100px;
   gap: 5px;
   position: relative;
+  
   .image-icon {
     max-width: 100%;
     height: 95px;
     padding: 10px;
     padding-bottom: 0px;
   }
+
   .file-icon {
     svg {
       width: 80px;
       height: 95px;
     }
   }
+
   .input {
     width: 100%;
     outline: none;
@@ -25,24 +28,78 @@
     text-align: center;
     color: $heading-color;
   }
+  
+  .textarea{
+    width: 100%;
+    font-size: 13px;
+    overflow: visible;
+  }
+
   .rename-input {
     background-color: $selection-color;
   }
+
+  .restore,
+  .permanent-delete {
+    path {
+      fill: $action-menu-visibility;
+    }
+
+    &:hover {
+      path {
+        fill: $font-color-dark;
+      }
+    }
+  }
+
+  .item-action {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: -10%;
+    left: 45%;
+    width: 50px;
+  }
   
+  .starred-icon{
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    left: 73%;
+    top: -7%;
+  }
+
   @media screen and (max-width: $width-screen-md) {
     padding: 10px 0px;
+    gap: 0px;
+     
     .image-icon {
       height: 80px;
       width: 120px;
     }
+
     .file-icon {
       svg {
         width: 50px;
         height: 80px;
       }
     }
+
     .input {
       font-size: 11px;
+    }
+
+    .item-action {
+      left: 38%;
+      top: -2%;
+      width: 40px;
+    }
+    
+    .starred-icon{
+      left: 72%;
+      top: -3%;
+      height: 23px;
+      width: 23px;
     }
   }
 }

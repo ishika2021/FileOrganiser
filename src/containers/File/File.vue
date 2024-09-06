@@ -1,7 +1,28 @@
 <template>
   <div>
     <div class="file-cover" v-if="isCut || isRenamed"></div>
-    <div class="file" @click="action($event, id)">
+    <div class="file" @dblclick="doubleClickAction($event, file)">
+      <div class="item-action" v-if="isTrashed">
+        <Icon
+          name="restore"
+          class="icon restore"
+          tooltip="Restore item"
+          @click="this.$emit('item-restored', file)"
+        />
+        <Icon
+          name="delete"
+          class="icon permanent-delete"
+          tooltip="Delete Permanently"
+          @click="this.$emit('item-trashed-permanently', file)"
+        />
+      </div>
+      <Icon
+        v-if="!isTrashView"
+        :name="starredIcon ? 'starred' : 'starred-outline'"
+        :color="starredIcon ? '#fdb93e' : ''"
+        :class="starredIcon ? 'starred-icon' : 'starred-icon starred-outline'"
+        @click="this.$emit('starred-action', props.file)"
+      />
       <img
         v-if="type === 'image'"
         :src="imageSource"
@@ -9,15 +30,11 @@
         class="image-icon"
       />
       <Icon v-else :name="type" class="file-icon" />
-      <input
-        class="input"
-        :class="isRenamed ? 'rename-input' : ''"
-        v-model="modelValue"
-        :disabled="!isRenamed"
-        ref="focusRenameInput"
-        @keyup.enter="
-          this.$emit('rename-file', { name: modelValue, file: file })
-        "
+      <Input
+        :modelValue="file.name"
+        :isEdit="isRenamed"
+        @update:modelValue="handleFileRename"
+        :fileExtension="file.extension"
       />
     </div>
   </div>
@@ -27,6 +44,7 @@
 import {
   computed,
   defineProps,
+  defineEmits,
   reactive,
   toRefs,
   ref,
@@ -36,6 +54,15 @@ import {
 } from "vue";
 import Icon from "@/components/Icon";
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
+import Input from "@/components/Input";
+
+const emit = defineEmits([
+  "item-restored",
+  "item-trashed-permanently",
+  "rename-file",
+  "starred-action",
+]);
 
 const props = defineProps({
   file: {
@@ -43,7 +70,12 @@ const props = defineProps({
     default: () => {},
     required: true,
   },
-  action: {
+  singleClickAction: {
+    type: Function,
+    default: () => {},
+    required: true,
+  },
+  doubleClickAction: {
     type: Function,
     default: () => {},
     required: true,
@@ -52,18 +84,20 @@ const props = defineProps({
 
 const modelValue = ref("");
 const focusRenameInput = ref(null);
+const item = reactive({ isStarred: props.file?.starred });
 
 const store = useStore();
+const route = useRoute();
 
 const state = reactive({
   id: computed(() => {
-    return props.file.id;
+    return props.file?.id;
   }),
   type: computed(() => {
-    return props.file.type;
+    return props.file?.type;
   }),
   imageSource: computed(() => {
-    return props.file.base64;
+    return props.file?.base64;
   }),
   cutItems: computed(() => store.getters["actions/temporaryCutItems"]),
   isCut: computed(() => {
@@ -73,7 +107,14 @@ const state = reactive({
   isRenamed: computed(() => {
     return state.renamedItems?.item === state.id;
   }),
+  isTrashed: computed(() => props.file?.trash),
+  isTrashView: computed(() => route.name === "Trash"),
+  starredIcon: computed(() => item.isStarred),
 });
+
+const handleFileRename = ($value) => {
+  emit("rename-file", { name: $value, file: props.file });
+};
 
 onMounted(() => {
   if (props.file) {
@@ -92,5 +133,21 @@ watch(
   }
 );
 
-const { id, type, imageSource, isCut, isRenamed } = toRefs(state);
+watch(
+  () => props.file?.starred,
+  (newVal) => {
+    item.isStarred = newVal;
+  },
+  { immediate: true }
+);
+
+const {
+  type,
+  imageSource,
+  isCut,
+  isRenamed,
+  starredIcon,
+  isTrashView,
+  isTrashed,
+} = toRefs(state);
 </script>

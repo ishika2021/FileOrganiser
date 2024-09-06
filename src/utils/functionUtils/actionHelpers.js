@@ -46,12 +46,18 @@ export const updateTrashFlag = (rootDirectory, trashObject) => {
 
   toBeDeleted.forEach((item) => {
     const type = item.charAt(0);
+
+    let res;
     if (type === "F") {
-      const res = parentFolder.files.find(({ id }) => id === item);
-      res.trash = true;
+      res = parentFolder.files.find(({ id }) => id === item);
     } else if (type === "D") {
-      const res = parentFolder.children.find(({ id }) => id === item);
+      res = parentFolder.children.find(({ id }) => id === item);
+    }
+
+    if (res) {
       res.trash = true;
+      res.starred = false;
+      res.recent = false;
     }
   });
 

@@ -65,8 +65,9 @@ export default {
     updateSelectedItem({ commit }, items) {
       commit("UPDATE_SELECTED_ITEM", items);
     },
-    moveToTrash({ commit, rootState }, obj) {
+    moveToTrash({ commit, rootState, dispatch }, obj) {
       commit("MOVE_TO_TRASH", { obj, rootState });
+      dispatch("views/addToTrash", obj, { root: true });
     },
     updateActionMenuVisibility({ commit }, obj) {
       commit("UPDATE_ACTION_MENU_VISIBILITY", obj);

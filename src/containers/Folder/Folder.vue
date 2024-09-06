@@ -2,32 +2,50 @@
   <div>
     <div class="folder-cover" v-if="isCut || isRenamed"></div>
     <div class="folder">
+      <div class="item-action" v-if="isTrashed">
+        <Icon
+          name="restore"
+          class="icon restore"
+          tooltip="Restore item"
+          @click="this.$emit('item-restored', folder)"
+        />
+        <Icon
+          name="delete"
+          class="icon permanent-delete"
+          tooltip="Delete Permanently"
+          @click="this.$emit('item-trashed-permanently', folder)"
+        />
+      </div>
+      <Icon
+        v-if="!isTrashView"
+        :name="starredIcon ? 'starred' : 'starred-outline'"
+        :color="starredIcon ? '#fdb93e' : ''"
+        :class="starredIcon ? 'starred-icon' : 'starred-icon starred-outline'"
+        @click="this.$emit('starred-action', props.folder)"
+      />
       <Icon
         name="folder-full"
         class="icon"
         @dblclick="doubleClickAction($event, folder)"
       />
-      <input
+      <Input
         v-if="isCreated"
-        class="input"
-        v-model="inputfolderName"
-        ref="focusInput"
-        @keyup.enter="this.$emit('save-folder', inputfolderName)"
+        :modelValue="inputfolderName"
+        :isEdit="isCreated"
+        @update:modelValue="handleFolderSave"
       />
-      <input
+      <Input
         v-else
-        class="input"
-        :class="isRenamed ? 'rename-input' : ''"
-        v-model="modelValue"
-        :disabled="!isRenamed"
-        ref="focusRenameInput"
-        @keyup.enter="this.$emit('rename-folder', { name: modelValue, folder })"
+        :modelValue="folder.name"
+        :isEdit="isRenamed"
+        @update:modelValue="handleFolderRename"
       />
     </div>
   </div>
 </template>
 <script setup>
 import Icon from "@/components/Icon";
+import Input from "@/components/Input";
 import {
   computed,
   onMounted,
@@ -39,7 +57,17 @@ import {
   watch,
   nextTick,
 } from "vue";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+
+const emit = defineEmits([
+  "save-folder",
+  "rename-folder",
+  "item-restored",
+  "item-trashed-permanently",
+  "starred-action",
+]);
+
 const props = defineProps({
   folder: {
     type: Object,
@@ -68,14 +96,14 @@ const props = defineProps({
   },
 });
 
-defineEmits(["save-folder", "rename-folder"]);
-
 const modelValue = ref("");
 const inputfolderName = ref(props.suggestedName);
 const focusInput = ref(null);
 const focusRenameInput = ref(null);
+const item = reactive({ isStarred: props.folder?.starred });
 
 const store = useStore();
+const route = useRoute();
 
 const state = reactive({
   cutItems: computed(() => store.getters["actions/temporaryCutItems"]),
@@ -90,7 +118,18 @@ const state = reactive({
     }
     return false;
   }),
+  isTrashed: computed(() => props.folder?.trash),
+  isTrashView: computed(() => route.name === "Trash"),
+  starredIcon: computed(() => item.isStarred),
 });
+
+const handleFolderRename = ($value) => {
+  emit("rename-folder", { name: $value, folder: props.folder });
+};
+
+const handleFolderSave = ($value) => {
+  emit("save-folder", $value);
+};
 
 onMounted(() => {
   nextTick(() => {
@@ -114,5 +153,13 @@ watch(
   }
 );
 
-const { isCut, isRenamed } = toRefs(state);
+watch(
+  () => props.folder?.starred,
+  (newVal) => {
+    item.isStarred = newVal;
+  },
+  { immediate: true }
+);
+
+const { isCut, isRenamed, starredIcon, isTrashView, isTrashed } = toRefs(state);
 </script>

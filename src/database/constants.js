@@ -6,6 +6,18 @@ const Constants = {
   async init() {
     try {
       await DB.init(storeName, "type");
+      const isCurrentFolderID = await this.getConstant("currentFolderID");
+      const isTheme = await this.getConstant("theme");
+      const isScreenSize = await this.getConstant("screenSize");
+      if (!isCurrentFolderID) {
+        await this.updateCurrentFolder("root");
+      }
+      if (!isTheme) {
+        await this.updateTheme(null);
+      }
+      if (!isScreenSize) {
+        await this.updateScreenSize(null);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -38,7 +50,7 @@ const Constants = {
   async getConstant(key) {
     try {
       const res = await DB.getData(storeName, key);
-      return res.value;
+      return res;
     } catch (error) {
       console.log(error);
     }

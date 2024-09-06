@@ -1,11 +1,18 @@
 <template>
-  <EmptyScreen />
+  <BaseWrapper :files="recentFiles" />
 </template>
 
-<script>
-import EmptyScreen from "@/components/EmptyScreen";
-export default {
-  name: "Recent",
-  components: { EmptyScreen },
-};
+<script setup>
+import { useStore } from "vuex";
+import { computed, reactive, toRefs } from "vue";
+
+import BaseWrapper from "@/views/BaseWrapper";
+
+const store = useStore();
+
+const state = reactive({
+  recentFiles: computed(() => store.getters["views/recentFiles"]),
+});
+
+const { recentFiles } = toRefs(state);
 </script>

@@ -24,18 +24,39 @@
           :menu="button.menu"
           :visible="button.visible"
         />
+        <Button
+          v-if="pageTitle === 'Trash'"
+          icon="restore"
+          type="primary"
+          label="Restore All"
+          :size="iconSize"
+          :class="iconSize === 'full' ? 'trash-action' : ''"
+          @click="handleRestoreAll"
+        />
+        <Button
+          v-if="pageTitle === 'Trash'"
+          icon="delete"
+          type="danger"
+          label="Delete All"
+          :size="iconSize"
+          :class="iconSize === 'full' ? 'trash-action' : ''"
+          @click="handleDeleteAll"
+        />
       </div>
     </section>
   </nav>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 import SearchBar from "@/components/SearchBar";
 import Breadcrumbs from "@/containers/Breadcrumbs";
 import Dropdown from "@/components/Dropdown";
 import FileUpload from "@/components/FileUpload/FileUpload";
 import MenuItem from "@/components/MenuItem";
 import ThemeSwitch from "@/containers/ThemeSwitch";
+import Button from "@/components/Button/Button.vue";
 export default {
   name: "Header",
   components: {
@@ -43,8 +64,18 @@ export default {
     Breadcrumbs,
     Dropdown,
     ThemeSwitch,
+    Button,
   },
   computed: {
+    ...mapGetters({
+      screenSize: "display/screenSize",
+    }),
+    iconSize() {
+      if (this.screenSize === "medium" || this.screenSize === "small") {
+        return "small";
+      }
+      return "full";
+    },
     pageTitle() {
       return this.$route.name;
     },
@@ -56,7 +87,7 @@ export default {
           label: "Sort",
           hasList: true,
           type: "primary",
-          size: "medium",
+          size: route !== "Trash" ? "medium" : "small",
           menu: [],
           visible: route !== "Dashboard",
         },
@@ -65,7 +96,7 @@ export default {
           label: "View",
           hasList: true,
           type: "primary",
-          size: "medium",
+          size: route !== "Trash" ? "medium" : "small",
           menu: [],
           visible: route !== "Dashboard",
         },
@@ -103,6 +134,12 @@ export default {
     },
     addFolder() {
       this.$store.dispatch("data/addNewFolder", true);
+    },
+    handleRestoreAll() {
+      this.$store.dispatch("views/restoreAllItems");
+    },
+    handleDeleteAll() {
+      this.$store.dispatch("views/permanentDeleteAll");
     },
   },
 };

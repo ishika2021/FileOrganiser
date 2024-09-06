@@ -7,12 +7,14 @@
     :renameFolder="renameFolder"
     :renameFile="renameFile"
     :getFolderNamesuggestion="getNewFolderName"
+    @folder-double-click="handleFolderClick"
   />
 </template>
 
 <script setup>
 import { useStore } from "vuex";
 import { computed, reactive, toRefs } from "vue";
+import { useRoute } from "vue-router";
 
 import BaseWrapper from "../BaseWrapper";
 import {
@@ -20,16 +22,25 @@ import {
   getNewFolderName,
   getNewFileName,
 } from "./utils/functionHelper";
+import { getNewBreadcrumb } from "@/utils/functionUtils/breadcrumbHelpers";
+import { ConstantStore } from "@/database";
 
 const store = useStore();
+const route = useRoute();
 
 const state = reactive({
   currentFolder: computed(() => store.getters["data/currentFolder"]),
   selectedFiles: computed(() => store.getters["data/selectedFiles"]),
-  breadcrumbs: computed(() => store.getters["breadcrumbs/breadcrumbs"]),
+  breadcrumbs: computed(() => {
+    const breadcrumbs = store.getters["breadcrumbs/breadcrumbs"];
+    const page = route.name.toLowerCase();
+    return breadcrumbs[page];
+  }),
+
+  //returns only the folders/files which aren't trashed
   unTrashedFolders: computed(() => {
     return state.currentFolder.children?.filter(({ trash }) => !trash);
-  }), //returns only the folders/files which aren't trashed
+  }),
   unTrashedFiles: computed(() => {
     return state.selectedFiles?.filter(({ trash }) => !trash);
   }),
@@ -75,6 +86,14 @@ const setNotification = (message, type = "default") => {
     message: message,
   };
   store.dispatch("display/updateNotification", notification);
+};
+
+const handleFolderClick = async ($folder) => {
+  const payload = getNewBreadcrumb(state.breadcrumbs, $folder, route.name);
+
+  await ConstantStore.updateCurrentFolder($folder.id);
+  store.dispatch("breadcrumbs/addBreadcrumb", payload);
+  store.dispatch("data/updateCurrentFolder", $folder.id);
 };
 
 const { unTrashedFolders, unTrashedFiles } = toRefs(state);

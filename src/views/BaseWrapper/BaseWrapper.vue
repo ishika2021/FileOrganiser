@@ -18,12 +18,14 @@
             :key="folder.id"
           >
             <Folder
-              :folder="folder"
-              :singleClickAction="fileAction"
-              :doubleClickAction="handleFolderDoubleClick"
               class="selectable"
+              :folder="folder"
               :data-id="folder.id"
+              :doubleClickAction="handleFolderDoubleClick"
               @rename-folder="renameFolder"
+              @item-restored="handleRestore"
+              @item-trashed-permanently="handlePermanentDelete"
+              @starred-action="handleStarredClick"
             />
           </div>
         </div>
@@ -35,14 +37,17 @@
           />
         </div>
         <div v-for="(file, index) in files" :key="index">
-          <div :class="selected === file.id ? 'folder-selected' : ''">
+          <div :class="selected === file?.id ? 'folder-selected' : ''">
             <File
               :file="file"
-              :action="fileAction"
               class="selectable"
-              :data-id="file.id"
+              :data-id="file?.id"
               :isEdit="false"
               @rename-file="renameFile"
+              :doubleClickAction="handleFileDoubleClick"
+              @item-restored="handleRestore"
+              @item-trashed-permanently="handlePermanentDelete"
+              @starred-action="handleStarredClick"
             />
           </div>
         </div>
@@ -53,24 +58,24 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, ref, watch, defineProps } from "vue";
+import { computed, ref, watch, defineProps, defineEmits } from "vue";
 
 import ActionMenu from "@/containers/ActionMenu";
 import Folder from "@/containers/Folder";
 import File from "@/containers/File";
 import { useSelectable } from "@/composables/useSelectable";
-import { ConstantStore } from "@/database";
+import { getRecentFilePayload } from "./utils/functionHelpers";
 
 const props = defineProps({
   folders: {
     type: Array,
     default: () => [],
-    required: true,
+    required: false,
   },
   files: {
     type: Array,
     default: () => [],
-    required: true,
+    required: false,
   },
   folderAction: {
     type: Function,
@@ -98,33 +103,21 @@ const props = defineProps({
     required: false,
   },
 });
+
+const emit = defineEmits(["folder-double-click"]);
+
 const store = useStore();
 const selected = ref(null);
 const suggestedName = ref("");
 
 const newFolder = computed(() => store.getters["data/isNewFolder"]);
-const breadcrumbs = computed(() => store.getters["breadcrumbs/breadcrumbs"]);
 const currentFolder = computed(() => store.getters["data/currentFolder"]);
 const lastActiveFolder = computed(
   () => store.getters["actions/lastActiveFolder"]
 );
-
 const handleFolderDoubleClick = async ($event, folder) => {
   $event.stopPropagation();
-  const lastTitlePath = breadcrumbs.value[breadcrumbs.value.length - 1].path;
-  const path =
-    lastTitlePath === "/"
-      ? "/" + folder.name
-      : lastTitlePath + "/" + folder.name;
-  const obj = {
-    title: folder.name,
-    path: path,
-    id: folder.id,
-  };
-
-  await ConstantStore.updateCurrentFolder(folder.id);
-  store.dispatch("breadcrumbs/addBreadcrumb", obj);
-  store.dispatch("data/updateCurrentFolder", folder.id);
+  emit("folder-double-click", folder);
 };
 
 const handleSelectedFolder = (selectedItemIDs) => {
@@ -132,7 +125,6 @@ const handleSelectedFolder = (selectedItemIDs) => {
     handleActionMenuVisibility(false);
     return;
   }
-
   store.dispatch("actions/updateSelectedItem", selectedItemIDs);
 };
 
@@ -145,6 +137,30 @@ const handleBoardClick = (e) => {
   store.dispatch("actions/updateLastActiveFolder", null);
   store.dispatch("actions/updateRenamedItems", {}); //disables rename input
   store.dispatch("data/addNewFolder", false); //removes the new unsaved folder
+};
+
+const handleFileDoubleClick = ($event, file) => {
+  // Add file to recent files
+  $event.stopPropagation();
+  const updatedFile = getRecentFilePayload(file);
+  store.dispatch("views/addToRecent", updatedFile);
+};
+
+const handleRestore = ($item) => {
+  store.dispatch("views/restoreItem", $item);
+};
+
+const handlePermanentDelete = ($item) => {
+  store.dispatch("views/permanentDeleteItem", $item);
+};
+
+const handleStarredClick = ($item) => {
+  const isStarred = $item.starred;
+  if (isStarred) {
+    store.dispatch("starredView/removeFromStarred", $item);
+  } else {
+    store.dispatch("starredView/addToStarred", $item);
+  }
 };
 
 watch(

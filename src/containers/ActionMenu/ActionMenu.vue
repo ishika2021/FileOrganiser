@@ -16,11 +16,13 @@
 <script setup>
 import { ref, computed, onMounted, watch, reactive } from "vue";
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 import Icon from "@/components/Icon";
 import { ActionStore } from "@/database";
 import { getMenuItemState, handleActionMenu } from "./utils/functionHelpers";
 
 const store = useStore();
+const route = useRoute();
 
 const state = reactive({
   selectedItems: computed(() => store.getters["actions/selectedItems"]),
@@ -30,6 +32,7 @@ const state = reactive({
   copiedObject: computed(() => store.getters["actions/copiedItems"]),
   cutObject: computed(() => store.getters["actions/cutItems"]),
   currentFolder: computed(() => store.getters["data/currentFolder"]),
+  currentView: computed(() => route.name),
 });
 
 const { updateCut, updateCopy } = ActionStore;
@@ -45,6 +48,11 @@ const trash = () => {
     };
 
     store.dispatch("actions/moveToTrash", payload);
+    store.dispatch(
+      "starredView/removeDeletedStarredContent",
+      state.selectedItems
+    ); //Removes the file from starred view and state
+    store.dispatch("views/removeDeletedRecentFiles", state.selectedItems); //Removes the file from recent view and state
     showActionMenu.value = false;
     setNotification("Item deleted");
   }
@@ -148,7 +156,7 @@ const rename = () => {
 const handleActionMenuVisibility = () => {
   const menu = actionMenu.value;
   const isCutCopy = state.copiedObject || state.cutObject ? true : false;
-  handleActionMenu(menu, showActionMenu.value, isCutCopy);
+  handleActionMenu(menu, showActionMenu.value, isCutCopy, state.currentView);
 };
 
 const setNotification = (message, type = "default") => {
@@ -161,6 +169,7 @@ const setNotification = (message, type = "default") => {
 
 onMounted(() => {
   showActionMenu.value = state.menuVisibilityStatus;
+  handleActionMenuVisibility(); //Show menu visibility according to views
 });
 
 watch(

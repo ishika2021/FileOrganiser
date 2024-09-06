@@ -1,12 +1,6 @@
 <template>
   <div
-    :class="
-      !isAllowed
-        ? 'not-allowed menu-item'
-        : isDropdown
-        ? 'dropdown-menu-item'
-        : 'menu-item'
-    "
+    :class="isDropdown ? 'dropdown-menu-item' : 'menu-item'"
     @click="action()"
   >
     <Icon
@@ -59,6 +53,7 @@ export default {
     isAllowed: {
       type: Boolean,
       required: false,
+      default: true,
     },
   },
 };

@@ -50,6 +50,8 @@ export default {
         return "#2DBD96";
       } else if (this.type === "secondary") {
         return "#ffffff";
+      } else if (this.type === "danger") {
+        return "#f7685b";
       }
       return "";
     },
