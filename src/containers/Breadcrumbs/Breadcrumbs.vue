@@ -36,9 +36,14 @@ export default {
         this.$route.name
       );
 
-      // handles breadcrumb navigation in Trash view
+      // handles breadcrumb navigation in views
       if (this.$route.name === "Trash") {
         this.$store.dispatch("views/updateTrashedContent", nextCurrentFolderID);
+      } else if (this.$route.name === "Starred") {
+        this.$store.dispatch(
+          "starredView/updateStarredContent",
+          nextCurrentFolderID
+        );
       } else {
         await ConstantStore.updateCurrentFolder(nextCurrentFolderID);
         this.$store.dispatch("data/updateCurrentFolder", nextCurrentFolderID);

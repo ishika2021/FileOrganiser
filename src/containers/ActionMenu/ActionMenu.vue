@@ -48,7 +48,11 @@ const trash = () => {
     };
 
     store.dispatch("actions/moveToTrash", payload);
-    store.dispatch("views/updateRecentFiles"); //Removes the file from recent file view
+    store.dispatch(
+      "starredView/removeDeletedStarredContent",
+      state.selectedItems
+    ); //Removes the file from starred view and state
+    store.dispatch("views/removeDeletedRecentFiles", state.selectedItems); //Removes the file from recent view and state
     showActionMenu.value = false;
     setNotification("Item deleted");
   }

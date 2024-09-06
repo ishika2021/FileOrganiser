@@ -28,6 +28,12 @@
     text-align: center;
     color: $heading-color;
   }
+  
+  .textarea{
+    width: 100%;
+    font-size: 13px;
+    overflow: visible;
+  }
 
   .rename-input {
     background-color: $selection-color;
@@ -54,11 +60,19 @@
     left: 45%;
     width: 50px;
   }
+  
+  .starred-icon{
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    left: 73%;
+    top: -7%;
+  }
 
   @media screen and (max-width: $width-screen-md) {
     padding: 10px 0px;
     gap: 0px;
-
+     
     .image-icon {
       height: 80px;
       width: 120px;
@@ -79,13 +93,13 @@
       left: 38%;
       top: -2%;
       width: 40px;
-
-      .icon {
-        svg {
-          height: 19px;
-          width: 19px;
-        }
-      }
+    }
+    
+    .starred-icon{
+      left: 72%;
+      top: -3%;
+      height: 23px;
+      width: 23px;
     }
   }
 }

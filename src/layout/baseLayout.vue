@@ -21,7 +21,6 @@ export default {
 
 <style>
 main {
-  display: grid;
   width: 100%;
 }
 </style>

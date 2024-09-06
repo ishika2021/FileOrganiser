@@ -71,6 +71,9 @@ export default {
     color() {
       this.svgLoader();
     },
+    name() {
+      this.svgLoader();
+    },
   },
 };
 </script>

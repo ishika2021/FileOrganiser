@@ -8,6 +8,7 @@ import {
   deleteItem,
   deleteAll,
   getTrashedContentFromFolder,
+  removeAllFromRecent,
 } from "@/utils/functionUtils/viewHelpers";
 import { ViewStore } from "@/database";
 export default {
@@ -101,6 +102,13 @@ export default {
         await ViewStore.updateTrash(JSON.parse(JSON.stringify(res)));
       }
     },
+    async REMOVE_DELETED_RECENT_FILES(state, payload) {
+      const res = removeAllFromRecent(state.recent, payload);
+      if (res) {
+        state.recent = res;
+        await ViewStore.updateRecent(JSON.parse(JSON.stringify(res)));
+      }
+    },
   },
   actions: {
     addToRecent({ commit, dispatch }, file) {
@@ -140,6 +148,10 @@ export default {
     permanentDeleteAll({ commit, dispatch, rootState }) {
       commit("PERMANENT_DELETE_ALL", rootState);
       dispatch("updateTrashedContent");
+    },
+    removeDeletedRecentFiles({ commit, dispatch }, Ids) {
+      commit("REMOVE_DELETED_RECENT_FILES", Ids);
+      dispatch("updateRecentFiles");
     },
   },
 };

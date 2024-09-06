@@ -7,7 +7,7 @@
       color="#A6A8A8"
     />
     <span @click="action(item)" :class="item.id === 'root' ? 'bold' : ''">
-      {{ item.title }}
+      {{ title }}
     </span>
   </li>
 </template>
@@ -32,6 +32,14 @@ export default {
   computed: {
     currentPage() {
       return this.$route.name;
+    },
+    title() {
+      // truncate the long breadcrumbs
+      const text = this.item.title;
+      if (text.length > 10) {
+        return text.substr(0, 10) + "\u2026";
+      }
+      return text;
     },
   },
 };

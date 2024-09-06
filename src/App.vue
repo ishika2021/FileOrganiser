@@ -9,7 +9,6 @@
 <script>
 import { mapGetters } from "vuex";
 import Notification from "./components/Notification";
-import { getNewFolder } from "@/views/Folders/utils/functionHelper";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import {
   ConstantStore,
@@ -61,19 +60,6 @@ export default {
       await DirectoryStore.init();
       await ViewStore.init();
     },
-    createDefaultFolders() {
-      const folders = ["Document", "Images", "Important"];
-      const currentFolder = {
-        id: "root",
-        children: [],
-      };
-      const result = [];
-      folders.forEach((folder) => {
-        const newFolder = getNewFolder(folder, currentFolder);
-        result.push(newFolder);
-      });
-      return result;
-    },
   },
   mounted() {
     window.addEventListener("resize", this.handleScreenWidthChange);
@@ -88,7 +74,7 @@ export default {
     const [currentFolderID, screenSize, theme] =
       await ConstantStore.getAllConstants();
     const [copy, cut] = await ActionStore.getAllActions();
-    const [recent, trash] = await ViewStore.getAllViews();
+    const [recent, starred, trash] = await ViewStore.getAllViews();
 
     if (copy && copy.value) {
       this.$store.dispatch("actions/updateCopiedItems", copy.value);
@@ -113,27 +99,28 @@ export default {
       };
 
       this.$store.dispatch("data/updateFolders", obj);
-    } else {
-      // gives default folder for new user
-      const children = this.createDefaultFolders();
-      const obj = {
-        folders: children,
-        files: [],
-      };
-      this.$store.dispatch("data/updateFolders", obj);
     }
 
+    //should stay before breadcrumbList so that it can be overriden if more than 1 breadcrumb exists for both views
     if (trash && trash.value) {
-      //should stay before breadcrumbList so that it can be overriden if more than 1 breadcrumb exists for Trash view
       this.$store.dispatch("views/updateTrash", trash.value);
     }
 
+    if (starred && starred.value) {
+      this.$store.dispatch("starredView/updateStarred", starred.value);
+    }
+
     if (breadcrumbList) {
-      const { trash } = breadcrumbList;
+      const { trash, starred } = breadcrumbList;
       if (trash.length > 1) {
         // gets ID of folder that was open in the trash view before reload
         const lastFolderID = trash[trash.length - 1].id;
         this.$store.dispatch("views/updateTrashedContent", lastFolderID);
+      }
+
+      if (starred.length > 1) {
+        const lastFolderID = starred[starred.length - 1].id;
+        this.$store.dispatch("starredView/updateStarredContent", lastFolderID);
       }
       this.$store.dispatch("breadcrumbs/updateBreadcrumbs", breadcrumbList);
     } else {

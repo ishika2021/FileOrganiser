@@ -49,7 +49,7 @@
 .selected {
   background-color: $selection-color;
   user-select: none;
-  border-radius: 6px;
+  border-radius: 3px;
 }
 .drag-select {
   border: 1px dashed $selecting-square;
