@@ -102,6 +102,8 @@ export const restoreItem = (item, trash, rootDirectory) => {
 
   // update trash flag to add it back to folder view
   item.trash = false;
+
+  return trash;
 };
 
 export const restoreAllItems = (trash, rootDirectory) => {
@@ -122,6 +124,23 @@ export const restoreAllItems = (trash, rootDirectory) => {
   });
 
   return [];
+};
+
+// removes item from recent after it is trashed
+export const removeAllFromRecent = (recent, itemIDs) => {
+  if (itemIDs.length && recent.length) {
+    recent.forEach((obj) => {
+      itemIDs.forEach((itemID) => {
+        const index = obj.files.findIndex((id) => id === itemID);
+        if (index >= 0) {
+          obj.files.splice(index, 1);
+        }
+      });
+    });
+    recent = recent.filter(({ files }) => files.length);
+  }
+
+  return recent;
 };
 
 const modifyRestoreItem = (item, parent) => {

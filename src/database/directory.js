@@ -1,11 +1,22 @@
 const storeName = "directories";
 import DB from "./db";
+import { getDefaultFolders } from "./dbHelpers";
 
 // ObjectStore having rootDirectory
 const Directories = {
   async init() {
     try {
       await DB.init(storeName);
+      const directories = await this.getDirectories();
+      // creates default folders for new users
+      if (!directories) {
+        const defaultFolders = getDefaultFolders();
+        const rootDirectory = {
+          children: defaultFolders,
+          files: [],
+        };
+        await this.updateDirectories(JSON.parse(JSON.stringify(rootDirectory)));
+      }
     } catch (error) {
       console.log(error);
     }

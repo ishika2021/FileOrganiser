@@ -34,11 +34,29 @@ export const removeFromStarred = (item, starred) => {
   return starred;
 };
 
+// remove item from starred after it is trashed
+export const removeAllFromStarred = (starred, itemIDs) => {
+  if (itemIDs.length && starred) {
+    starred.forEach((obj) => {
+      itemIDs.forEach((itemID) => {
+        const index = obj.content.findIndex((id) => id === itemID);
+        if (index >= 0) {
+          obj.content.splice(index, 1);
+        }
+      });
+    });
+    starred = starred.filter(({ content }) => content.length);
+  }
+
+  return starred;
+};
+
 export const getStarredContent = (starred, rootDirectory) => {
   const result = {
     folders: [],
     files: [],
   };
+
   if (starred && rootDirectory) {
     starred.forEach((obj) => {
       const parentID = obj.parent;
@@ -48,10 +66,15 @@ export const getStarredContent = (starred, rootDirectory) => {
           const type = itemID.split("-")[0];
           if (type === "D") {
             const itemObj = parent.children.find(({ id }) => id === itemID);
-            result.folders.push(itemObj);
+
+            if (!itemObj.trash && itemObj.starred) {
+              result.folders.push(itemObj);
+            }
           } else if (type === "F") {
             const itemObj = parent.files.find(({ id }) => id === itemID);
-            result.files.push(itemObj);
+            if (itemObj.starred && !itemObj.trash) {
+              result.files.push(itemObj);
+            }
           }
         });
       }

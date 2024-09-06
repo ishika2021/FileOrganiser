@@ -46,6 +46,7 @@ export default {
   },
   methods: {
     async handleChange(e) {
+      this.setNotification();
       const files = e.target.files;
       const convertedFiles = await fileConverter(
         files,
@@ -53,6 +54,14 @@ export default {
         this.currentFolder.id
       );
       this.$store.dispatch("data/addNewFiles", convertedFiles);
+    },
+
+    setNotification() {
+      const notification = {
+        type: "loading",
+        message: "File upload may take time",
+      };
+      this.$store.dispatch("display/updateNotification", notification);
     },
   },
 };

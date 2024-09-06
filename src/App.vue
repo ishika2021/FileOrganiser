@@ -9,7 +9,6 @@
 <script>
 import { mapGetters } from "vuex";
 import Notification from "./components/Notification";
-import { getNewFolder } from "@/views/Folders/utils/functionHelper";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import {
   ConstantStore,
@@ -61,19 +60,6 @@ export default {
       await DirectoryStore.init();
       await ViewStore.init();
     },
-    createDefaultFolders() {
-      const folders = ["Document", "Images", "Important"];
-      const currentFolder = {
-        id: "root",
-        children: [],
-      };
-      const result = [];
-      folders.forEach((folder) => {
-        const newFolder = getNewFolder(folder, currentFolder);
-        result.push(newFolder);
-      });
-      return result;
-    },
   },
   mounted() {
     window.addEventListener("resize", this.handleScreenWidthChange);
@@ -112,14 +98,6 @@ export default {
         files: rootDirectory.files,
       };
 
-      this.$store.dispatch("data/updateFolders", obj);
-    } else {
-      // gives default folder for new user
-      const children = this.createDefaultFolders();
-      const obj = {
-        folders: children,
-        files: [],
-      };
       this.$store.dispatch("data/updateFolders", obj);
     }
 

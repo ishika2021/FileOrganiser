@@ -38,6 +38,8 @@ const fileOperations = (allFileNames) => {
   const updatedAllFileName = [...allFileNames];
 
   const inner = (file, parentID) => {
+    const splitedChars = file.name.split(".");
+    const extension = splitedChars[splitedChars.length - 1];
     const name = generateUniqueFileName(file.name, updatedAllFileName);
     const size = formatFileSize(file.size);
     const { type, label } = formatFileType(file.name);
@@ -49,6 +51,7 @@ const fileOperations = (allFileNames) => {
     const convertedObj = {
       id: "F-" + uuidv4(),
       name: name,
+      extension: extension,
       size: size,
       type: type,
       label: label,

@@ -30,15 +30,11 @@
         class="image-icon"
       />
       <Icon v-else :name="type" class="file-icon" />
-      <input
-        class="input"
-        :class="isRenamed ? 'rename-input' : ''"
-        v-model="modelValue"
-        :disabled="!isRenamed"
-        ref="focusRenameInput"
-        @keyup.enter="
-          this.$emit('rename-file', { name: modelValue, file: file })
-        "
+      <Input
+        :modelValue="file.name"
+        :isEdit="isRenamed"
+        @update:modelValue="handleFileRename"
+        :fileExtension="file.extension"
       />
     </div>
   </div>
@@ -59,8 +55,9 @@ import {
 import Icon from "@/components/Icon";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
+import Input from "@/components/Input";
 
-defineEmits([
+const emit = defineEmits([
   "item-restored",
   "item-trashed-permanently",
   "rename-file",
@@ -114,6 +111,10 @@ const state = reactive({
   isTrashView: computed(() => route.name === "Trash"),
   starredIcon: computed(() => item.isStarred),
 });
+
+const handleFileRename = ($value) => {
+  emit("rename-file", { name: $value, file: props.file });
+};
 
 onMounted(() => {
   if (props.file) {

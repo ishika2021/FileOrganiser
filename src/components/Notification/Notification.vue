@@ -32,6 +32,8 @@ export default {
       switch (type) {
         case "error":
           return "#f7685b";
+        case "loading":
+          return "#fdb93e";
         case "default":
           return "#2dbd96";
       }

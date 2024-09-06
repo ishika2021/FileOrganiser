@@ -28,6 +28,12 @@
     text-align: center;
     color: $heading-color;
   }
+  
+  .textarea{
+    width: 100%;
+    font-size: 13px;
+    overflow: visible;
+  }
 
   .rename-input {
     background-color: $selection-color;

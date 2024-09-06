@@ -28,27 +28,24 @@
         class="icon"
         @dblclick="doubleClickAction($event, folder)"
       />
-      <input
+      <Input
         v-if="isCreated"
-        class="input"
-        v-model="inputfolderName"
-        ref="focusInput"
-        @keyup.enter="this.$emit('save-folder', inputfolderName)"
+        :modelValue="inputfolderName"
+        :isEdit="isCreated"
+        @update:modelValue="handleFolderSave"
       />
-      <input
+      <Input
         v-else
-        class="input"
-        :class="isRenamed ? 'rename-input' : ''"
-        v-model="modelValue"
-        :disabled="!isRenamed"
-        ref="focusRenameInput"
-        @keyup.enter="this.$emit('rename-folder', { name: modelValue, folder })"
+        :modelValue="folder.name"
+        :isEdit="isRenamed"
+        @update:modelValue="handleFolderRename"
       />
     </div>
   </div>
 </template>
 <script setup>
 import Icon from "@/components/Icon";
+import Input from "@/components/Input";
 import {
   computed,
   onMounted,
@@ -63,7 +60,7 @@ import {
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
-defineEmits([
+const emit = defineEmits([
   "save-folder",
   "rename-folder",
   "item-restored",
@@ -125,6 +122,14 @@ const state = reactive({
   isTrashView: computed(() => route.name === "Trash"),
   starredIcon: computed(() => item.isStarred),
 });
+
+const handleFolderRename = ($value) => {
+  emit("rename-folder", { name: $value, folder: props.folder });
+};
+
+const handleFolderSave = ($value) => {
+  emit("save-folder", $value);
+};
 
 onMounted(() => {
   nextTick(() => {
