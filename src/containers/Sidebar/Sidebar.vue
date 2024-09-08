@@ -2,12 +2,7 @@
   <main class="sidebar">
     <header>
       <div class="logo">
-        <img
-          :src="require(`../../assets/logo.png`)"
-          alt="project-logo"
-          height="100%"
-          width="100%"
-        />
+        <img :src="logo" alt="project-logo" height="100%" width="100%" />
       </div>
       <div class="project-name">Local Drop</div>
     </header>
@@ -26,7 +21,8 @@
 </template>
 
 <script>
-import MenuItem from "../../components/MenuItem/MenuItem.vue";
+import MenuItem from "@/components/MenuItem";
+import logo from "@/assets/logo.png";
 export default {
   name: "Sidebar",
   components: {
@@ -66,6 +62,7 @@ export default {
           isAllowed: false,
         },
       ],
+      logo,
     };
   },
   computed: {

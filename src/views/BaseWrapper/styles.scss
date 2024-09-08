@@ -21,7 +21,7 @@
     overflow-y: auto;
     height: 396px;
     scrollbar-gutter: stable;
-    padding: 10px 25px 35px 25px;  //separate padding is required to make drag-select work from the edge of first item
+    padding: 16px 25px 35px 25px;  //separate padding is required to make drag-select work from the edge of first item
 
     &::-webkit-scrollbar {
       width: 10px;

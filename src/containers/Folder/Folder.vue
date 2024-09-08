@@ -7,13 +7,13 @@
           name="restore"
           class="icon restore"
           tooltip="Restore item"
-          @click="this.$emit('item-restored', folder)"
+          @click="emit('item-restored', folder)"
         />
         <Icon
           name="delete"
           class="icon permanent-delete"
           tooltip="Delete Permanently"
-          @click="this.$emit('item-trashed-permanently', folder)"
+          @click="emit('item-trashed-permanently', folder)"
         />
       </div>
       <Icon
@@ -21,7 +21,7 @@
         :name="starredIcon ? 'starred' : 'starred-outline'"
         :color="starredIcon ? '#fdb93e' : ''"
         :class="starredIcon ? 'starred-icon' : 'starred-icon starred-outline'"
-        @click="this.$emit('starred-action', props.folder)"
+        @click="emit('starred-action', props.folder)"
       />
       <Icon
         name="folder-full"
