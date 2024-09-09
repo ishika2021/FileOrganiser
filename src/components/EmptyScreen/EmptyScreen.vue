@@ -7,6 +7,7 @@
         height="100%"
         width="100%"
         class="image"
+        loading="lazy"
       />
       <span class="text">Coming Soon...</span>
     </div>

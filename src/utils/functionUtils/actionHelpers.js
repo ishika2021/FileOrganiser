@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 import { getFolderByID, generateUniqueFolderName } from "./folderHelpers.js";
 import { generateUniqueFileName } from "./fileHelpers.js";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 
 export const handlePaste = (rootDirectory, currentFolder, pasteObject) => {
   const { items, operation, parentID } = pasteObject;
   const parentFolder = getFolderByID(parentID, rootDirectory);
+  console.log("paste is running........");
 
   items.forEach((item) => {
     const type = item.charAt(0);
@@ -66,7 +67,7 @@ export const updateTrashFlag = (rootDirectory, trashObject) => {
 
 // transforms  target folder properties before pasting it on new location
 const transformFolderProperties = (target, currentFolder) => {
-  const newFolder = _.cloneDeep(target);
+  const newFolder = cloneDeep(target);
 
   const allSubFolderNames = currentFolder.children
     .filter(({ trash }) => !trash)
@@ -106,7 +107,7 @@ const generateUpdatedIDs = (parentID, folders) => {
 
 // transforms  target file properties before pasting it on new location
 const transformFileProperties = (target, currentFolder) => {
-  const newFile = _.cloneDeep(target);
+  const newFile = cloneDeep(target);
 
   const allFileNames = currentFolder.files
     .filter(({ trash }) => !trash)

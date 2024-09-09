@@ -2,7 +2,13 @@
   <main class="sidebar">
     <header>
       <div class="logo">
-        <img :src="logo" alt="project-logo" height="100%" width="100%" />
+        <img
+          :src="logo"
+          alt="project-logo"
+          height="100%"
+          width="100%"
+          loading="lazy"
+        />
       </div>
       <div class="project-name">Local Drop</div>
     </header>

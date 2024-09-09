@@ -28,6 +28,7 @@
         :src="imageSource"
         alt="file"
         class="image-icon"
+        loading="lazy"
       />
       <Icon v-else :name="type" class="file-icon" />
       <Input

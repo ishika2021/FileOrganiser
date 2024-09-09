@@ -1,40 +1,34 @@
 import { createRouter, createWebHistory } from "vue-router";
-import baseLayout from "@/layout/baseLayout.vue";
-import Dashboard from "@/views/Dashboard";
-import Folders from "@/views/Folders";
-import Recent from "@/views/Recent";
-import Starred from "@/views/Starred";
-import Trash from "@/views/Trash";
 
 const routes = [
   {
     path: "/",
-    component: baseLayout,
+    component: import("@/layout/baseLayout.vue"),
     children: [
       {
         path: "/",
         name: "Folders",
-        component: Folders,
+        component: () => import("@/views/Folders"),
       },
       {
         path: "/Dashboard",
         name: "Dashboard",
-        component: Dashboard,
+        component: () => import("@/views/Dashboard"),
       },
       {
         path: "/recent",
         name: "Recent",
-        component: Recent,
+        component: () => import("@/views/Recent"),
       },
       {
         path: "/starred",
         name: "Starred",
-        component: Starred,
+        component: () => import("@/views/Starred"),
       },
       {
         path: "/trash",
         name: "Trash",
-        component: Trash,
+        component: () => import("@/views/Trash"),
       },
     ],
   },

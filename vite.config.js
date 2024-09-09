@@ -2,11 +2,11 @@
 
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import { visualizer } from "rollup-plugin-visualizer";
 import path from "path";
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), visualizer()],
   server: {
     host: true, // Allows localhost to work properly
     port: 3000, // Default Vite port
