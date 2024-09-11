@@ -53,7 +53,7 @@ import { mapGetters } from "vuex";
 import SearchBar from "@/components/SearchBar";
 import Breadcrumbs from "@/containers/Breadcrumbs";
 import Dropdown from "@/components/Dropdown";
-import FileUpload from "@/components/FileUpload/FileUpload";
+import FileUpload from "@/components/FileUpload";
 import MenuItem from "@/components/MenuItem";
 import ThemeSwitch from "@/containers/ThemeSwitch";
 import Button from "@/components/Button/Button.vue";

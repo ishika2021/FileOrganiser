@@ -32,6 +32,7 @@ export default {
   data() {
     return {
       uniqueID: `icon-${Math.random().toString(36).substring(2, 9)}`,
+      svgCache: {},
     };
   },
   computed: {
@@ -43,26 +44,35 @@ export default {
     this.svgLoader();
   },
   methods: {
-    svgLoader() {
+    async svgLoader() {
       if (this.name) {
-        fetch(`icons/${this.name}.svg`)
-          .then((response) => response.text())
-          .then((svg) => {
-            const ele = document.querySelector(`#${this.uniqueID}`);
-            ele.innerHTML = svg;
-            const pathElements = document.querySelectorAll(
-              `#${this.uniqueID} svg path`
-            );
-            if (this.color) {
-              if (pathElements.length > 1) {
-                pathElements.forEach((ele) => {
-                  ele.setAttribute("fill", this.color);
-                });
-              } else {
-                pathElements[0].setAttribute("fill", this.color);
-              }
-            }
-          });
+        if (this.svgCache[this.name]) {
+          this.insertSVG(this.svgCache[this.name]);
+        } else if (localStorage.getItem(this.name)) {
+          const svg = localStorage.getItem(this.name);
+          this.svgCache[this.name] = svg;
+          this.insertSVG(svg);
+        } else {
+          try {
+            const response = await fetch(`icons/${this.name}.svg`, {
+              cache: "default",
+            });
+            const svg = await response.text();
+            this.svgCache[this.name] = svg;
+            localStorage.setItem(this.name, svg);
+            this.insertSVG(svg);
+          } catch (e) {
+            console.error("Error loading svg:", e);
+          }
+        }
+      }
+    },
+    insertSVG(svg) {
+      const ele = document.querySelector(`#${this.uniqueID}`);
+      ele.innerHTML = svg;
+      const pathElements = ele.querySelectorAll("svg path");
+      if (this.color) {
+        pathElements.forEach((path) => path.setAttribute("fill", this.color));
       }
     },
   },

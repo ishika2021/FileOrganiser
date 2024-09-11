@@ -7,13 +7,13 @@
           name="restore"
           class="icon restore"
           tooltip="Restore item"
-          @click="this.$emit('item-restored', file)"
+          @click="emit('item-restored', file)"
         />
         <Icon
           name="delete"
           class="icon permanent-delete"
           tooltip="Delete Permanently"
-          @click="this.$emit('item-trashed-permanently', file)"
+          @click="emit('item-trashed-permanently', file)"
         />
       </div>
       <Icon
@@ -21,13 +21,14 @@
         :name="starredIcon ? 'starred' : 'starred-outline'"
         :color="starredIcon ? '#fdb93e' : ''"
         :class="starredIcon ? 'starred-icon' : 'starred-icon starred-outline'"
-        @click="this.$emit('starred-action', props.file)"
+        @click="emit('starred-action', file)"
       />
       <img
         v-if="type === 'image'"
         :src="imageSource"
         alt="file"
         class="image-icon"
+        loading="lazy"
       />
       <Icon v-else :name="type" class="file-icon" />
       <Input

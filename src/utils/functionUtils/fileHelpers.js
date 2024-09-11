@@ -37,7 +37,7 @@ export const fileConverter = async (newFiles, allFiles, parentID) => {
 const fileOperations = (allFileNames) => {
   const updatedAllFileName = [...allFileNames];
 
-  const inner = (file, parentID) => {
+  const inner = async (file, parentID) => {
     const splitedChars = file.name.split(".");
     const extension = splitedChars[splitedChars.length - 1];
     const name = generateUniqueFileName(file.name, updatedAllFileName);
@@ -64,6 +64,13 @@ const fileOperations = (allFileNames) => {
       parentID: parentID,
     };
 
+    const isImage = file.type.startsWith("image/");
+    if (isImage) {
+      const compressedImg = await compressImage(file);
+      file = compressedImg;
+      convertedObj.size = formatFileSize(file.size);
+    }
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -78,6 +85,80 @@ const fileOperations = (allFileNames) => {
   };
 
   return inner;
+};
+
+const compressImage = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      const img = new Image();
+      img.src = reader.result;
+
+      img.onload = () => {
+        const MAX_WIDTH = 150;
+        const MAX_HEIGHT = 90;
+        const QUALITY = 0.7;
+        const MIME_TYPE = file.type;
+
+        const [newWidth, newHeight] = calculateSize(img, MAX_WIDTH, MAX_HEIGHT); //reduces img size
+
+        const canvas = document.createElement("canvas");
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+        canvas.toBlob(
+          (blob) => {
+            const readerCompressed = new FileReader();
+            readerCompressed.readAsDataURL(blob);
+
+            readerCompressed.onload = () => {
+              const compressedFile = new File([blob], file.name, {
+                type: MIME_TYPE,
+              });
+              resolve(compressedFile);
+            };
+            readerCompressed.onerror = (error) => {
+              reject(error);
+            };
+          },
+          MIME_TYPE,
+          QUALITY
+        );
+      };
+
+      img.onerror = (error) => {
+        reject(error);
+      };
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+// Modifies the size of image according to it's height:width ratio
+const calculateSize = (img, maxWidth, maxHeight) => {
+  let imgWidth = img.width;
+  let imgHeight = img.height;
+
+  if (imgWidth > imgHeight) {
+    if (imgWidth > maxWidth) {
+      imgHeight = Math.round((imgHeight * maxWidth) / imgWidth);
+      imgWidth = maxWidth;
+    }
+  } else {
+    if (imgHeight > maxHeight) {
+      imgWidth = Math.round((imgWidth * maxHeight) / imgHeight);
+      imgHeight = maxHeight;
+    }
+  }
+  return [imgWidth, imgHeight];
 };
 
 // returns unique name for the file
