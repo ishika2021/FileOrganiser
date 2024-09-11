@@ -9,6 +9,7 @@
               type="file"
               id="file-upload"
               multiple
+              :accept="acceptedFileTypes"
               @change="handleChange($event)"
             />
           </div>
@@ -42,6 +43,9 @@ export default {
     }),
     unTrashedFiles() {
       return this.selectedFiles.filter(({ trash }) => !trash);
+    },
+    acceptedFileTypes() {
+      return ".png,.jpg,.xlsx,.pdf,.txt,.docx";
     },
   },
   methods: {

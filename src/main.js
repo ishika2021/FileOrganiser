@@ -6,14 +6,29 @@ import store from "./store";
 // Vuetify
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
+import {
+  VList,
+  VListItem,
+  VMenu,
+  VListItemTitle,
+  VSnackbar,
+  VSkeletonLoader,
+  VTooltip,
+} from "vuetify/components";
+
 import "./styles/index.scss";
 import "vuetify/dist/vuetify.css";
 
 const vuetify = createVuetify({
-  components,
-  directives,
+  components: {
+    VList,
+    VSnackbar,
+    VSkeletonLoader,
+    VTooltip,
+    VListItemTitle,
+    VMenu,
+    VListItem,
+  },
 });
 
 const app = createApp({

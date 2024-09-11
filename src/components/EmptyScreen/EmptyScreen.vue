@@ -2,11 +2,12 @@
   <div class="empty-screen">
     <div class="content">
       <img
-        :src="require(`../../assets/empty-screen.png`)"
+        :src="emptyScreenImg"
         alt="Page is under construction"
         height="100%"
         width="100%"
         class="image"
+        loading="lazy"
       />
       <span class="text">Coming Soon...</span>
     </div>
@@ -14,7 +15,13 @@
 </template>
 
 <script>
+import emptyScreenImg from "@/assets/empty-screen.png";
 export default {
   name: "EmptyScreen",
+  data() {
+    return {
+      emptyScreenImg,
+    };
+  },
 };
 </script>
