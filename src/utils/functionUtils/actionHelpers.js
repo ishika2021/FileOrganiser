@@ -6,7 +6,6 @@ import cloneDeep from "lodash/cloneDeep";
 export const handlePaste = (rootDirectory, currentFolder, pasteObject) => {
   const { items, operation, parentID } = pasteObject;
   const parentFolder = getFolderByID(parentID, rootDirectory);
-  console.log("paste is running........");
 
   items.forEach((item) => {
     const type = item.charAt(0);
